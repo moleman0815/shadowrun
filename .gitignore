@@ -2,3 +2,6 @@ codeigniter/application_snn/logs/log-2016-12-16.php
 /.buildpath
 /.project
 /.settings/
+snn/fc.php
+codeigniter/application_snn/config/config.php
+codeigniter/application_snn/config/database.php
