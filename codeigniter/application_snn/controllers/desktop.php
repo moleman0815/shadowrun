@@ -61,6 +61,33 @@ class Desktop extends CI_Controller {
 			echo json_encode(array('status' => 'success', 'title' => $data[0]['title'], 'receiver' => $data[0]['nickname'], 'receiver_id' => $data[0]['send_from'], 'msg' => $data[0]['msg_text']));			
 		}
 	}
+	
+	public function shoutbox () {
+		$page = $this->uri->segment(3);
+		$header = array('name' => $this->session->userdata('name'));
+		$data = array(
+				'shoutbox' => $this->main_db_assets->getShoutboxFull(),
+		);
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => true,
+				'column_messages' => $this->main_db_assets->getColumnMessages(),
+				'show_friends' => true,
+				'friends' => $this->add_functions->getFriends(),
+		);
+		$right = array(
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+		);
+		
+		$this->load->view('header');
+		$this->load->view('menu_header', $header);
+		$this->load->view('left_column', $left);
+		$this->load->view('div_md8');
+		$this->load->view('shoutbox', $data);
+		$this->load->view('right_column', $right);
+		$this->load->view('footer');
+	}
 
 	public function overview() {
 		$page = $this->uri->segment(3);

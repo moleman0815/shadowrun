@@ -145,8 +145,19 @@ class Main_db_assets extends CI_Model
         $this->db->join('login', 'login.id = shoutbox.login_id');
         $this->db->where('shoutbox.deleted', '0');
         $this->db->order_by("sb_time", "desc"); 
+        $this->db->limit('7');
         $query = $this->db->get();
         return $query->result_array();
+    }
+    
+    function getShoutboxFull () {
+    	$this->db->select('shoutbox.*, login.nickname');
+    	$this->db->from('shoutbox');
+    	$this->db->join('login', 'login.id = shoutbox.login_id');
+    	$this->db->where('shoutbox.deleted', '0');
+    	$this->db->order_by("sb_time", "desc");
+    	$query = $this->db->get();
+    	return $query->result_array();
     }
 
 	function sendShoutbox() {

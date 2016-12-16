@@ -48,7 +48,7 @@ $(document).ready(function(){
 				<?php $x++; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
-
+			<span><a href="/secure/snn/desktop/shoutbox">>> Shoutbox Archiv</a></span>
 			<div style="margin:5px">
 				<?=form_open_multipart(base_url() . 'desktop/newShoutbox')?>
 				<?=form_hidden('userid', $this->session->userdata('id'))?>
