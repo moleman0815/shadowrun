@@ -93,10 +93,17 @@ legend {
 	<ul>
 		<li><a href="#nickname">Nickname</a></li>
 	  	<li><a href="#passwort">Passwort</a></li>
+	  	<!-- <li><a href="#setting">Settings</a></li> -->
 		<li><a href="#avatar">Avatar</a></li>
 		<li><a href="#charakter">Charakter</a></li>
 		<li><a href="#freunde">Freunde</a></li>
 	</ul>
+	<!-- 	<div id="settings">
+		<fieldset>
+			<legend>Settings</legend>
+		</fieldset>
+	</div>
+	-->
 	<div id="freunde">
 		<fieldset>
 			<legend>Freunde</legend>

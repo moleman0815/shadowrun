@@ -3,7 +3,7 @@ input, textarea, select {
 	color: black;
 }
 </style>
-
+<?php # _debugDie($messages); ?>
 
 	<div style="margin: 0 0 20px 0">
 		<a class="fancybox" href="#divReply" id="replyForm" style="display:none"></a>
@@ -18,12 +18,16 @@ input, textarea, select {
 			<div class="alert alert-success"><?=$msg['success']?></div>
 			<br />
 		<?php endif; ?>	
-	<?php $a=0; foreach($messages as $m):?>
-	<?php $subclass = ($a%2 == 0) ? 'uneven' : '';?>					
+	<?php $a=0; foreach($messages['messages'] as $m):?>
+	<?php $subclass = ($a%2 == 0) ? 'uneven' : '';?>	
+	<?php 
+		$avatar = $messages['avatar'][$m['send_to']][0]['avatar'];
+		$nickname = ($m['send_to'] == $this->session->userdata('id')) ? "DIR" : $messages['avatar'][$m['send_to']][0]['nickname'];
+	?>				
 	<div class="newselement <?=$subclass;?>">
-		<?php if($m['avatar']): ?>
+		<?php if($avatar): ?>
 			<div style="float:left;width:100px;padding:10px">
-				<img src="/secure/snn/assets/img/avatar/<?=$m['avatar'];?>" alt="" />
+				<img src="/secure/snn/assets/img/avatar/<?=$avatar;?>" alt="" />
 			</div>
 		<?php endif; ?>
 		<div>
@@ -35,7 +39,7 @@ input, textarea, select {
 						<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="deleteMsg('<?=$m['id']?>')" style="cursor:pointer" /></span>
 					</div>
 				</h4>		
-				<p>Nachricht von <?=$m['nickname']?> am <?= date('d.m.Y H:i', $m['date'])?></p>
+				<p>Nachricht von <strong><?=$nickname?></strong> am <?= date('d.m.Y H:i', $m['date'])?></p>
 				<span id="teaser_<?=$m['id']?>"><?=substr($m['msg_text'], 0, 100);?> ...</span><br />
 				<?php if (strlen($m['msg_text']) > 100): ?>
 					<input type="button" value="[ Full Message ]" onclick="toggleMsg('msg_<?=$m['id']?>')" class=" btn-info btn-sm" style="float:right;color: #000000" />

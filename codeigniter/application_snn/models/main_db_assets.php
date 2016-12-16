@@ -72,18 +72,49 @@ class Main_db_assets extends CI_Model
     function getMessages($page) {
 		$limit = '10';
 		$page = ($page) ? $page : '0';
+		$data = array();
+		$avatars = array();
+		$tmpAvatar = array();
+		
 	
-        $this->db->select('messages.*, login.nickname, login.avatar');
-        $this->db->from('messages');
-        $this->db->join('login', 'login.id = messages.send_from');
+        $this->db->select('messages.*');
+        $this->db->from('messages');       
         $this->db->where('send_to', $this->session->userdata('id'));
+        $this->db->where('send_to', $this->session->userdata('id'));
+        #$this->db->or_where('send_to', 2);
+        $this->db->or_where('send_from', $this->session->userdata('id'));
         $this->db->where('deleted', '0');
-        $this->db->order_by("date", "DESC"); 
+        $this->db->order_by("date", "DESC");
 		$this->db->limit($limit, $page);
-        $query = $this->db->get()->result_array();
+        $data['messages'] = $this->db->get()->result_array();
+        
+        foreach ($data['messages'] as $value) {
+        	if (!in_array($value['send_to'], $avatars) && $value['send_to'] != $this->session->userdata('id')) {
+        		array_push($avatars, $value['send_to']);
+        	}
+        }
+        
+        foreach ($avatars as $a) {
+        	$this->db->select('id, nickname, avatar');
+        	$this->db->from('login');
+        	$this->db->where('id', $a);
+        	$data['avatar'][$a] = $this->db->get()->result_array();        	
+        }
+        
+        $this->db->select('id, nickname, avatar');
+        $this->db->from('login');
+        $this->db->where('id', $this->session->userdata('id'));
+        $data['avatar'][$this->session->userdata('id')] = $this->db->get()->result_array();
+        
+        
+        
+        
+        
+        
+        #$this->db->select('nickname, avatar');
         
 
-        return $query;
+        return $data;
     }
 
     function getColumnMessages () {
