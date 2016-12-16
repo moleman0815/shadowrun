@@ -8,7 +8,7 @@
     <title>Shadow NewsNet 2.0</title>
     <meta name="description" content="">
 
-
+	<link rel="icon" type="image/x-icon" href="/secure/snn/assets/img/favicon.png">
     <link href="/secure/snn/assets/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
     <!--<link href="/secure/snn/assets/css/font-awesome.min.css" rel="stylesheet">-->
