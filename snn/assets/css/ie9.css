@@ -1,0 +1,38 @@
+.lotto-seminare div[class^='seminar-box'] {
+	width: 100%;
+	min-height: 100px;
+	height: 100%;
+}
+
+div.seminar-icon-left {
+  clear: left;
+  float:left;  
+  min-height: 100px;
+}
+    
+div.seminar-info-right {
+  width: 201px;
+  float: left;
+  overflow: hidden;
+  min-height: 100px;
+}
+
+#toggleContent, 
+#toggleContent[class^="seminar-box"],   
+#toggleContent[class^="seminar-box"].seminar-icon-left,  
+#toggleContent[class^="seminar-box"].seminar-content-center { 
+	height: inherit; 
+}
+
+div.seminar-content-center {
+  background-color: #ECDCB7;
+	float: left;
+  min-height: 100px;
+  margin-top: 0;
+}
+
+#toggleContent div[class^='seminar-box'] .seminar-content-center {
+  margin-top: -1px;
+}
+
+.lotto-seminarmenu .styled-select select { background-color: #51555f; }

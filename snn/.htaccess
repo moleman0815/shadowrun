@@ -1,0 +1,23 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* fc.php/$0 [PT,L]
+
+#RewriteEngine on
+
+#RewriteCond $1 ^(desktop|login)
+#RewriteRule ^(.*)$ fc.php/$1 [PT,L]
+
+
+# Rewrite Log is deprecated in apache 2.4
+# Use this: LogLevel alert rewrite:trace3
+# in Vhost config Directory directive
+
+#AuthUserFile /var/www/vhosts/default/htdocs/secure/snn/.htpasswd
+#AuthGroupFile /dev/null
+#AuthName "Password Protected Area"
+#AuthType Basic
+
+#<limit GET POST>
+#require valid-user
+#</limit>

@@ -1,0 +1,489 @@
+/*  reset & .clear
+----------------------------*/
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.clear:before,
+.clear:after {
+    content: " ";
+    display: table;
+}
+
+.clear:after { clear: both }
+
+.clear { *zoom: 1 }
+
+/*  MAIN
+----------------------------*/
+
+
+li { list-style: none }
+
+a { text-decoration: none }
+
+
+/*  PRODUCTS
+----------------------------*/
+
+#product ul {
+    width: 680px;
+    margin-left: -10px; 
+display: flex;
+    flex-wrap: wrap;
+}
+
+#product ul li {
+    position: relative;
+    float: left;
+    width: 150px;
+    margin: 0 0 10px 10px;
+    padding: 5px;
+    color: #000000;
+    background-color: #fff;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    background: none repeat scroll 0 0 rgba(103, 193, 245, 0.2);
+    color: #FFFFFF;    
+    -webkit-transition: -webkit-transform .1s ease;
+    -moz-transition: -webkit-transform .1s ease;
+    -o-transition: -webkit-transform .1s ease;
+    -ms-transition: -webkit-transform .1s ease;
+    transition: transform .1s ease;
+    cursor: pointer; 
+    
+
+}
+
+
+#product ul li:hover {
+    /*background-color: #fff8c1;*/
+    background: none repeat scroll 0 0 rgba(93, 193, 245, 0.2);
+    cursor: pointer;    
+}
+
+#product.active ul li {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter: alpha(opacity = 40);
+    opacity: .4;
+    cursor: pointer;    
+}
+
+#product.active ul li.active {
+    z-index: 20;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: alpha(opacity = 100);
+    opacity: 1;
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -o-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transform: scale(.6);
+    -moz-transform: scale(.6);
+    -o-transform: scale(.6);
+    -ms-transform: scale(.6);
+    transform: scale(.6);
+    cursor: pointer;
+}
+
+#product ul li a {
+    display: block;
+    color: #000
+}
+
+#product ul li h3 {
+    margin-top: 5px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+#product ul li h3,
+#product ul li p {
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+#product ul li a img { display: block }
+
+/*  BASKET
+----------------------------*/
+
+.basket {
+    position: relative;
+}
+
+.basket .basket_list {
+    width: 400px;
+    background-color: #fff;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    color: #000000;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    background: none repeat scroll 0 0 rgba(103, 193, 245, 0.2);
+    color: #FFFFFF;        
+}
+.basket .basket_list input {
+    color: black;
+}
+
+.basket.active .basket_list,
+.basket.hover .basket_list { 
+    background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF;
+     }
+
+.basket.active .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; 
+    border: 1px solid red;
+}
+
+.basket.hover .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; }
+
+/* .head */
+
+.basket .head {
+    overflow: hidden;
+    margin: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    border-bottom: 1px solid #ddd;
+}
+
+.basket .head .name { float: left }
+.basket .head .amount {padding-left: 200px;}
+.basket .head .count { padding-left: 10px; }
+
+.basket  .name { float: left }
+.basket  .amount {padding-left: 200px;}
+.basket  .count { padding-left: 10px; }
+
+/* .head */
+
+.basket ul { padding-bottom: 10px }
+
+.basket ul li {
+    position: relative;
+    clear: both;
+    overflow: hidden;
+    margin: 0 10px;
+    height: 35px;
+    line-height: 32px;
+    border-bottom: 1px dashed #eee;
+}
+
+.basket ul li:hover { border-bottom-color: #ccc }
+
+
+.basket ul li span.name {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    -webkit-transition: width .2s ease;
+    -moz-transition: width .2s ease;
+    -o-transition: width .2s ease;
+    -ms-transition: width .2s ease;
+    transition: width .2s ease;
+}
+
+.basket ul li:hover span.name { width: 146px }
+
+.basket ul li input.count {
+    line-height: 20px;
+    text-align: center;
+    border: 0;
+    border-radius: 3px;
+    background-color: #ddd;
+}
+
+.basket ul li button.delete {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.basket ul li button.minus {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+
+}
+
+
+/*  basket_sell
+----------------------------*/
+
+.basket_sell {
+    position: relative;
+}
+
+.basket_sell .basket_list {
+    width: 400px;
+    background-color: #fff;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    color: #000000;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    background: none repeat scroll 0 0 rgba(103, 193, 245, 0.2);
+    color: #FFFFFF;        
+}
+.basket_sell .basket_list input {
+    color: black;
+}
+
+.basket_sell.active .basket_list,
+.basket_sell.hover .basket_list { 
+    background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF;
+     }
+
+.basket_sell.active .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; 
+    border: 1px solid red;
+}
+
+.basket_sell.hover .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; }
+
+/* .head */
+
+.basket_sell .head {
+    overflow: hidden;
+    margin: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    border-bottom: 1px solid #ddd;
+}
+
+.basket_sell .head .name { float: left }
+.basket_sell .head .amount {padding-left: 200px;}
+.basket_sell .head .count { padding-left: 10px; }
+
+.basket_sell  .name { float: left }
+.basket_sell  .amount {padding-left: 200px;}
+.basket_sell  .count { padding-left: 10px; }
+
+/* .head */
+
+.basket_sell ul { padding-bottom: 10px }
+
+.basket_sell ul li {
+    position: relative;
+    clear: both;
+    overflow: hidden;
+    margin: 0 10px;
+    height: 35px;
+    line-height: 32px;
+    border-bottom: 1px dashed #eee;
+}
+
+.basket_sell ul li:hover { border-bottom-color: #ccc }
+
+
+.basket_sell ul li span.name {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    -webkit-transition: width .2s ease;
+    -moz-transition: width .2s ease;
+    -o-transition: width .2s ease;
+    -ms-transition: width .2s ease;
+    transition: width .2s ease;
+}
+
+.basket_sell ul li:hover span.name { width: 146px }
+
+.basket_sell ul li input.count {
+    line-height: 20px;
+    text-align: center;
+    border: 0;
+    border-radius: 3px;
+    background-color: #ddd;
+}
+
+.basket_sell ul li button.delete {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.basket_sell ul li button.minus {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+
+}
+
+/*  basket_sell
+----------------------------*/
+
+.basket_cyberware {
+    position: relative;
+}
+
+.basket_cyberware .basket_list {
+    width: 400px;
+    background-color: #fff;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    color: #000000;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    background: none repeat scroll 0 0 rgba(103, 193, 245, 0.2);
+    color: #FFFFFF;        
+}
+.basket_cyberware .basket_list input {
+    color: black;
+}
+
+.basket_cyberware.active .basket_list,
+.basket_cyberware.hover .basket_list { 
+    background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF;
+     }
+
+.basket_cyberware.active .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; 
+    border: 1px solid red;
+}
+
+.basket_cyberware.hover .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; }
+
+/* .head */
+
+.basket_cyberware .head {
+    overflow: hidden;
+    margin: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    border-bottom: 1px solid #ddd;
+}
+
+.basket_cyberware .head .name { float: left }
+.basket_cyberware .head .amount {padding-left: 200px;}
+.basket_cyberware .head .count { padding-left: 10px; }
+
+.basket_cyberware  .name { float: left }
+.basket_cyberware  .amount {padding-left: 200px;}
+.basket_cyberware  .count { padding-left: 10px; }
+
+/* .head */
+
+.basket_cyberware ul { padding-bottom: 10px }
+
+.basket_cyberware ul li {
+    position: relative;
+    clear: both;
+    overflow: hidden;
+    margin: 0 10px;
+    height: 35px;
+    line-height: 32px;
+    border-bottom: 1px dashed #eee;
+}
+
+.basket_cyberware ul li:hover { border-bottom-color: #ccc }
+
+
+.basket_cyberware ul li span.name {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    -webkit-transition: width .2s ease;
+    -moz-transition: width .2s ease;
+    -o-transition: width .2s ease;
+    -ms-transition: width .2s ease;
+    transition: width .2s ease;
+}
+
+.basket_cyberware ul li:hover span.name { width: 146px }
+
+.basket_cyberware ul li input.count {
+    line-height: 20px;
+    text-align: center;
+    border: 0;
+    border-radius: 3px;
+    background-color: #ddd;
+}
+
+.basket_cyberware ul li button.delete {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.basket_cyberware ul li button.minus {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+
+}

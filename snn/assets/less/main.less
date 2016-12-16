@@ -1,0 +1,1365 @@
+// for testing only - Show Raster
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+  //border: 1px solid blue;
+}
+
+
+//
+// Declare variables like colors, size, width, formats
+//----------------------------------------------------
+
+// families and fonts (font-size = pt!!!)
+@family: Arial;
+@italic: italic;
+@font1: 12px;
+@font2: 14px;     /* standard size hole project */
+@font3: 18px;
+@font4: 24px;
+@font5: 38px;
+
+
+// colors background
+@background:    #f9f7ed;		// beige 			      Standard background
+@navbackground: #E5D4A4;		// dark beige		    Navigation background
+@boxbackground: #ECDCB7;		// beige for boxes  Boxes background
+
+@slidebackstart: #f4ebd5;		// beige verlauf	von hell
+@slidebackend:   #f5ebd5;		// beige verlauf	nach dunkel
+
+// colors others
+
+@schwarz: #000000;
+@weiss:   #ffffff;
+
+@braun:   #951b24;				// rotbraun			   Standard Login area
+@schrift: #51555f;				// dark gray		   Standard text
+@lines:   #6b6b6b;				// gray 			     lines between news
+@gray:    #a7a7a7;				// light gray		   "Anmedlung angefragt"
+@black:   #1f2730;				// very dark gray	 "Angemeldet" and login button
+@topnav:  #cea8aa;				// light red 	     Topline Naviagtion small
+
+// spaces, borders, navigation header
+@nav-top:     137px;		  // top navigation slot                      (137px)
+@nav:         240px;			// complete navigation slot all other sites (240px)
+@nav-content: 280px;      // start content after navigation           (280px)
+@nav-home:    800px;      // navigation header to                     (599px + 201px Abstand Content)
+
+@noborder: 0px solid;
+
+
+//
+// individual changes of standard values - overwrite Bootstrap Layout
+//-------------------------------------------------------------------
+
+body {
+	background-color: @background;
+	color: @schrift;
+	font-family: @family;
+	font-size: @font2;
+	line-height: 1.2;
+	height: 100%;
+}
+
+//
+// Erweiterung Bootstrap max. Size bei größeren Monitorauflösungen max. 956px
+// (interner Bereich) 1305 - 340 +16 (rechts) + 16 (links)
+//
+// Info: Bootstrap bringt links und rechts außen jeweils auch noch einen Rand von
+// 15px mit, den wir in den Vorgaben aber nicht geplant haben. Daher entstehen
+// kleiner Differenzen bei bden Bemaßungen
+//-------------------------------------------------------------------------------
+
+@media (min-width: 992px) {
+  .container { width: 988px; }
+}
+@media (min-width: 1200px) {
+  .container { width: 988px; }
+}
+@media (min-width: 1350px) {
+  .container { width: 988px; }
+}
+
+// Overwriting Bootstrap Raster - Empty spaces 15px --> 16px
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
+	color: @braun;
+	font-weight: bold;
+	line-height: 1em;
+	text-transform: uppercase;
+}
+
+h1, .h1 { 
+  font-size: @font5; 
+  &.top-titel { margin-top: 0px; }
+}
+
+h2, .h2 { font-size: @font4; }
+h3, .h3 { font-size: @font3; }
+h4, .h4 { font-size: @font2; }
+
+h5, .h5 {
+	color: @schrift;
+	font-size: @font1;
+	font-weight: regular;
+}
+
+//
+// Layout ToggleBoxen - Anpassung Bootstrap Layout an Lotto-Akademie
+//------------------------------------------------------------------
+.panel-group { margin-bottom: 0; }
+.panel-group .panel { border-radius: none; margin-bottom: 10px; }
+.panel-default { border-color: none; }
+.panel {
+  background-color: @background;
+  border: 0px solid transparent;
+  border-radius: none;
+  box-shadow: none;
+  margin-bottom: 0;
+}
+.panel-heading {
+  border: none;
+  padding: 0;
+}
+.panel-body { 
+  padding: 0; 
+  background-image: url("../img/background_box2c.png");
+  background-size: 100% 100%;
+  background-color: @boxbackground;
+  background-repeat: repeat;
+  .seminar-box-2c {
+    margin-top: 0;
+  }
+}
+.panel-group .panel-heading + .panel-collapse > .panel-body { border: none; }
+
+//
+// Layout Standardelemente - Footer, Breadcrumb, Links, Clearer, Quadrate
+//-----------------------------------------------------------------------
+
+.lotto-nav-breadcrumb {
+  margin-top: -35px;
+
+  > ol.breadcrumb {
+    background-color: @background;
+  	padding: 0;
+  	font-size: @font1;
+
+  	> li + li:before {
+  		content: "> ";
+  		color: inherit;
+  	}
+
+  	.active {
+  		color: inherit;
+  		font-weight: bold;
+  	}
+  }
+}
+
+
+footer {
+	background-color: @navbackground;
+	font-style: @italic;
+	font-size: @font1;
+	height: 70px;
+	text-align: center;
+	margin-top: 40px;
+
+	.container ul {
+		margin-top: 15px;
+		margin-bottom: 2px;
+
+    > li {
+   	  display: inline;
+
+   	  &+li:before {
+       	content: "/ ";
+       	color: inherit;
+   	  }
+
+      > a {
+       	padding: 0 10px;
+
+       	&:hover {
+       	  text-decoration: underline;
+       	  color: inherit;
+        }
+      }
+    }
+	}
+}
+
+a {
+	color: inherit;
+	&:hover, &:focus {
+		color: inherit;
+		text-decoration: underline;
+	}
+}
+
+.clear {
+  clear: both;
+}
+
+.square {
+	background-color: @braun;
+	float: left;
+	height: 19px;
+	margin-right: 5px;
+	width: 19px;
+}
+
+
+//
+// Individuelle Abstaende dokumentenweit
+//--------------------------------------
+
+.lotto-main-content { margin-top: @nav-content; }
+.lotto-home-content { margin-top: @nav-home; }
+
+.lotto-abstand-10 { margin-top: 10px; }
+.lotto-abstand-20 { margin-top: 20px; }
+.lotto-abstand-40 { margin-top: 40px; }
+
+
+//
+// rechte Randleiste 
+//------------------
+
+.lotto-right-box {
+  width: 308px;
+  margin-bottom: 40px;
+  div[id^="r-"] {
+    margin-bottom: 16px;
+    img { width: 308px; }
+  }
+  .title {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  #r-maps {
+    .address {
+      background-color: @boxbackground;
+      padding: 20px;
+      font-weight: bold;
+    }
+  }
+}
+
+
+//
+// header and navigation
+//----------------------
+
+header {
+    -webkit-transition: height 0.3s;
+    -moz-transition: height 0.3s;
+    -ms-transition: height 0.3s;
+    -o-transition: height 0.3s;
+    transition: height 0.3s;
+}
+header nav {
+    display: inline-block;
+    float: right;
+}
+header nav a {
+    line-height: 150px;
+    margin-left: 20px;
+    color: #9fdbfc;
+    font-weight: 700;
+    font-size: 18px;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+header nav a:hover {
+    color: white;
+}
+header.smaller {
+    height: 75px;
+}
+header.smaller nav a {
+    line-height: 75px;
+}
+
+.navbar { height: @nav; }
+.navbar-brand { height: @nav-top; }
+.navbar-nav > li { padding-right: 10px; }
+
+.navbar-inverse {
+	background-color: @navbackground;
+	border: @noborder;
+	z-index: 99;
+
+  &.home {
+    height: 600px;
+    background-image: url(../img/topheader/logo_home.png);
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+	.navbar-left > li > a {
+    color: @braun;
+    font-size: @font3;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding-right: 3px;
+    padding-left: 3px;
+
+    &:hover, &:focus {
+      color: @braun;
+      text-decoration: underline;
+    }
+  }
+
+	.navbar-brand {
+	  color: @braun;
+    font-size: 1em;
+    font-weight: bold;
+	  /* margin-top: 10px; */
+
+		&.logo {
+			margin-right: 5px;
+      padding: 30px 0;
+		}
+  }
+
+  .collapse.navbar-collapse {
+    ul {
+      margin-top: 40px;
+      &.boxes {
+        margin-top: 315px;
+      }
+    }
+  }
+
+  //
+  // Login Area
+  //----------------------------
+
+  &.navbar-login {
+		background-color: @braun;
+    color: @background;
+
+    &.normal { font-weight: normal; }
+    &.center { margin-left: -5px; }
+    &.logo { margin-right: 0; }
+
+    .square { background-color: @background; }
+
+    .topheader_nav {
+      .col-md-12 { background-color: @braun; }
+    }
+
+    .navbar-nav > li {
+      padding-right: 18px;
+
+      .minimize {
+        font-size: @font1;
+        color: @topnav;
+        padding: 2px 10px;
+        margin: 0;
+        font-weight: normal;
+        text-transform: none;
+      }
+
+      > a {
+        color: @background;
+        font-size: @font2;
+        padding-right: 0;
+        text-transform: uppercase;
+
+        &.normal {
+          font-weight: normal;
+        }
+        &.minimize {
+          font-size: @font1;
+          color: @topnav;
+          padding: 0 10px 5px;
+          margin: 0;
+          font-weight: normal;
+          border-left: 1px solid;
+          text-transform: none;
+        }
+      }
+    }
+
+    .collapse.navbar-collapse {
+      ul { margin-top: 8px; }
+    }
+  }
+}
+
+.topheader-home {
+  .row.bottom-slot {
+    margin-top: 329px;
+  }
+}
+
+.topheader_image {
+	/*background-image: url(../img/topheader/top_header_public.png);*/
+  height: 101px;
+ 	left: 50%;
+ 	margin-left: -657px;
+  position: absolute;
+  top: 139px;
+ 	width: 1304px;
+}
+
+.topheader_nav {
+	.col-md-12 {
+		background-color: @navbackground;
+		height: @nav-top;
+	}
+}
+
+.navbar-header {
+  width: 100%;
+  float: unset;
+  height: @nav-top;
+}
+
+.topheader_home {
+  .col-md-12 {
+    .navbar-header {
+      padding: 0 68px;
+    }
+  }
+}
+
+.navbar-form {
+	.form-group {
+		display: block;
+		margin-bottom: 10px;
+	}
+	&.navbar-right {
+		background-color: @braun;
+		height: 139px;
+		padding: 12px 10px;
+		width: 106%;
+
+		&:last-child {
+			margin-top: 0;
+		}
+	}
+	.form-control {
+		width:100%;
+	}
+}
+
+.form-control {
+	background-color: @navbackground;
+	border: @noborder;
+	border-radius: 0px;
+	color: @braun;
+	height: 25px;
+
+	&::-moz-placeholder {
+		color: @braun;
+	}
+}
+
+.btn-success {
+	background-color: @black;
+	border: @noborder;
+	border-radius: 0px;
+	color: @background;
+	margin-top: 15px;
+	padding: 2px;
+	text-transform: uppercase;
+	width:100%;
+	font-weight: bold;
+
+	&:hover, &:focus, &:active, &.active, &.open > .dropdown-toggle.btn-success {
+		background-color: #000000;
+		color: @background;
+	}
+}
+
+//
+// Lotterie Individual - Standard Artikel
+//---------------------------------------
+
+.lotto-article {
+	img.portrait {
+		float: left;
+		height: 200px;
+		margin: 0 15px 10px 0;
+		width: 200px;
+	}
+	.anriss {
+		font-weight: bold;
+		margin-bottom: 20px;
+	}
+
+	.salutation, .greetings {
+		color: @braun;
+		font-size: @font3;
+		font-weight: bold;
+	}
+
+	.greetings, .title-bottom {
+		text-transform: uppercase;
+	}
+
+	.title-bottom {
+		font-size: @font3;
+		font-weight: bold;
+	}
+}
+
+
+// Referenten
+
+#referents.lotto-referents {
+  .referer {
+    img.portrait {
+      float: left;
+      width: 250px;
+      height: 250px;
+      margin: 0 15px 10px 0;
+    }
+    .text {
+      float: right;
+    }
+    .spitzmarke {
+      font-weight: bold;
+      color: @braun;
+      text-transform: uppercase;
+    }
+    .mehr {
+      color: @braun;
+      float: none;
+    }
+
+  }
+}
+
+
+// Mitarbeiter
+
+.lotto-mitarbeiter {
+  input[type=text] {
+    width: 100%;
+    background-color: @braun;
+    color: @weiss;
+    padding: 5px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    border: 0px solid;
+  }
+  input[type=text]:focus {
+    outline: none;  
+  }
+
+  .lotto-seminare {
+    div[id^="toggleContent"] {
+      .seminar-content-center { 
+        height: auto !important; 
+        .container {
+          height: auto !important; 
+        }
+      }
+    }
+  }   
+}
+
+//Biga und Video
+
+.lotto-biga, .lotto-video {
+	margin-top: 40px;
+
+	.carousel-indicators li { display: none;  }
+  .glyphicon-chevron-right:before { content: " "; }
+  .glyphicon-chevron-left:before { content: " "; }
+
+	.carousel-caption {
+    background-color: @schrift;
+    text-align: left;
+    font-weight: bold;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.7;
+    padding: 5px 10px 2px;
+    width: 100%;
+  }
+  .carousel-control {
+    &.left {
+      width: 0;
+      height: 0;
+      border-top: 50px solid transparent;
+      border-bottom: 50px solid transparent;
+      border-right: 20px solid @braun;
+      margin-top: 150px;
+      margin-left: 10px;
+      opacity: 1;
+    }
+    &.right {
+      width: 0;
+      height: 0;
+      border-top: 50px solid transparent;
+      border-bottom: 50px solid transparent;
+      border-left: 20px solid @braun;
+      margin-top: 150px;
+      margin-right: 10px;
+      opacity: 1;
+    }
+	}
+
+	.teaser {
+		font-weight: bold;
+		margin: 20px 0 10px;
+	}
+}
+
+
+// Teaser
+
+.lotto-teaser {
+	clear: both;
+	margin-bottom: 55px;
+
+	img.icon {
+		width: 250px;
+		height: 280px;
+		float: left;
+		margin: 0 20px 10px 0;
+	}
+}
+
+.lotto-article, .lotto-teaser {
+	.text {
+		margin-bottom: 20px;
+	}
+
+	img.news {
+		width:300px;
+		height: 300px;
+		float: left;
+		margin: 0 20px 10px 0;
+	}
+}
+
+
+// Standardelemente
+
+.datum {
+	margin-bottom: -15px;
+	margin-top: 15px;
+	font-size: 1em;
+}
+
+.spitzmarke {
+	font-weight: bold;
+	color: @braun;
+}
+
+
+// Newslist (Teaserliste der News)
+
+.lotto-newslist{
+	hr {
+		background-color: @schrift;
+		height: 2px;
+		border: @noborder;
+	}
+
+	.lotto-newshead {
+		margin: 40px 0 -15px;
+		text-transform: uppercase;
+		font-weight: bold;
+		hr {
+		  margin-bottom: 30px;
+		  margin-top: 6px;
+		}
+	}
+
+	.lotto-newsteaser {
+    .text {
+      min-height: 120px;
+    }
+		img.newsteaser {
+			width:180px;
+			float: left;
+			margin: 0 20px 10px 0;
+		}
+		.mehr {
+			color: @braun;
+			float: none;
+		}
+	}
+
+  .mehr {
+    font-size: @font1;
+    float: right;
+    margin-top: -10px;
+    text-transform: uppercase;
+  }
+}
+
+
+//
+// Lotterie Individual - Seminare
+//--------------------------------
+
+.lotto-seminare {
+  div[class^="seminar-box"] {
+    margin-top: 0px;
+  }
+}
+
+.lotto-seminarprogramm {
+  margin-bottom: 20px;
+  &.datum .info-box {
+    padding: 10px 20px;
+    .title {
+      margin: 0;
+    }
+  }
+
+  // TOGGLE CONTENT ONLY
+  // Seminarprogramm - Infoboxen ohne rechte eingefärbte Box
+  // Content im Toggle weiter oben anordnen 
+  //-------------------------------------------------------------------
+  div[id^="toggleContent"] { margin-top: -10px; }
+  
+  .info-box {
+    background-color: @braun;
+    color: @background;
+    margin: 5px 0 0 0;
+    font-size: @font2;
+    padding: 30px 20px;
+    .title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+  }
+
+  div[class^="seminar-box"] {
+    margin-top: 8px;
+  }
+}
+
+
+// Das Seminar
+
+#seminar {
+  .container { width: 100%; }
+  .h1.seminarboxtitel { margin-bottom: 5px; }
+  .h3.seminarboxteaser { margin-top: 0px; }
+  .seminar-content-center { width: 100%; background-color: @boxbackground; }
+
+  ul {
+    list-style: none;
+    color: @schrift;
+    margin-left: -15px;
+
+    &.icon-braun { list-style-image: url(../img/icon/square-braun-10x10.gif); }
+    li { margin: 10px 5px 0 0; }
+  }
+
+  .plaetze {
+    background-color: @schrift;
+    color: @background;
+    margin: 0 -14px;
+    font-size: @font2;
+    padding: 10px 23px;
+
+    table { width: 100%; margin-bottom: 6px; }
+    td { width: 20%; padding: 0 6px; }
+    td.icon { width: 5%; padding-right: 0; text-align: right; }
+    td.full { width: 40%; text-align: center; }
+    h2 { color: @background; }
+  }
+
+  div[class^="seminar-box"], div.seminar-alternatives, div.seminar-stimmen {
+    .seminarhead {
+      font-weight: bold;
+      margin: 28px 0 0px;
+      text-transform: uppercase;
+    }
+    .infobox {
+      width: 100;
+      background-color: @boxbackground;
+      margin: 10px 0;
+      padding: 10px 5px;
+    }
+  }
+  div[class^="seminar-box"] {
+    .plaetze {
+      margin: 0 -14px;
+
+      &.besuchte {
+        background-color: @braun;
+        margin: 0 -14px;
+      }
+    }
+  }
+  .seminar-alternatives {
+    .plaetze {
+      margin: 10px 0;
+    }
+  }
+  img.seminar-box-icon {
+    width: 145px;
+    margin: 0 10px 0 -14px;
+    float: left;
+  }
+  .info.h1{
+    color: @background;
+    float: left;
+    margin: 100px 25px -25px -130px;
+    font-size: @font5;
+  }
+
+  .text {
+    color: @schrift;
+    margin-top: 20px;
+    .highlight {
+      color: @braun;
+      text-transform: uppercase;
+    }
+  }
+  .tip {
+    background-color: @braun;
+    color: @background;
+    margin: 10px 0;
+    font-weight: bold;
+    font-size: @font2;
+    padding: 10px;
+  }
+  .footer {
+    background-color: @braun;
+    color: @background;
+    margin: 40px -13px 0 -13px;
+    font-size: @font2;
+    padding: 23px;
+
+    .anfrage {
+      background-color: @black;
+      text-transform: uppercase;
+      font-size: @font5;
+      font-weight: bold;
+      text-align: center;
+      padding: 5px;
+      margin-top: 10px;
+    }
+  }
+  .meldung {
+    margin-top: 20px;
+
+    img {
+      width: 100px;
+      margin: 0 15px 0 0;
+      float: left;
+    }
+
+    .title {
+      font-weight: bold;
+    }
+    .infotext {
+      color: @braun;
+      font-weight: bold;
+    }
+  }
+  .download {
+    margin-top: 26px;
+
+    .text {
+      margin: 10px 0 10px 0;
+    }
+    .title {
+      font-size: @font3;
+      color: @schrift;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 35px;
+      margin: 0 10px 15px 20px;
+    }
+  }
+  .faq {
+    margin-top: 26px;
+
+    .text {
+      margin: 15px 0 10px 0;
+      color: @braun;
+      font-weight: bold;
+      text-decoration: none;
+      > a {
+        text-decoration: none;
+        &:focus .cursor, &:hover .cursor {
+          cursor: pointer;
+        }
+      }
+    }
+    .title {
+      font-size: @font3;
+      color: @schrift;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    img, input[type=image] {
+      float: left;
+      margin: 0 5px 15px 0;
+    }
+    .box {
+      border-bottom: 1px solid @schrift;
+      padding-bottom: 2px;
+    }
+  }
+}
+
+// SEMINARPROGRAMM
+
+.lotto-seminare, .lotto-seminarprogramm {
+
+  // TOGGLE CONTENT ONLY
+  div[id^="toggleContent"] { height: inherit; }
+
+  div[id^="toggleContent"] div[class^="seminar-box"] {
+    margin-top: 0;
+    
+    .seminar-content-center {
+      width: 561px;
+      height: inherit;
+      background-color: @boxbackground;
+      margin-bottom: 16px;
+
+      .text {
+        color: @schwarz;
+        margin: 10px 0;
+        font-weight: bold;
+        font-size: @font2;
+      }
+
+      .tip {
+        background-color: @braun;
+        color: @background;
+        margin: 10px 0;
+        font-weight: bold;
+        font-size: @font2;
+        padding: 10px;
+      }
+
+      .plaetze {
+        background-color: @schrift;
+        color: @background;
+        margin: 5px 0;
+        font-weight: bold;
+        font-size: @font2;
+        padding: 10px;
+
+        .full {
+          background-color: @braun;
+          text-transform: uppercase;
+          text-aling: center;
+        }
+
+        table { width: 100%; margin-bottom: 6px; }
+        td { width: 20%; padding: 0 6px; }
+        td.icon { width: 5%; padding-right: 0; text-align: right; }
+        td.full { width: 40%; text-align: center; }
+        h2 { color: @background; }
+
+        .dreieck-right {
+          width: 0;
+          height: 0;
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+          border-left: 14px solid @background;
+          margin-top: 45px;
+          margin-left: 175px;
+        }
+      }
+    }
+  }
+  // END TOOGLE CONTENT ONLY
+
+  &.besuchte {
+    .seminar-box-2c, .seminar-box-3c {
+      .seminar-content-center {
+        width: 100%;
+        padding: 0;
+        background-color: @boxbackground;
+      }
+    }
+    .seminar-bewerten {
+      margin: 20px 0 10px 0; 
+      color: #51555f;
+      font-weight: bold;
+      .seminarhead {
+        font-size: 18px;
+      }
+    }
+  }
+  .seminar-box-2c {
+    clear: left;
+    position: relative;
+    width: 100%;
+    background-image: url("../img/background_box2c.png");
+    background-size: 100% 100%;
+    background-color: @boxbackground;
+    background-repeat: repeat;
+    height: 100%;
+
+    .seminar-content-center { 
+      width:561px; 
+      height: 100%;
+    }
+  }
+  .seminar-box-3c {
+    clear: left;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    
+    .seminar-content-center { 
+      width:360px;  
+      height: 100%; 
+    }
+  }
+
+  div[class^="seminar-box"] {
+    background-color: @boxbackground;
+    width: 100%;
+    min-height: 100px;
+
+    // Display Flexbox Browserweichen
+    display: -webkit-box;           
+    -webkit-box-orient: horizontal;
+    display: -webkit-block;       /* OLD iOS 6-, Safari 3.1-6 */
+
+    display: flex;                /* Firefox (actual) */
+    -moz-box-orient: horizontal;
+
+    display: -ms-box;             /* IE Box IE10+ 
+    -ms-box-orient: horizontal;
+    display: -ms-flexbox;         /* TWEENER - IE 10 */
+
+
+    .seminar-icon-left {
+      background-color: @schrift;
+      width: 65px;
+      min-height: inherit;
+
+      // ordering flexbox
+      -webkit-box-ordinal-group: 1;  
+      -moz-box-ordinal-group: 1;     
+      -ms-flex-order: 1;     
+      -webkit-order: 1;  
+      order: 1;
+      float: left;
+      margin-top: 0px;
+
+      .seminar.toggler-button {
+        margin-top: 15px;
+        margin-left: 20px;
+      }
+
+      .seminar-box-icon {
+        padding:0;
+        margin:0;
+        width: 65px;
+        /* height: 71px; */
+      }
+      .plaetze {
+        color: @background;
+        margin-top: -25px;
+        font-weight: bold;
+        text-align: center;
+        font-size: @font3;
+      }
+      .dreieck-down {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 14px solid @background;
+        margin-top: 8px;
+        margin-left: 25px;
+      }
+    }
+
+    .seminar-content-center {
+      // ordering flexbox
+      -webkit-box-ordinal-group: 2;  
+      -moz-box-ordinal-group: 2;
+      -ms-flex-order: 2;     
+      -webkit-order: 2;  
+      order: 2;
+      float: left;
+      margin-top: 0px;
+      min-height: inherit;
+      padding: 0 15px; 
+      
+      .title {
+        color: @braun;
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: @font4;
+        text-transform: uppercase;
+      }
+      .text {
+        color: @braun;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-size: @font2;
+      }
+    }
+
+    .seminar-info-right {
+      // ordering flexbox
+      -webkit-box-ordinal-group: 3;  
+      -moz-box-ordinal-group: 3;     
+      -ms-flex-order: 3;     
+      -webkit-order: 3;  
+      order: 3;
+      float: left;
+      margin-top: 0px;
+      min-height: inherit;
+      width: 201px;
+      height: 100%;
+      color: @background;
+      padding-right: 0;
+      padding-left: 0;
+
+      &.asked { background-color: @gray; }
+      &.ordered, &.new, &.full { background-color: @black; }
+      &.completed { background-color: @braun; }
+
+      .boxcontent {
+        float: left;
+        width: 88%;
+      
+        &.full .text .redbox {
+          background-color: @braun;
+          width: 100%;
+          padding: 1px 4px;
+          text-transform: uppercase;
+          font-weight: bold;
+          text-align: center;
+        }
+  
+        .datum {
+          font-weight: bold;
+          margin: 24px 0 0 26px;
+          float: left;
+        }
+        .text {
+          margin: 0 0 23px 26px;
+          float: left;
+          width: 112px;
+        }
+      }
+      .icon { 
+        float: left; 
+        margin-top: 21%;
+      }
+
+      .dreieck-right {
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 14px solid @background;
+        float: right;
+      }
+
+      &.new {
+        .datum {
+          margin: 20px 0 0 26px;
+        }
+        .text {
+          margin: 0 0 12px 26px;
+        }
+        .plaetze {
+          font-size: @font3;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .mitfahr-title {
+    font-weight: bold;
+    color: @schrift;
+    text-transform: uppercase;
+    margin: 20px 0 10px;
+  }
+  .mitfahr-box {
+    background-color: @boxbackground;
+    width: 100%;
+    min-height: 100px;
+    display: inline-flex;
+    padding: 5px;
+
+    table.mitfahr-text {
+      width: 94%;
+      margin: 20px 20px;
+      color: @braun;
+      font-size: @font2;
+      font-weight: bold;
+
+      tr {
+        line-height: 2em;
+      }
+    }
+  }
+
+  .mehr {
+    font-size: @font1;
+    float: right;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+}
+
+
+// SEMINARE ZUSÄZLICHE NAVIGATION
+
+.lotto-seminarmenu {
+  margin-top: 16px;
+
+  a.h2 {
+    color: @schrift;
+    font-weight: normal;
+  }
+  a:active.h2, a:focus.h2 {
+    color: @braun;
+  }
+
+  .col-md-2 {
+    margin-top: -20px;
+  }
+
+  .styled-select {
+    background: @schrift;
+    height: 26px;
+    overflow: hidden;
+    width: 130px;
+    margin-bottom: 10px;
+  }
+
+  .styled-select select {
+     background: transparent;
+     border: none;
+     font-size: 14px;
+     height: 26px;
+     padding: 5px;
+     width: 130px;
+     color: @background;
+     font-weight: bold;
+  }
+}
+
+.lotto-teaser {
+  .box {
+    position: relative;
+    width: 250px;
+    height: 295px;
+    float: left;
+    margin-right: 10px;
+
+    .titel {
+      position: absolute; 
+      top: 205px;
+      color: @background;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 1.6em;
+      font-weight: bold;
+      margin: 0 30px;
+      width: 190px;
+    }
+
+  }
+}
+
+.lotto-navi-seminare {
+  width: 105%;
+
+  .box {
+    width: 32%;
+    float: left;
+
+    >a.icon img {
+      float: left;
+      width: 200px;
+      height: 200px;
+      margin-right: 12px;
+      z-index: 99;
+    }
+    >a.icon:active img, >a.icon:focus img {
+      border: 8px @braun solid;
+      width:200px;
+      height: 200px;
+    }
+    .titel {
+      position: absolute;
+      top: 143px;
+      color: @background;    
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin: 0 20px;
+      width: 158px;
+    }
+  }
+}
+
+.lotto-navi-seminare-datum {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  .icon {
+    padding: 9px;
+    background: @schrift;
+    margin-right: 7px;
+    color: @background;
+
+    &.active { background: @black; }
+  }
+}
+
+
+// FORMULARE
+
+#formular.lotto-formular {
+  .header {
+    margin: 10px 0;
+    font-weight: bold;
+
+    &.top {
+      text-transform: uppercase;
+      margin: 26px 0 15px;
+    }
+  }
+  .form-field {
+    margin: 10px 0;
+
+    .form-cell { display: table-cell;}
+
+    .form-title {
+      width: 150px;
+      font-weigth: bold;
+      float: left;
+    }
+
+    input[type=text] { width: 250px; }
+    input[type=radio], input[type=checkbox] { margin-right: 10px;  }
+    textarea { width: 100%; }
+  }
+
+  .btn { width: 30%; }
+}

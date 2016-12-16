@@ -1,0 +1,77 @@
+/* individual changes of standard values */
+body {
+	background-color: #f6f6e6;
+}
+
+.navbar {
+	min-height: 137px;
+}
+
+.navbar-inverse {
+	background-color: #e5d4a4;
+	border: 0px solid;
+}
+
+.navbar-inverse .navbar-brand {
+	color: #8f1a26;
+	margin-top: 10px;
+	font-size: 1em;
+} 
+
+.navbar-inverse .navbar-brand.logo {
+	width: 200px;
+	margin-right: 50px;
+}
+
+.navbar-inverse .navbar-brand.center {
+	margin-top: 40px;
+	margin-left: 5px;
+	text-transform: uppercase;
+}
+
+.square {
+	float: left;
+	height: 15px;
+	width: 15px;
+	margin-right: 5px;
+	background-color: #8f1a26;
+}
+
+.navbar-form .form-group {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.navbar-form.navbar-right {
+	padding: 14px 10px;
+	background-color: #8f1a26;
+	margin: 0;
+	width: 30%;
+}
+
+.navbar-form .form-control {
+	width: 100%;
+}
+
+.form-control {
+	background-color: #e5d4a4;
+	color: #8f1a26;
+	border: 0px solid;
+	border-radius: 0px;
+	height: 25px;
+}
+
+.form-control::-moz-placeholder {
+	color: #8f1a26;
+}
+
+.btn-success {
+	text-transform: uppercase;
+	color: #e5d4a4;
+	width: 100%;
+	border-radius: 0px;
+	padding: 2px;
+	background-color: #000000;
+	border: 0px solid;
+	margin-top: 15px;
+} 
