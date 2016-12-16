@@ -98,7 +98,7 @@ class Desktop extends CI_Controller {
 						'show_ads' => true,
 						'ads' => $this->main_db_assets->getAds(),
 			);
-
+/* ein commit test */
 			$this->load->view('header');
 			$this->load->view('menu_header', $header);
 			$this->load->view('left_column', $left);
