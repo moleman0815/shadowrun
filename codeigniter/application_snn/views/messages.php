@@ -23,8 +23,9 @@ input, textarea, select {
 	<?php 
 		$avatar = $messages['avatar'][$m['send_to']][0]['avatar'];
 		$nickname = ($m['send_to'] == $this->session->userdata('id')) ? "DIR" : $messages['avatar'][$m['send_to']][0]['nickname'];
+		$ownclass = ($m['send_to'] == $this->session->userdata('id')) ? "green_border" : "";
 	?>				
-	<div class="newselement <?=$subclass;?>">
+	<div class="newselement <?=$subclass;?> <?=$ownclass?>">
 		<?php if($avatar): ?>
 			<div style="float:left;width:100px;padding:10px">
 				<img src="/secure/snn/assets/img/avatar/<?=$avatar;?>" alt="" />
