@@ -1,6 +1,7 @@
 <?php
-#	_debug($combat['player']);
-	$combat['player']['maxammo'] = 3;
+	#rsort($combat['ini']);
+	#_debugDie($combat['ini']);
+	#$combat['player']['maxammo'] = 3;
 	$error = $this->session->userdata('error');
 	$this->session->unset_userdata('error');		
 ?>
@@ -29,7 +30,7 @@
 					<b><i class="fa fa-exclamation-circle"></i>&nbsp;<?=$error?></b>
 				</div>
 			<?php endif; ?>				
-		<div class="col-md-8" style="border: 1px solid white; padding: 10px;">
+		<div class="col-md-7" style="border: 1px solid white; padding: 10px;">
 			<b>Initiativeverlauf in Kampfrunde <?=$combat['round']?>:</b> <br />
 				<?php foreach($combat['ini'] as $key => $value): ?>
 					Phase <?=$key .' : '. $value;?><br />
@@ -40,7 +41,7 @@
 			 <?=$combat['round']?><br />
 			 <br />
 			<b>Aktuelle Phase:</b><br />
-			 <?=$combat['iniphase']+1?><br />
+			 <?= (isset($combat['iniphase'])) ? $combat['iniphase']+1 : max(array_keys($combat['ini'])); ?><br />
 		</div>
 				<div style="clear:both"></div>		
 		<br />		
@@ -51,7 +52,7 @@
 				<?=preg_replace('/AAA/', '', $c)?>
 			<?php endforeach; ?>
 			<br /><br />
-			<div>Aktuelle Runde <?=$combat['round']?> Iniphase <?=($combat['iniphase']+1)?></div>		
+			<div>Aktuelle Runde <?=$combat['round']?> Iniphase <?=(isset($combat['iniphase'])) ? $combat['iniphase']+1 : max(array_keys($combat['ini']));?></div>		
 		</div>
 		<div class="col-md-5">
 			<?php 
@@ -104,7 +105,8 @@
 			<br />
 			<b>Gegner</b><br />		
 			<?php foreach($combat['enemy'] as $e):?>
-			<div>
+			
+			<div style="border:1px solid white; padding: 3px">
 					Name: <?=$e['name']?><br />
 					HP (physisch):  <?=$e['health']?><br />
 					HP (mental):  <?=$e['spirit']?><br />

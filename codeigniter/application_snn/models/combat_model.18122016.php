@@ -346,27 +346,22 @@ class Combat_model extends CI_Model
 		$this->enemy = $enemy;
 		$this->enemies = count($this->enemy);
 		$this->lastround = 0;
-		$this->round = 1;
-		$this->getInitiative();
 		
+		#$this->_writeToSession();
 		
 		$data['player'] = $player;
 		$data['enemy'] = $enemy;
 		$data['enemies'] = count($this->enemy);
-		$data['ini'] = $this->ini;
-		$data['round'] = '1';
-		$data['combatlog'] = $this->combatlog;
-		$this->_writeToSession();
 				
-#		$this->beginnFighting(1);
+		$this->beginnFighting(1);
 		return $data;
 	}
 
 
-	function beginnFighting ($round) {
+	function beginnFighting ($round=1) {
 	error_log('in beginnFighting');	
 		array_push($this->combatlog, 'AAA Kampfrunde '.$this->round.' beginnt.<br />');			
-
+		#$this->checkResult();
 		if($this->status == 'running') {
 			if ($this->lastround != $this->round) {
 				$this->ini = '';
@@ -377,9 +372,11 @@ class Combat_model extends CI_Model
 			
 			$this->lastround = $this->round;
 			$this->round = $round;
-						
-			$this->combatRound();
-
+			
+			die();
+			#$this->combatRound();
+			#$this->checkResult();
+		
 			if($this->status == 'running') {
 				$this->beginnFighting ($round+1);
 			}
@@ -389,19 +386,19 @@ class Combat_model extends CI_Model
 	}
 
 	function combatRound() {	
+		#die('heer');
 		$x = $this->iniphase;
-		$max = max(array_keys($this->ini));
-		
 		error_log('in combatRound before itter: '.$this->iniphase.' x ->'.$x);	
-
-		/* Iteration durch die Iniphasen */
-		for($x=$max; $x=0; $x--){
+		while($x) {
+		#for($x=$this->iniphase;$x=0;$x--){
+			if ($this->iniphase == 0) {
+				$this->round = $this->round+1;
+				$this->beginnFighting($this->round);
+			}
 			$this->checkResult();
-			
 			if (in_array($x, array_keys($this->ini))) {
 				$this->fighterinround = $this->ini[$x];
 				$this->shootOut();
-				$this->iniphase = $this->iniphase-1;
 			} else {
 				$this->iniphase = $this->iniphase-1;				
 			}
@@ -432,8 +429,43 @@ class Combat_model extends CI_Model
 		} else {
 			$this->finalizeFight();
 		}
+		$this->iniphase = (int)($this->iniphase-1);
+		$this->combatRound();		
 	}
-	
+
+	function shootOut2() {
+	error_log('in shootOut');
+		$this->iniphase = $this->iniphase-1;	
+		if ($this->iniphase == 0) {
+			$round = ($this->round+1);
+			$this->beginnFighting($round);
+		}
+
+		$fighter = explode(';', $this->fighterinround); 
+
+	foreach ($fighter as $f) {
+			if($this->status == 'running') {
+				if (in_array($f, $this->player)) {
+					array_push($this->combatlog, '<br />Iniphase '.($this->iniphase+1).' Spieler <b>'.ucfirst($this->player['name']).'</b> agiert.<br />');	
+					$this->playerShooting('1');
+				}
+				foreach ($this->enemy as $e) {
+	error_log('in shootOut '.$f);					
+					if ($f == $e['name']) {
+						if ($e['status'] != 'dead') {
+							array_push($this->combatlog, '<br />Iniphase '.($this->iniphase+1).' Ganger <i>'.ucfirst($e['name']).'</i> schiesst.<br />');	
+							$this->enemyShooting($e);
+						}
+					}
+				}
+			} else {
+				$this->finalizeFight();
+			}				
+		}	
+		#$this->iniphase = (int)($this->iniphase-1);
+		$this->combatRound();
+	}
+
 	function enterCombatRound() {
  		error_log('in enterCombatRound');	
 		$this->_writeToSession();
@@ -478,7 +510,17 @@ class Combat_model extends CI_Model
 	
 	function playerShooting($inround) {
  		error_log('in playerShooting');
-		
+		$this->checkResult();
+		/*
+		if ($inround == 1) {
+			if($this->status == 'running') {
+				$this->enterCombatRound();
+			} else {
+				$this->finalizeFight();
+			}
+		}
+*/
+			
 		for ($i=0;$i<2;$i++) {
 			if($this->status == 'running') {		
 				if ($this->player['action'] == 'salve') {
@@ -528,6 +570,8 @@ class Combat_model extends CI_Model
 			}
 		}
 		error_log('in playerShooting return');
+		#$this->iniphase = (int)($this->iniphase-1);
+		$this->shootOut();
 	}
 
 	function evaluatePlayerDamage ($shots) {

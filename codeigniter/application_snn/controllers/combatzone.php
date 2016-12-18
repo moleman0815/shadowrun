@@ -259,7 +259,7 @@ class Combatzone extends CI_Controller {
 		$this->load->view('menu_header');		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
-		$this->load->view('combat/startup', $center);
+		$this->load->view('combat/round', $center);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');	
 	}
