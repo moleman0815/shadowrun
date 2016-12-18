@@ -254,12 +254,12 @@ class Combatzone extends CI_Controller {
 						'ads' => $this->main_db_assets->getAds(),
 		);	
 
-		die("fight");
+
 		$this->load->view('header');
 		$this->load->view('menu_header');		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
-		$this->load->view('combat/round', $center);
+		$this->load->view('combat/startup', $center);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');	
 	}
@@ -316,6 +316,7 @@ class Combatzone extends CI_Controller {
 				redirect('combatzone/combat_round');		
 		} else {
 			$this->combat_model->returnFromCombatRound();
+			
 		}
 	}
 

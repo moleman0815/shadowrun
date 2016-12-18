@@ -64,7 +64,8 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav" role="menu">
             <li><a href="/secure/snn/desktop/overview"><i class="fa fa-home"></i>&nbsp;[Home]</a></li>
-<?php /*  
+		<?php if($this->session->userdata('rank') == '1'): ?>
+
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]</a><span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -72,7 +73,9 @@
                   <li><a href="/secure/snn/combatzone/marketplace"><i class="fa fa-credit-card"></i>&nbsp;[Marktplatz]</a></li>
                 </ul>
             </li>
-   
+            
+         <?php endif; ?>
+<?php /*     
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="combatzone"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]<b class="caret"></b></a>
         <ul class="dropdown-menu">

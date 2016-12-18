@@ -256,6 +256,7 @@ class Combat_model extends CI_Model
 		$inv = $this->getInventory();
 		$player_reaction = floor(($char[0]['quickness']+$char[0]['intelligence'])/2)."<br />";
 		$player_initiative = (int)($this->combat->_calculateIni('3')+$player_reaction);
+		$data = array();
 
 		$c_ini = 0;
 		$c_armor = 0;
@@ -344,8 +345,17 @@ class Combat_model extends CI_Model
 		$this->player = $player;
 		$this->enemy = $enemy;
 		$this->enemies = count($this->enemy);
-
-		$this->beginnFighting(1);	
+		
+		$this->_writeToSession();
+		
+		$data['player'] = $player;
+		$data['enemy'] = $enemy;
+		$data['enemies'] = count($this->enemy);
+		
+		_debug($this->getInitiative());
+		
+		#$this->beginnFighting(1);
+		#return $data;
 	}
 
 
@@ -353,13 +363,13 @@ class Combat_model extends CI_Model
 	error_log('in beginnFighting');	
 		$this->round = $round;
 		array_push($this->combatlog, 'AAA Kampfrunde '.$this->round.' beginnt.<br />');			
-		#$this->checkResult();
+		$this->checkResult();
 		if($this->status == 'running') {
 			$this->ini = '';
 			$this->getInitiative();			
 			$this->iniphase = max(array_keys($this->ini));
 			$this->combatRound();
-			#$this->checkResult();
+			$this->checkResult();
 		
 			if($this->status == 'running') {
 				$this->beginnFighting ($round+1);
@@ -413,7 +423,7 @@ class Combat_model extends CI_Model
 		} else {
 			$this->finalizeFight();
 		}
-		#$this->iniphase = (int)($this->iniphase-1);
+		$this->iniphase = (int)($this->iniphase-1);
 		$this->combatRound();		
 	}
 
@@ -459,7 +469,7 @@ class Combat_model extends CI_Model
 	function returnFromCombatRound() {
  		error_log('in returnFromCombatRound');		
 		unset($_POST['sendAction']);
-die("return");
+
 		$this->_readFromSession();
 		$this->player['action'] = $this->input->post('action');
 
@@ -487,14 +497,15 @@ die("return");
 			$this->status = 'flee';
 			$this->finalizeFight();
 		} else {
-			$this->playerShooting('0');
+			$this->playerShooting($this->round);
 			error_log('in returnFromCombatRound after shootout');	
 		}
 	}
 	
 	function playerShooting($inround) {
  		error_log('in playerShooting');
-		#$this->checkResult();
+		$this->checkResult();
+		/*
 		if ($inround == 1) {
 			if($this->status == 'running') {
 				$this->enterCombatRound();
@@ -502,7 +513,7 @@ die("return");
 				$this->finalizeFight();
 			}
 		}
-
+*/
 			
 		for ($i=0;$i<2;$i++) {
 			if($this->status == 'running') {		
@@ -553,7 +564,7 @@ die("return");
 			}
 		}
 		error_log('in playerShooting return');
-		$this->iniphase = (int)($this->iniphase-1);
+		#$this->iniphase = (int)($this->iniphase-1);
 		$this->shootOut();
 	}
 

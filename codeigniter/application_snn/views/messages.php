@@ -22,10 +22,11 @@ input, textarea, select {
 	<?php $subclass = ($a%2 == 0) ? 'uneven' : '';?>	
 	<?php 
 		$avatar = $messages['avatar'][$m['send_to']][0]['avatar'];
-		$nickname = ($m['send_to'] == $this->session->userdata('id')) ? "DIR" : $messages['avatar'][$m['send_to']][0]['nickname'];
-		$ownclass = ($m['send_to'] == $this->session->userdata('id')) ? "green_border" : "";
+		$sendto = ($m['send_to'] == $this->session->userdata('id')) ? "DICH" : $messages['avatar'][$m['send_to']][0]['nickname'];
+		$nickname = ($m['send_from'] == $this->session->userdata('id')) ? "DIR" : $messages['avatar'][$m['send_from']][0]['nickname'];
+		$ownclass = ($m['send_from'] == $this->session->userdata('id')) ? "green_border" : "";
 	?>				
-	<div class="newselement <?=$subclass;?> <?=$ownclass?>">
+	<div class="newselement <?=$subclass;?> <?=$ownclass?>" style="padding: 0 5px 0 0">
 		<?php if($avatar): ?>
 			<div style="float:left;width:100px;padding:10px">
 				<img src="/secure/snn/assets/img/avatar/<?=$avatar;?>" alt="" />
@@ -40,7 +41,8 @@ input, textarea, select {
 						<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="deleteMsg('<?=$m['id']?>')" style="cursor:pointer" /></span>
 					</div>
 				</h4>		
-				<p>Nachricht von <strong><?=$nickname?></strong> am <?= date('d.m.Y H:i', $m['date'])?></p>
+				<span style="font-size: 12px">Nachricht von <strong><?=$nickname?></strong> an <strong><?=$sendto?></strong> am <?= date('d.m.Y - H:i', $m['date'])?> Uhr</span>
+				<br />
 				<span id="teaser_<?=$m['id']?>"><?=substr($m['msg_text'], 0, 100);?> ...</span><br />
 				<?php if (strlen($m['msg_text']) > 100): ?>
 					<input type="button" value="[ Full Message ]" onclick="toggleMsg('msg_<?=$m['id']?>')" class=" btn-info btn-sm" style="float:right;color: #000000" />
