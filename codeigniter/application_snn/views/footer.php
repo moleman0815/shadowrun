@@ -14,12 +14,17 @@
 	<script type="text/javascript" src="/secure/snn/assets/js/functions.js"></script>
 	<script type="text/javascript" src="/secure/snn/assets/js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="/secure/snn/assets/js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/secure/snn/assets/js/bootstrap.min.js"></script>    
+    <script type="text/javascript" src="/secure/snn/assets/js/bootstrap.min.js"></script>
+
 
 	<link href="/secure/snn/assets/js/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" media="screen">
 	<?php if(($this->uri->segment(2) == 'marketplace') || ($this->uri->segment(2) == 'clinic')): ?>
         <link href="/secure/snn/assets/css/shop.css" rel="stylesheet">        
         <script type="text/javascript" src="/secure/snn/assets/js/shop.js"></script>        
+    <?php endif;?>
+    
+    <?php if($this->uri->segment(1) == 'combatzone'): ?>
+    	<script type="text/javascript" src="/secure/snn/assets/js/combat.js"></script>    
     <?php endif;?>
 
     <script type="text/javascript">

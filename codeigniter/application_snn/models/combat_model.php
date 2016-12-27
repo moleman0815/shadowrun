@@ -356,6 +356,7 @@ class Combat_model extends CI_Model
 		$data['ini'] = $this->ini;
 		$data['round'] = '1';
 		$data['combatlog'] = $this->combatlog;
+		$data['startup'] = true;
 		$this->_writeToSession();
 				
 #		$this->beginnFighting(1);
