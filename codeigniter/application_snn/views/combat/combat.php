@@ -20,7 +20,7 @@
     	<?php endif; ?>
     	$('#shootout-form').submit(function(event){
     		event.preventDefault();
-    		sr.combat.testme();
+    		alert("here");
     	});
 	});
 
