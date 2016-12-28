@@ -2,13 +2,11 @@
 #	_debug($inv);
 ?>
 
-	<br />
 	<?php if(!empty($char)): ?>
 	<div>
 			<br />
-		<div class="newstitle">Inventar</div>
-		<br />				
-		<table class="table table-condensed">
+		<div class="newstitle">Inventar</div>				
+		<table class="table table-condensed newselement">
 			<thead>
 				<tr>
 					<th>Char</th>

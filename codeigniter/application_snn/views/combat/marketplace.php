@@ -113,7 +113,9 @@ legend {
 			<?php endif; ?>			
 		<div class="col-sm-12">
 	<?php if(!empty($char)): ?>
-			<div class="curator">Verfügbares Geld: <?=$inv[0]['money']?> &yen;</div><br />
+			<div class="curator">Verfügbares Geld: <?=$inv[0]['money']?> &yen;</div>
+			<div class="curator">Medipacks: <?=$inv[0]['medipacks']?></div>
+			<div class="curator">Munition: <?=$inv[0]['maxammo']?></div><br />
 			<?php if (!empty($inv[0]['weapon'])): ?>
 			<div class="curator">Waffen:<br />
 				<ul>
@@ -132,8 +134,7 @@ legend {
 				</ul>
 			</div>
 			<?php endif; ?>
-			<div class="curator">Medipacks: <?=$inv[0]['medipacks']?></div>
-			<div class="curator">Munition: <?=$inv[0]['maxammo']?></div>
+			
 		</div>
 		<div style="clear:both"></div>
 		<br />
@@ -147,7 +148,7 @@ legend {
 			<div class="col-md-6">
 				<div class="newstitle">Waffen<span style="float:right;margin-left:20px;cursor:pointer" id="weapon_span" onclick="toggleMarketBoxes('weapon')"><img src="/secure/snn/assets/img/icons/add.png" /></div>
 				<br />
-				<div style="display: block" id="weapon_box">
+				<div style="display: none" id="weapon_box">
 		    		<section id="product">
 			        	<ul class="clear">
 			        	<?php if(!empty($weapons[0])): ?>
@@ -257,16 +258,18 @@ legend {
 			<div style="display: block" id="weapon_sell_box">
 	    		<section id="product">
 	        		<ul class="clear">
-	        		<?php foreach($inv[0]['weapon'] as $w): ?>
-	            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-cost="<?=($w['cost']/2);?>"  id="item_<?=$w['wid']?>">
-	            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3><br />
-	            			Ammo: <?=$w['ammo'];?><br />
-	            			Damage: <?=$w['damage'];?><br />
-	            			Modus: <?=$w['mode'];?><br />
-	            			Rückstoß: -<?=$w['reduce'];?><br /><br />
-							Kosten: <b><?=($w['cost']/2);?> &yen;</b><br />&nbsp;
-	            		</li>
-	        		<?php endforeach; ?>
+	        		<?php if(!empty($inv[0]['weapon'])): ?>
+		        		<?php foreach($inv[0]['weapon'] as $w): ?>
+		            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-cost="<?=($w['cost']/2);?>"  id="item_<?=$w['wid']?>">
+		            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3><br />
+		            			Ammo: <?=$w['ammo'];?><br />
+		            			Damage: <?=$w['damage'];?><br />
+		            			Modus: <?=$w['mode'];?><br />
+		            			Rückstoß: -<?=$w['reduce'];?><br /><br />
+								Kosten: <b><?=($w['cost']/2);?> &yen;</b><br />&nbsp;
+		            		</li>
+		        		<?php endforeach; ?>
+		        	<?php endif; ?>
 	        		</ul>
 	        	</section>
 	        	<br />
@@ -274,6 +277,7 @@ legend {
 			<div style="display: block" id="armor_sell_box">			
 	    		<section id="product">
 	        	<ul class="clear">
+	        	<?php if(!empty($inv[0]['armor'])): ?>
 	        		<?php foreach($inv[0]['armor'] as $w): ?>
 	            		<li data-id="<?=$w['wid']?>" data-type="armor" data-cost="<?=($w['cost']/2);?>"  id="item_<?=$w['wid']?>">
 	            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3><br />
@@ -281,6 +285,7 @@ legend {
 							Kosten: <b><?=($w['cost']/2);?> &yen;</b><br />&nbsp;
 	            		</li>
 	        		<?php endforeach; ?>
+	        	<?php endif; ?>
 	        	</ul>
 	        	</section>
 	        </div>	        
