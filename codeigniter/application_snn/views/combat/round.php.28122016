@@ -15,7 +15,6 @@
 
 <script>
 	$( document ).ready(function() {
-		sr.combat.initiateCombat();
     	<?php if($error): ?>	
     		$("#error").fadeOut(7000);    	
     	<?php endif; ?>

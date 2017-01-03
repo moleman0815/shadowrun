@@ -263,6 +263,10 @@ class Combatzone extends CI_Controller {
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');	
 	}
+	
+	function initiateCombat () {
+		echo json_encode(array('data' => $this->combat_model->calculateFight()));
+	}
 
 	function combat_result () {
 		$left = array(

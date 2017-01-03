@@ -228,7 +228,7 @@ $( document ).ready(function() {
 			<?php endforeach; ?>
 		<?php endif; ?>
 			<div class="col-sm-12 newselement">
-          	<center><?=form_submit(array('id'=>'submit', 'value' => 'FIGHT !', 'name' => 'submit', 'class' => 'btn btn-danger'),'', 'style="width: 300px"');?></center>
+          	<center><?=form_submit(array('id'=>'submit', 'value' => 'Start Mission', 'name' => 'submit', 'class' => 'btn btn-danger'),'', 'style="width: 300px"');?></center>
 			<?=form_close();?>					
 				<br />
 				<div id="combat_result"></div>
