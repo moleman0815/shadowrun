@@ -324,7 +324,7 @@ class Combat_model extends CI_Model
 
 
 		$tmp = '"'.$player['name'].'"';
-		$enemy = [];
+		$enemy = array();
 		for($x=0;$x<count($ganger);$x++) {
 			$enemy[$x]['body'] = $ganger[$x][0]['body'];
 			$enemy[$x]['health'] = '10';			

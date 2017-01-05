@@ -193,7 +193,8 @@ class Desktop extends CI_Controller {
 						'messages' => $this->main_db_assets->getMessages($page),
 						'receiver' => $this->main_db_assets->getReceiver(),
 						'pagination' => $this->pagination->create_links(),
-						'msg' => $msg,						
+						'msg' => $msg,	
+						'settings' => $this->settings,
 			);
 		$left = array(
 						'show_shoutbox' => true,
@@ -220,12 +221,16 @@ class Desktop extends CI_Controller {
 	}
 	
 	public function sendMessage () {
+		$title = $this->input->post('title');
+		$receiver = $this->input->post('receiver');
+		$text = $this->input->post('msg_text');
+		
 		if ($this->input->post('sendmsg') == true) {
-			if(empty($this->input->post('title'))) {
+			if(empty($title)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Titel.'));
-			} else if (empty($this->input->post('receiver'))) {
+			} else if (empty($receiver)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Empfänger.'));
-			} else if (empty($this->input->post('msg_text'))) {
+			} else if (empty($text)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Text.'));
 			} else {
 				if ($this->main_db_assets->sendMessage()) {

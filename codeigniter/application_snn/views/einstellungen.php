@@ -116,6 +116,14 @@ legend {
 				<br /><br />
 				<input type="checkbox" name="show_ads" value="1" <?=($settings[0]['show_ads'] == 1) ? 'checked="checked"' : ''; ?>> - Werbung verbergen<br />
 			</div>
+			<br /><br />
+			<div class="col-sm-12">
+				<br /><br />
+				<span>Nachrichten</span>
+				<br /><br />
+				<input type="checkbox" name="show_own_messages" value="1" <?=($settings[0]['show_own_messages'] == 1) ? 'checked="checked"' : ''; ?>> - Eigene Nachrichten anzeigen<br />
+			</div>
+			
 			
 			<div class="col-sm-12">
 			<br /><br />

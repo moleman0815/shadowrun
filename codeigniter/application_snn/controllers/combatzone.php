@@ -52,7 +52,7 @@ class Combatzone extends CI_Controller {
 				redirect('combatzone/marketplace');				
 			}	
 		}
-		_debug($settings);
+
 		$left = array(
 				'show_shoutbox' => true,
           		'show_messages' => true,
@@ -138,7 +138,8 @@ class Combatzone extends CI_Controller {
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
           		'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),          				          		
+  				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
 			);		
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),
@@ -146,7 +147,6 @@ class Combatzone extends CI_Controller {
 				'missions' => $this->combat_model->getAllMissions('1'),
 				'stats' =>  $this->combat_model->getStatistics(),
 				'inv' => $this->combat_model->getInventory(),
-				'settings' => $this->settings,
 			);
 		$right = array(
 				'show_ads' => true,

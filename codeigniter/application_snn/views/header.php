@@ -16,6 +16,7 @@
 
     <link href="/secure/snn/assets/css/shadowrun.css" rel="stylesheet">
     <link href="/secure/snn/assets/css/style.css" rel="stylesheet">
+    <link href="/secure/snn/assets/css/trix.css" rel="stylesheet">
 
         <script type="text/javascript" src="/secure/snn/assets/js/jquery.min.js"></script> 
 </head>

@@ -120,8 +120,8 @@ class Main_db_assets extends CI_Model
         }        
         
         foreach ($data['messages'] as $value) {
-        	if (!in_array($value['send_to'], $avatars) && $value['send_to'] != $this->session->userdata('id')) {
-        		array_push($avatars, $value['send_to']);
+        	if (!in_array($value['send_from'], $avatars) && $value['send_from'] != $this->session->userdata('id')) {
+        		array_push($avatars, $value['send_from']);
         	}
         }
         

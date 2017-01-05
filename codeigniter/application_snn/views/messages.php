@@ -45,6 +45,12 @@ input, textarea, select {
 	</style>
 	
 	<script>
+	var newMessageBtn;
+	var newMessageModal;
+	var newMessageClose;
+	var replyMessageModal;
+	var replyMessageClose;
+	
  	$( document ).ready(function() { 			
      	$('#writeMessage').submit(function(event){
      		event.preventDefault();
@@ -54,7 +60,33 @@ input, textarea, select {
      		event.preventDefault();
      		sr.messages.sendMessage();     		
      	});
+
+     	newMessageBtn = document.getElementById('newMessageBtn');
+     	newMessageModal = document.getElementById('newMessageBox');
+     	newMessageClose = document.getElementById('newMessageClose');
+     	replyMessageModal = document.getElementById('replyMessageBox');
+     	replyMessageClose = document.getElementById('replyMessageClose');
+
+     	newMessageBtn.onclick = function (){
+     		newMessageModal.style.display = "block";
+     	}
+
+     	newMessageClose.onclick = function() {
+     		newMessageModal.style.display = "none";
+     	}
+     	replyMessageClose.onclick = function() {
+     		replyMessageModal.style.display = "none";
+     	}	
+
+     	window.onclick = function(event) {
+     	    if (event.target == newMessageModal) {
+     	    	newMessageModal.style.display = "none";
+     	    	replyMessageModal.style.display = "none";
+     	    }
+     	}
  	});
+
+
 
 </script>
 
@@ -68,19 +100,23 @@ input, textarea, select {
 		<div class="alert alert-success" id="sendMsgSuccess" style="display:none"></div>
 
 	<?php $a=0; foreach($messages['messages'] as $m):?>
+	<?php 
+		if($settings[0]['show_own_messages'] == 0 && $m['send_from'] == $this->session->userdata('id')) { continue; } 
+	?>
 	<?php $subclass = ($a%2 == 0) ? 'uneven' : '';?>	
 	<?php 
-		$avatar = $messages['avatar'][$m['send_to']][0]['avatar'];
+		$avatar = $messages['avatar'][$m['send_from']][0]['avatar'];
 		$sendto = ($m['send_to'] == $this->session->userdata('id')) ? "DICH" : $messages['avatar'][$m['send_to']][0]['nickname'];
 		$nickname = ($m['send_from'] == $this->session->userdata('id')) ? "DIR" : $messages['avatar'][$m['send_from']][0]['nickname'];
 		$ownclass = ($m['send_from'] == $this->session->userdata('id')) ? "green_border" : "";
+		#_debug($messages);
 	?>				
 	<div class="newselement <?=$subclass;?> <?=$ownclass?>" style="padding: 0 5px 0 5px">
 		<div>
 			<a name="<?=$m['id']?>" style="text-decoration:none"></a>
 				<h4>
 					<?=$m['title']?>
-					<span id="new_<?=$m['id']?>"><?=($m['gelesen'] == 0) ? "(neu)" : ""; ?></span>
+					<span id="new_<?=$m['id']?>"><?=($m['gelesen'] == 0 && $m['send_from'] != $this->session->userdata('id')) ? "(neu)" : ""; ?></span>
 					<div style="float:right">
 						<input type="button" value="[ Lesen ]" onclick="sr.messages.toggleMsg('<?=$m['id']?>')" class=" btn-info btn-sm" style="color: #000000;padding-left:10px" />
 						<span style="margin-right:10px"><img src="/secure/snn/assets/img/icons/turn_right.png" onclick="sr.messages.replyMessage('<?=$m['id']?>', '<?=$m['id']?>')" title="reply" alt="reply" style="cursor:pointer" /></span>
@@ -91,9 +127,9 @@ input, textarea, select {
 				
 					<div style="clear:both"></div>
 					<?php $msgclass = ($a%2 == 0) ? 'class="evenmsg"' : 'class="unevenmsg"'; ?> 					
-					<div style="display:none;border:1px solid grey;padding:10px" <?=$msgclass?> id="msg_<?=$m['id']?>">
+					<div style="display:none;border:1px solid grey;padding:5px" <?=$msgclass?> id="msg_<?=$m['id']?>">
 						<?php if($avatar): ?>
-							<div style="float:left;width:100px;padding:10px">
+							<div style="float:left;width:100px;padding:5px">
 								<img src="/secure/snn/assets/img/avatar/<?=$avatar;?>" alt="" />
 							</div>
 						<?php endif; ?>

@@ -700,7 +700,7 @@ class Add_functions extends CI_Model {
 	}
 
 	function insertNews () {
-		#$this->util->_debug($this->input->post()); die();
+		#_debugDie($this->input->post());
 		$news = array (
 				'title' => $this->input->post('title'),
 				'newstext' => $this->input->post('newstext'),
@@ -1017,12 +1017,13 @@ class Add_functions extends CI_Model {
 			'show_friends' => $this->input->post('show_friends'),
 			'show_msgbox' => $this->input->post('show_msgbox'),
 			'show_ads' => $this->input->post('show_ads'),
+			'show_own_messages' => $this->input->post('show_own_messages'),
 		);
 		return ($this->db->update('login', $data, array('id' => $this->session->userdata('id')))) ? true : false;
 	}
 	
 	function readSettings () {
-		$this->db->select('show_shoutbox, show_friends, show_msgbox, show_ads');
+		$this->db->select('show_shoutbox, show_friends, show_msgbox, show_ads, show_own_messages');
 		$this->db->from('login');
 		$this->db->where('id', $this->session->userdata('id'));
 		return $this->db->get()->result_array();

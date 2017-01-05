@@ -18,9 +18,12 @@
     		$("#success").fadeOut(7000);    	
     	<?php endif; ?>    	
 	});
+	$(function() {
+        $('.wymeditor').wymeditor();
+    })
 </script>
-<div class="col-lg-8 admininterface">
-		<fieldset>
+<div class="col-lg-8">
+		<fieldset style="background-color: white">
 		<legend class="newstitle">News schreiben</legend>
 		<br />
 			<?php if($error): ?>
@@ -47,7 +50,9 @@
 				<br />
 				<label class="control-label" for="newstext" style="width:150px">News Text</label>
 				<br />
-				<?=form_textarea(array('id' => 'newstext', 'name' =>'newstext', "class" => "input-xlarge", "style" => "width:600px;height:150px"));?>
+				<input type="hidden" id="newstext" name="newstext" />
+				<trix-editor input="newstext" class="trix-content"></trix-editor>
+				
 			</div>
 			<div style="clear:both"></div>
 			<div class="col-sm-12">

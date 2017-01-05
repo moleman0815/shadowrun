@@ -27,6 +27,9 @@
     <?php if($this->uri->segment(1) == 'combatzone'): ?>
     	<script type="text/javascript" src="/secure/snn/assets/js/combat.js"></script>    
     <?php endif;?>
+    <?php if($this->uri->segment(1) == 'admin'): ?>
+    	<script type="text/javascript" src="/secure/snn/assets/js/trix.js"></script>    
+    <?php endif;?>
 
     <script type="text/javascript">
     $(document).ready(function () {

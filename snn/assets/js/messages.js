@@ -10,30 +10,6 @@ var replyMessageModal;
 var replyMessageClose;
 
 $( document ).ready(function() { 	
-	newMessageBtn = document.getElementById('newMessageBtn');
-	newMessageModal = document.getElementById('newMessageBox');
-	newMessageClose = document.getElementById('newMessageClose');
-	replyMessageModal = document.getElementById('replyMessageBox');
-	replyMessageClose = document.getElementById('replyMessageClose');
-
-	newMessageBtn.onclick = function (){
-		newMessageModal.style.display = "block";
-	}
-
-	newMessageClose.onclick = function() {
-		newMessageModal.style.display = "none";
-	}
-	replyMessageClose.onclick = function() {
-		replyMessageModal.style.display = "none";
-	}	
-
-	window.onclick = function(event) {
-	    if (event.target == newMessageModal) {
-	    	newMessageModal.style.display = "none";
-	    	replyMessageModal.style.display = "none";
-	    }
-	}
-	
 	$('#sendMsgError').hide();
 	$('#sendMsgSuccess').hide();
 	sr.messages.getNewMsgHeader();
@@ -123,3 +99,4 @@ $.extend (sr,{
 });
 
 sr.messages.init();
+
