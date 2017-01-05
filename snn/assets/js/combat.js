@@ -8,16 +8,6 @@ $.extend (sr,{
 		init : function () {
 			console.log("combat initiated");
 		},
-		initiateCombat : function () {
-			console.log('startup');
-			$.post(
-				'/secure/snn/combatzone/initiateCombat',
-				function(data) {
-					console.log("data "+data);
-				}
-					
-			);
-		},
 		proceedAction : function () {
     		var action = $('input[id="action"]:checked').val();
     		var round = $('#round').val();

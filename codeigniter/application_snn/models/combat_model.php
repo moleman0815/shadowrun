@@ -273,7 +273,7 @@ class Combat_model extends CI_Model
 			}
 		}
 
-#_debugDie($inv);
+#_debugDie($ganger);
 		/* SC Rüstung wird kalkuliert */
 		$aid = $this->input->post('armor');
 		if (!empty($aid)) {
@@ -322,8 +322,9 @@ class Combat_model extends CI_Model
 		$player['avatar'] = $char[0]['avatar'];
 		$player['mw'] = $c_mw;
 
-#_debugDie($player);
+
 		$tmp = '"'.$player['name'].'"';
+		$enemy = [];
 		for($x=0;$x<count($ganger);$x++) {
 			$enemy[$x]['body'] = $ganger[$x][0]['body'];
 			$enemy[$x]['health'] = '10';			
@@ -345,91 +346,96 @@ class Combat_model extends CI_Model
 		$this->player = $player;
 		$this->enemy = $enemy;
 		$this->enemies = count($this->enemy);
-		$this->lastround = 0;
-		$this->round = 1;
-		$this->getInitiative();
-		
+		$this->lastround = 1;
+		$this->round = 0;		
+		#_debugDie($this->enemy);
 		
 		$data['player'] = $player;
 		$data['enemy'] = $enemy;
 		$data['enemies'] = count($this->enemy);
-		$data['ini'] = $this->ini;
+		
 		$data['round'] = '1';
 		$data['combatlog'] = $this->combatlog;
 		$data['startup'] = true;
-		$this->_writeToSession();
-				
-#		$this->beginnFighting(1);
+		
+		
+		#_debugDie($data);
+		
+		$this->beginnFighting();
+		$data['ini'] = $this->ini;
+		
+		$this->_writeToSession();		
 		return $data;
 	}
 
 
-	function beginnFighting ($round) {
-	error_log('in beginnFighting');	
+	function beginnFighting () {
+		error_log('in beginnFighting');	
 		array_push($this->combatlog, 'AAA Kampfrunde '.$this->round.' beginnt.<br />');			
 
 		if($this->status == 'running') {
-			if ($this->lastround != $this->round) {
-				$this->ini = '';
+			$this->checkResult();
+			
+			if ($this->round == 0) {
 				$this->getInitiative();
-				#_debug($this->ini);
+				$this->iniphase = max(array_keys($this->ini));
+				$this->round = '1';
+				return true;
+			} else if ($this->lastround != $this->round) {				
+				$this->getInitiative();
 				$this->iniphase = max(array_keys($this->ini));
 			}
-			
-			$this->lastround = $this->round;
-			$this->round = $round;
-						
-			$this->combatRound();
 
-			if($this->status == 'running') {
-				$this->beginnFighting ($round+1);
-			}
+			$this->lastround = $this->round;
+
+			$this->combatRound();
+			#_debug($this->combatlog);
+
 		} else {			
 			$this->finalizeFight();
 		}		
 	}
 
 	function combatRound() {	
-		$x = $this->iniphase;
-		$max = max(array_keys($this->ini));
-		
-		error_log('in combatRound before itter: '.$this->iniphase.' x ->'.$x);	
+		error_log('in combatRound before itter: '.$this->iniphase);	
 
 		/* Iteration durch die Iniphasen */
-		for($x=$max; $x=0; $x--){
+		for($this->iniphase = max(array_keys($this->ini)); $this->iniphase > 0; $this->iniphase--) {
 			$this->checkResult();
 			
-			if (in_array($x, array_keys($this->ini))) {
-				$this->fighterinround = $this->ini[$x];
+			if (in_array($this->iniphase, array_keys($this->ini))) {
+				$this->fighterinround = $this->ini[$this->iniphase];
 				$this->shootOut();
-				$this->iniphase = $this->iniphase-1;
-			} else {
-				$this->iniphase = $this->iniphase-1;				
 			}
+			error_log('in combatRound after itter : '.$this->iniphase);						
+		}	
 
-			$x = $this->iniphase;			
-			error_log('in combatRound after itter : '.$this->iniphase.' -> '.$x);						
-		}		
+		$this->round++;
+		$this->beginnFighting();
 	}
 
 
 	function shootOut() {	
 		if($this->status == 'running') {
 			$fighter = explode(';', $this->fighterinround); 
-			foreach ($fighter as $f) {		
+
+			foreach ($fighter as $f) {	
 				if ($f == $this->player['name']) {
 					array_push($this->combatlog, '<br />Iniphase '.($this->iniphase).' Spieler <b>'.ucfirst($this->player['name']).'</b> agiert.<br />');	
-					$this->playerShooting($this->round);				
-				}
-				foreach ($this->enemy as $e) {
-					if ($f == $e['name']) {
-						if ($e['status'] != 'dead') {
-							array_push($this->combatlog, '<br />Iniphase '.($this->iniphase).' Ganger <i>'.ucfirst($e['name']).'</i> schiesst.<br />');	
-							$this->enemyShooting($e);
+					#$this->playerShooting($this->round);
+					#$this->enterCombatRound();
+				} else {
+					foreach ($this->enemy as $e) {
+						if ($f == $e['name']) {
+							if ($e['status'] != 'dead') {
+								array_push($this->combatlog, '<br />Iniphase '.($this->iniphase).' Ganger <i>'.ucfirst($e['name']).'</i> schiesst.<br />');	
+								#$this->enemyShooting($e);
+							}
 						}
 					}
 				}
 			}
+
 		} else {
 			$this->finalizeFight();
 		}
@@ -437,8 +443,8 @@ class Combat_model extends CI_Model
 	
 	function enterCombatRound() {
  		error_log('in enterCombatRound');	
-		$this->_writeToSession();
-		redirect('/combatzone/combat_round');
+		//$this->_writeToSession();
+		//redirect('/combatzone/fight/');
 	}
 
 	function returnFromCombatRound() {
@@ -450,7 +456,7 @@ class Combat_model extends CI_Model
 
 		if ($this->player['action'] == 'cover') {
 			array_push($this->combatlog, 'Iniphase '.($this->iniphase+1).' <b>'.ucfirst($this->player['name']).'</b> geht in Deckung.<br />');	
-			$this->combatRound();			
+			$this->beginnFighting();			
 		} else if ($this->player['action'] == 'reload') {
 			array_push($this->combatlog, 'Iniphase '.($this->iniphase+1).' <b>'.ucfirst($this->player['name']).'</b> l&auml;dt nach.<br />');	
 			if ($this->player['maxammo'] >= $this->player['ammo_default']) {
@@ -460,14 +466,14 @@ class Combat_model extends CI_Model
 				$this->player['ammo'] = $this->player['maxammo'];
 				$this->player['maxammo'] = 0;
 			}
-			$this->combatRound();	
+			$this->beginnFighting();	
 		} else if ($this->player['action'] == 'smallheal') {
 			$this->player['health'] = ($this->player['health']+3);
 			if($this->player['health'] > 10) {
 				$this->player['health'] = '10';
 			}
 			$this->player['small_medipacks'] = $this->player['small_medipacks']-1;
-			$this->combatRound();	
+			$this->beginnFighting();	
 		} else if ($this->player['action'] == 'flee') {
 			$this->status = 'flee';
 			$this->finalizeFight();
@@ -708,7 +714,8 @@ class Combat_model extends CI_Model
  
 	/* berechnet die Initiative */
 	function getInitiative() {
- 		error_log('in getInitiative');	
+ 		error_log('in getInitiative');
+ 		$this->ini = '';
 		$reaction = ($this->player['reaction']+$this->player['reaction_mod']);
 		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction);
 		$this->calculateRounds($ini_player, $this->player['name']);		
@@ -723,6 +730,7 @@ class Combat_model extends CI_Model
 	/* Berechnet die Kampfrunden der Initiative */
 	function calculateRounds($count, $name) {
  		error_log('in calculateRounds');	
+ 		 		
 		if ($count > 10) {	
 			for ($x=$count;$x>0;$x-=10) {
 				if (empty($this->ini[$x]))	 {
@@ -801,14 +809,11 @@ class Combat_model extends CI_Model
 			}
 		}		
 		if ($status == $this->enemies) {
-			error_log('in checkResult - enemy dead');	
+			error_log('in checkResult - all enemy dead');	
 			$this->status = 'success';
 			$this->finalizeFight();
 		} 	
-		if ($this->iniphase <= '0') {
-			$this->round = $this->round+1;
-			$this->beginnFighting($this->round);
-		}
+
 		error_log('in checkResult - else');	
 	}
 
@@ -888,18 +893,18 @@ class Combat_model extends CI_Model
 				'round' => $this->round,
  				'lastround' => $this->lastround,
 				'ini' => $this->ini,
-				'iniphase' => $this->iniphase,
-				'inicounter' => $this->inicounter,
+				'iniphase' => ($this->iniphase) ? $this->iniphase : '0',
+				'inicounter' => ($this->inicounter) ? $this->inicounter : '0',
 				);
  		$json = json_encode($data);
-		$sql = sprintf("
+ 		$sql = sprintf("
 					INSERT INTO %s (userid, json) VALUES ('%s','%s')
 					ON DUPLICATE KEY UPDATE json='%s'
-					", 				
-						'newsnet_infight', $this->session->userdata('id'), $json,
-						$json
-					);
-			$this->db->query($sql); 		
+					",
+ 				'newsnet_infight', $this->session->userdata('id'), $json,
+ 				$json
+ 				);
+		$this->db->query($sql);
 	}
 
 	function _readFromSession() {

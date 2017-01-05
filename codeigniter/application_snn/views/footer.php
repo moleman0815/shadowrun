@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="/secure/snn/assets/js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="/secure/snn/assets/js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/secure/snn/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/secure/snn/assets/js/messages.js"></script> 
 
 
 	<link href="/secure/snn/assets/js/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" media="screen">

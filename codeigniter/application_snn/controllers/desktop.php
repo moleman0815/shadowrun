@@ -3,17 +3,22 @@
 
 class Desktop extends CI_Controller {
 
+	var $settings;
+	var $newMessages;
+	
 	function Desktop() {
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));	
 		$this->load->library('pagination');				
 		if ($this->session->userdata('login') == true) {
 
-
+			#_debugDie($this->session->all_userdata());
 			$this->load->model('main_db_assets');		
 			$this->load->model('util');	
 			$this->load->model('add_functions');	
 			$this->add_functions->setActive();
+			$this->settings = $this->add_functions->readSettings();
+			$this->newMessages = $this->main_db_assets->countNewMessages();
 			#$this->session->set_userdata('id', '5');		
 			#$this->session->set_userdata('name', 'feta');		
 			#$this->session->set_userdata('rank', '2');
@@ -62,9 +67,21 @@ class Desktop extends CI_Controller {
 		}
 	}
 	
+	public function getNewMsgHeader () {
+		echo json_encode(array('msgNo' => $this->newMessages));
+	}
+	
+	public function updateNewMessage () {
+		if($this->main_db_assets->updateNewMessage()) {
+			return true;
+		}
+	}
+	
 	public function shoutbox () {
 		$page = $this->uri->segment(3);
-		$header = array('name' => $this->session->userdata('name'));
+		$header = array(
+				'name' => $this->session->userdata('name'),		
+		);
 		$data = array(
 				'shoutbox' => $this->main_db_assets->getShoutboxFull(),
 		);
@@ -74,10 +91,12 @@ class Desktop extends CI_Controller {
 				'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
 				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
 		);
 		$right = array(
 				'show_ads' => true,
 				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 		
 		$this->load->view('header');
@@ -106,9 +125,11 @@ class Desktop extends CI_Controller {
 		$config['first_link'] = 'First';
 		$config['first_tag_open'] = '<span class="newspaginationdigit">';
 		$config['first_tag_close'] = '</span>';		
-		
+			
 		$this->pagination->initialize($config);		
-		$header = array('name' => $this->session->userdata('name'));
+		$header = array(
+				'name' => $this->session->userdata('name'),
+		);
 		$data = array(
 						'news' => $this->main_db_assets->getNews($page),
 						'pagination' => $this->pagination->create_links(),
@@ -119,11 +140,13 @@ class Desktop extends CI_Controller {
           				'show_messages' => true,
           				'column_messages' => $this->main_db_assets->getColumnMessages(),          				
 						'show_friends' => true,
-          				'friends' => $this->add_functions->getFriends(),          				
+          				'friends' => $this->add_functions->getFriends(),  
+						'settings' => $this->settings,
 			);
 		$right = array(
 						'show_ads' => true,
 						'ads' => $this->main_db_assets->getAds(),
+						'settings' => $this->settings,
 			);
 
 			$this->load->view('header');
@@ -136,22 +159,17 @@ class Desktop extends CI_Controller {
 
 
 	}
-
-	public function messages () {
-		
+	
+	public function messages () {	
 		$msg = array('error' => '' , 'success' => '');
-		
-		if ($this->input->post('sendmsg') == true) {
-			if ($this->main_db_assets->sendMessage()) {
-				$msg['success'] = 'Die Nachricht wurde erfolgreich verschickt.';
-			} else {
-				$msg['error'] = 'Beim Versenden der Nachricht ist ein Fehler aufgetreten.';
-			}
-		}
-		
+		$this->load->library('pagination');
+
 		$page = $this->uri->segment(3);
 		$header = array('name' => $this->session->userdata('name'));
 		$config['base_url'] = '/secure/snn/desktop/messages/';
+		$config['total_rows'] = ($this->main_db_assets->countMessages()-1);
+		$config['per_page'] = 10;		
+		
 		$config['num_tag_open'] = '<span class="newspaginationdigit">';
 		$config['num_tag_close'] = '</span>';
 		$config['cur_tag_open'] = '<span class="newspaginationdigitactive">';
@@ -164,10 +182,13 @@ class Desktop extends CI_Controller {
 		$config['first_link'] = 'First';
 		$config['first_tag_open'] = '<span class="newspaginationdigit">';
 		$config['first_tag_close'] = '</span>';			
-		$config['total_rows'] = ($this->main_db_assets->countMessages()-1);
-		$config['per_page'] = 10;
+
 		$this->pagination->initialize($config);
-		
+
+
+		$header = array(
+				'name' => $this->session->userdata('name'),
+		);
 		$data = array(
 						'messages' => $this->main_db_assets->getMessages($page),
 						'receiver' => $this->main_db_assets->getReceiver(),
@@ -179,22 +200,43 @@ class Desktop extends CI_Controller {
           				'shoutbox' => $this->main_db_assets->getShoutbox(),
           				'show_messages' => false,
 						'show_friends' => true,
-          				'friends' => $this->add_functions->getFriends(),          				          				
+          				'friends' => $this->add_functions->getFriends(),    
+						'settings' => $this->settings,
 
 			);
 		$right = array(
 						'show_ads' => true,
 						'ads' => $this->main_db_assets->getAds(),
+						'settings' => $this->settings,
 			);							
 
 			$this->load->view('header');
-			$this->load->view('menu_header');
+			$this->load->view('menu_header', $header);
 			$this->load->view('left_column', $left);
 			$this->load->view('div_md8');
 			$this->load->view('messages', $data);		
 			$this->load->view('right_column', $right);
 			$this->load->view('footer');
 	}
+	
+	public function sendMessage () {
+		if ($this->input->post('sendmsg') == true) {
+			if(empty($this->input->post('title'))) {
+				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Titel.'));
+			} else if (empty($this->input->post('receiver'))) {
+				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Empfänger.'));
+			} else if (empty($this->input->post('msg_text'))) {
+				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Text.'));
+			} else {
+				if ($this->main_db_assets->sendMessage()) {
+					echo json_encode(array('status' => 'success', 'msg' => 'Die Nachricht wurde erfolgreich verschickt.'));
+				} else {
+					echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten.'));
+				}
+			}
+		}
+	}
+	
 
 	public function addFriend() {
 		if($this->add_functions->addFriend()) {
@@ -231,21 +273,36 @@ class Desktop extends CI_Controller {
 		$friendMsg = '';
 		$flashMsg;
 
-		$header = array('name' => $this->session->userdata('name'));
+		$header = array(
+				'name' => $this->session->userdata('name'),
+		);
+		$settings = $this->add_functions->readSettings();
+		
 		$left = array(
 						'show_shoutbox' => true,
           				'shoutbox' => $this->main_db_assets->getShoutbox(),
           				'show_messages' => true,
           				'column_messages' => $this->main_db_assets->getColumnMessages(),
 						'show_friends' => true,
-          				'friends' => $this->add_functions->getFriends(),          				          				
+          				'friends' => $this->add_functions->getFriends(), 
+						'settings' => $this->settings,
 		);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 
-		if($this->input->post('sendNick')) {
+		
+		if ($this->input->post('sendSettings')) {
+			if($this->add_functions->writeSettings()) {
+				$this->session->set_userdata('success', 'Deine Settings wurde erfolgreich gespeichert.');
+				redirect('desktop/einstellungen');
+			} else {
+				$this->session->set_userdata('error', 'Beim Speichern deiner Settings ist ein Fehler aufgetreten.');
+				redirect('desktop/einstellungen');
+			}
+		} else if($this->input->post('sendNick')) {
 			if($this->input->post('nickname')) {
 				if($this->user_model->changeNickname()) {
 					$this->session->set_userdata('success', 'Dein Nickname wurde erfolgreich geÃ¤ndert.');
@@ -307,11 +364,12 @@ class Desktop extends CI_Controller {
 					'showme' => $showme,
 					'friendMsg' => $friendMsg,
 					'flashMsg' => '',
+					'settings' => $this->settings,
 		);
 
 
 			$this->load->view('header');
-			$this->load->view('menu_header');
+			$this->load->view('menu_header', $header);
 			$this->load->view('left_column', $left);
 			$this->load->view('div_md8');
 			$this->load->view('einstellungen', $data);		
@@ -345,10 +403,12 @@ class Desktop extends CI_Controller {
 					redirect('desktop/feedback');													
 			}
 		}
-
+		$header = array(
+				'name' => $this->session->userdata('name'),
+		);
 		$data = array('feedback' => $this->main_db_assets->getFeedback(),);	
 		$this->load->view('header');
-		$this->load->view('menu_header');			
+		$this->load->view('menu_header', $header);			
 		$this->load->view('feedback', $data);		
 		$this->load->view('footer');		
 	}

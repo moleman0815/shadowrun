@@ -65,10 +65,34 @@ class Main_db_assets extends CI_Model
     function countMessages () {
         $this->db->where('deleted', '0');
         $this->db->where('send_to', $this->session->userdata('id'));
+        $this->db->or_where('send_from', $this->session->userdata('id'));
         $this->db->from('messages');
-        return  $this->db->count_all_results();        
+        $query = $this->db->get()->result_array();
+
+        for($i=0; $i<count($query);$i++) {
+        	if ($query[$i]['send_from'] == $this->session->userdata('id') && preg_match("/freundschaftsanfrage/i", $query[$i]["title"])) {
+        		unset($query[$i]);
+        	}
+        }
+        
+        return count($query);        
     }
 
+    function countNewMessages () {
+    	$this->db->where('gelesen', '0');
+    	$this->db->where('deleted', '0');
+    	$this->db->where('send_to', $this->session->userdata('id'));
+    	$this->db->from('messages');
+    	return  $this->db->count_all_results();
+    }
+    
+    function updateNewMessage () {
+    	$news = array (
+    			'gelesen' => '1',
+    	);
+    	return ($this->db->update('messages', $news, array('id' => $this->input->post("id")))) ? true : false;	
+    }
+    
     function getMessages($page) {
 		$limit = '10';
 		$page = ($page) ? $page : '0';
@@ -80,13 +104,20 @@ class Main_db_assets extends CI_Model
         $this->db->select('messages.*');
         $this->db->from('messages');       
         $this->db->where('send_to', $this->session->userdata('id'));
-        $this->db->where('send_to', $this->session->userdata('id'));
+        #$this->db->where('send_to', $this->session->userdata('id'));
         #$this->db->or_where('send_to', 2);
         $this->db->or_where('send_from', $this->session->userdata('id'));
         $this->db->where('deleted', '0');
         $this->db->order_by("date", "DESC");
 		$this->db->limit($limit, $page);
         $data['messages'] = $this->db->get()->result_array();
+        
+        for($i=0; $i<count($data['messages']);$i++) {
+        	if ($data['messages'][$i]['send_from'] == $this->session->userdata('id') && preg_match("/freundschaftsanfrage/i", $data['messages'][$i]["title"])) {
+        		unset($data['messages'][$i]);
+        		echo "jaa";	
+        	}
+        }        
         
         foreach ($data['messages'] as $value) {
         	if (!in_array($value['send_to'], $avatars) && $value['send_to'] != $this->session->userdata('id')) {
@@ -105,15 +136,7 @@ class Main_db_assets extends CI_Model
         $this->db->from('login');
         $this->db->where('id', $this->session->userdata('id'));
         $data['avatar'][$this->session->userdata('id')] = $this->db->get()->result_array();
-        
-        
-        
-        
-        
-        
-        #$this->db->select('nickname, avatar');
-        
-
+ 
         return $data;
     }
 

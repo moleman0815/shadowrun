@@ -87,10 +87,10 @@
       </li>
 */ ?>
             <li><a href="/secure/snn/desktop/einstellungen"><i class="fa fa-cogs"></i>&nbsp;[Einstellungen]</a></li>
-            <li><a href="/secure/snn/desktop/messages"><i class="fa fa-newspaper-o"></i>&nbsp;[Nachrichten]</a></li>
-            <?php if($this->session->userdata('type') == '2'): ?>            
+            <li><a href="/secure/snn/desktop/messages"><i class="fa fa-newspaper-o"></i>&nbsp;[Nachrichten<span id="newMessagesHeader"></span>]</a></li>
+                       
                 <li><a href="/secure/snn/desktop/feedback"><i class="fa fa-street-view"></i>&nbsp;[Feedback]</a></li>            
-            <?php endif; ?>
+            
             <?php if($this->session->userdata('rank') <= '2'): ?>
               <li><a href="/secure/snn/admin"><i class="fa fa-university"></i>&nbsp;[Admin]</a></li>
             <?php endif; ?>               

@@ -21,7 +21,7 @@
    // importnat: set timezone	
    date_default_timezone_set('Europe/Paris');
 
-	define('ENVIRONMENT', 'development');
+	define('ENVIRONMENT', 'testing');
 	#define('MYROOTPATH', '/var/www/vhosts/default'); //
 	#define('ENVIRONMENT', 'testing');
 	define('MYROOTPATH', 'c://xampp');

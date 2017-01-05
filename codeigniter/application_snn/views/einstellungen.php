@@ -13,6 +13,7 @@
 	foreach ($friends as $f) {
 		array_push($nofriends, $f['id']);		
 	}
+	#_debugDie($settings);
 ?>
 <style>
 	input, select {
@@ -93,17 +94,37 @@ legend {
 	<ul>
 		<li><a href="#nickname">Nickname</a></li>
 	  	<li><a href="#passwort">Passwort</a></li>
-	  	<!-- <li><a href="#setting">Settings</a></li> -->
+	  	<li><a href="#settings">Settings</a></li>
 		<li><a href="#avatar">Avatar</a></li>
 		<li><a href="#charakter">Charakter</a></li>
 		<li><a href="#freunde">Freunde</a></li>
 	</ul>
-	<!-- 	<div id="settings">
+	<div id="settings">
 		<fieldset>
 			<legend>Settings</legend>
+			<?=form_open('/desktop/einstellungen');?>
+			<?=form_hidden('sendSettings', true);?>
+			<div class="col-sm-6">
+				<span>Linke Spalte</span>
+				<br /><br />
+				<input type="checkbox" name="show_shoutbox" value="1" <?=($settings[0]['show_shoutbox'] == 1) ? 'checked="checked"' : ''; ?>> - Shoutbox verbergen<br />
+				<input type="checkbox" name="show_friends" value="1" <?=($settings[0]['show_friends'] == 1) ? 'checked="checked"' : ''; ?>> - Freunde verbergen<br />
+				<input type="checkbox" name="show_msgbox" value="1" <?=($settings[0]['show_msgbox'] == 1) ? 'checked="checked"' : ''; ?>> - Neueste Nachrichten verbergen<br />
+			</div>
+			<div class="col-sm-6">
+				<span>Rechte Spalte</span>
+				<br /><br />
+				<input type="checkbox" name="show_ads" value="1" <?=($settings[0]['show_ads'] == 1) ? 'checked="checked"' : ''; ?>> - Werbung verbergen<br />
+			</div>
+			
+			<div class="col-sm-12">
+			<br /><br />
+				<input type="submit" value="Settings speichern" class="btn btn-primary btn-sm"/>
+			</div>
+			<?=form_close();?>
 		</fieldset>
 	</div>
-	-->
+	
 	<div id="freunde">
 		<fieldset>
 			<legend>Freunde</legend>

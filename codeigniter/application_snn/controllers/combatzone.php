@@ -3,6 +3,8 @@
 
 class Combatzone extends CI_Controller {
 
+	var $settings;
+	
 	function Combatzone() {
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));	
@@ -12,6 +14,7 @@ class Combatzone extends CI_Controller {
 			$this->load->model('util');			
 			$this->load->model('add_functions');	
 			$this->add_functions->setActive();
+			$this->settings = $this->add_functions->readSettings();
 		} else {
 			redirect('/login');
 		}
@@ -49,13 +52,15 @@ class Combatzone extends CI_Controller {
 				redirect('combatzone/marketplace');				
 			}	
 		}
+		_debug($settings);
 		$left = array(
 				'show_shoutbox' => true,
           		'show_messages' => true,
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
           		'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),          				          		
+  				'friends' => $this->add_functions->getFriends(),   
+				'settings' => $this->settings,
 			);
 
 		$char = $this->add_functions->getCharacter();
@@ -72,6 +77,7 @@ class Combatzone extends CI_Controller {
 		$right = array(
 						'show_ads' => true,
 						'ads' => $this->main_db_assets->getAds(),
+						'settings' => $this->settings,
 		);
 		$this->load->view('header');
 		$this->load->view('menu_header');		
@@ -103,7 +109,8 @@ class Combatzone extends CI_Controller {
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
           		'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),          				          		
+  				'friends' => $this->add_functions->getFriends(),  
+				'settings' => $this->settings,
 			);
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),
@@ -111,8 +118,9 @@ class Combatzone extends CI_Controller {
 				'inv' =>  $this->combat_model->getInventory(),
 			);		
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 		$this->load->view('header');
 		$this->load->view('menu_header');		
@@ -138,10 +146,12 @@ class Combatzone extends CI_Controller {
 				'missions' => $this->combat_model->getAllMissions('1'),
 				'stats' =>  $this->combat_model->getStatistics(),
 				'inv' => $this->combat_model->getInventory(),
+				'settings' => $this->settings,
 			);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 		$this->load->view('header');
 		$this->load->view('menu_header');		
@@ -160,6 +170,7 @@ class Combatzone extends CI_Controller {
           		'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
   				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
 			);		
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),
@@ -168,8 +179,9 @@ class Combatzone extends CI_Controller {
 				'inv' => $this->combat_model->getInventory(),
 			);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 		//_debugDie($center);
 		$this->load->view('header');
@@ -241,7 +253,8 @@ class Combatzone extends CI_Controller {
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
 				'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),				
+  				'friends' => $this->add_functions->getFriends(),	
+				'settings' => $this->settings,
 			);		
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),
@@ -250,8 +263,9 @@ class Combatzone extends CI_Controller {
 				'mission' => $this->combat_model->getMissionData(),
 			);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);	
 
 
@@ -263,10 +277,6 @@ class Combatzone extends CI_Controller {
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');	
 	}
-	
-	function initiateCombat () {
-		echo json_encode(array('data' => $this->combat_model->calculateFight()));
-	}
 
 	function combat_result () {
 		$left = array(
@@ -275,7 +285,8 @@ class Combatzone extends CI_Controller {
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
 				'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),				
+  				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
 			);		
 
 		$center = array(
@@ -285,8 +296,9 @@ class Combatzone extends CI_Controller {
 				'mission' => $this->combat_model->getMissionData(),
 			);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);	
 
 		$this->load->view('header');
@@ -299,11 +311,21 @@ class Combatzone extends CI_Controller {
 	}
 
 	function combat_round() {
-			#_debug($this->session->all_userdata());
-		$left = array('show_shoutbox' => false,'show_messages' => false, 'show_friends' => false,
-  				'friends' => $this->add_functions->getFriends(),);		
-		$right = array('show_ads' => false,);	
-		$center = array('combat' => $this->combat_model->getInfightData(),);					
+		$left = array(
+				'show_shoutbox' => true,
+				'show_messages' => true,
+				'shoutbox' => $this->main_db_assets->getShoutbox(),
+				'column_messages' => $this->main_db_assets->getColumnMessages(),
+				'show_friends' => true,
+				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
+		);
+		$right = array(
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
+		);
+		$center = array('combat' => $this->combat_model->getInfightData());					
 		$this->load->view('header');
 		$this->load->view('menu_header');		
 		$this->load->view('left_column', $left);	
@@ -315,11 +337,13 @@ class Combatzone extends CI_Controller {
 	
 	function nextRound() {
 		$action = $this->input->post('action');
+		#_debugDie("here");
 		if (empty($action)) {
 				$this->session->set_userdata('error', 'Du hast keine Aktion ausgewählt!');
 				redirect('combatzone/combat_round');		
 		} else {
 			$this->combat_model->returnFromCombatRound();
+			redirect('combatzone/combat_round');
 			
 		}
 	}
@@ -331,15 +355,17 @@ class Combatzone extends CI_Controller {
           		'shoutbox' => $this->main_db_assets->getShoutbox(),
           		'column_messages' => $this->main_db_assets->getColumnMessages(),
 				'show_friends' => true,
-  				'friends' => $this->add_functions->getFriends(),          				          		
+  				'friends' => $this->add_functions->getFriends(),   
+				'settings' => $this->settings,
 			);		
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),			
 				'inv' => $this->combat_model->getInventory(),
 			);
 		$right = array(
-						'show_ads' => true,
-						'ads' => $this->main_db_assets->getAds(),
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
 		);
 		$this->load->view('header');
 		$this->load->view('menu_header');		

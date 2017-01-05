@@ -1,6 +1,6 @@
 <?php
 	#rsort($combat['ini']);
-	#_debugDie($combat['ini']);
+#	_debugDie($combat);
 	#$combat['player']['maxammo'] = 3;
 	$error = $this->session->userdata('error');
 	$this->session->unset_userdata('error');		
@@ -15,19 +15,13 @@
 
 <script>
 	$( document ).ready(function() {
-		sr.combat.initiateCombat();
     	<?php if($error): ?>	
     		$("#error").fadeOut(7000);    	
     	<?php endif; ?>
-    	$('#shootout-form').submit(function(event){
-    		event.preventDefault();
-    		sr.combat.proceedAction();
-    	});
 	});
 
 </script>
 
-<?php if(isset($combat['startup'])): ?>
 	<fieldset class="newselement">
 		<legend class="newstitle">Kampfrunde</legend>
 		<br />
@@ -110,6 +104,7 @@
 		<br />		
 		<div class="col-md-12" style="float:left;">
 			<span class="newstitle">Bisheriger Kampfverlauf:</span>
+			<br />
 			<ul>
 			<?php foreach($combat['combatlog'] as $c):?>
 				<li><?=preg_replace('/AAA/', '', $c)?></li>
@@ -123,8 +118,10 @@
 		<br />
 		<fieldset class="newselement">
 		<div><b>Welche Aktion möchtest du ausführen (zählt für beide Ini-Aktionen)?</b></div>
-		<form action="#" enctype="text/html" id="shootout-form" />
+		<form action="/secure/snn/combatzone/nextRound" method="post" enctype="text/html" id="shootout-form" />
 		<input type="hidden" name="round" id="round" value="<?=$combat['round'];?>" />
+		<input type="hidden" name="weapon" id="weapon" value="<?=$_POST['weapon'];?>" />
+		<input type="hidden" name="armor" id="armor" value="<?=$_POST['armor'];?>" />
 		<?=form_hidden('sendAction', true);?>
 	<?php if($combat['player']['ammo'] > 1): ?>
 		<?php if(in_array('HM', $mode)): ?>
@@ -156,6 +153,3 @@
 		</form>	
 		</fieldset>
 	</fieldset>
-<?php else: ?>
-
-<?php endif; ?>

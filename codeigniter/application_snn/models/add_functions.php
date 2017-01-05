@@ -216,7 +216,7 @@ class Add_functions extends CI_Model {
 	function sendInternMessage($pass) {
 		$user = $this->db->get_where('login', array('id' => $this->session->userdata('id')))->result_array();
 
-		$msg = ucfirst($user[0]['nickname'])." hat die eine Freundschaftsanfrage gesendet.<br /><br />";
+		$msg = ucfirst($user[0]['nickname'])." hat dir eine Freundschaftsanfrage gesendet.<br /><br />";
 		$msg .= "Klicke auf Annehmen um diese zu akzeptieren, oder auf Ablehnen um sie zu blocken.<br /><br />";
 		$msg .= "<a href='/secure/snn/desktop/friendship/1/".$pass."/".$this->session->userdata('id')."/".$this->input->post('id')."'><b>Annehmen</b></a><br /><br />";
 		$msg .= "<a href='/secure/snn/desktop/friendship/0/".$pass."/".$this->session->userdata('id')."/".$this->input->post('id')."'><b>Ablehnen</b></a><br />";
@@ -1010,6 +1010,25 @@ class Add_functions extends CI_Model {
 		$this->db->order_by('active.lastactive', 'DESC');
 		return $this->db->get()->result_array();
 	}
+	
+	function writeSettings () {
+		$data = array (
+			'show_shoutbox' => $this->input->post('show_shoutbox'),
+			'show_friends' => $this->input->post('show_friends'),
+			'show_msgbox' => $this->input->post('show_msgbox'),
+			'show_ads' => $this->input->post('show_ads'),
+		);
+		return ($this->db->update('login', $data, array('id' => $this->session->userdata('id')))) ? true : false;
+	}
+	
+	function readSettings () {
+		$this->db->select('show_shoutbox, show_friends, show_msgbox, show_ads');
+		$this->db->from('login');
+		$this->db->where('id', $this->session->userdata('id'));
+		return $this->db->get()->result_array();
+	}
+	
+
 }
 
 ?>	

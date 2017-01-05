@@ -56,15 +56,7 @@ function toggleNews(id) {
 	}
 }
 
-	function toggleMsg(id) {
-		$('div[id^="msg"]').each(function(){
-			var fid = $(this).attr('id');
-			if (id != fid) {
-				$(this).hide('fast');
-			}			
-		});
-		$('#'+id).toggle('fast');
-	}
+
 	$(function() {
 		$("#btnForm").fancybox({
 			'onStart': function() { $("#divForm").css("display","block"); },            
@@ -81,28 +73,7 @@ function toggleNews(id) {
 			'onClosed': function() { $("#divReply").css("display","none"); }
 		});
 	});	
-	function deleteMsg(id) {
-		$.post('/secure/snn/desktop/deleteMsg', {id: id}, function(data)
-			{
-				location.reload();
-			});			
-	}
 
-	function replyMsg(id, senderid) {
-		$('#senderid').val(id);
-		$.post(
-			'/secure/snn/desktop/replyMsg', 
-			{id: id}, 
-			function(data) {
-					var json = jQuery.parseJSON(data);
-					$('#replytitle').val('Re: '+json.title);
-					$('#receiverid').val(json.receiver_id);
-					$('#replyreceiver').val(json.receiver);
-					$('#reply_text').val(json.msg);
-				
-					$('#replyForm').click();
-			});			
-	}
 
 
 	function deleteAvatar(id) {
