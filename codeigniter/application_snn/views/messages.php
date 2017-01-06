@@ -54,11 +54,11 @@ input, textarea, select {
  	$( document ).ready(function() { 			
      	$('#writeMessage').submit(function(event){
      		event.preventDefault();
-     		sr.messages.sendMessage();     		
+     		sr.messages.sendNewMessage();     		
      	});
      	$('#replyMessage').submit(function(event){
      		event.preventDefault();
-     		sr.messages.sendMessage();     		
+     		sr.messages.sendReplyMessage();     		
      	});
 
      	newMessageBtn = document.getElementById('newMessageBtn');
@@ -119,7 +119,11 @@ input, textarea, select {
 					<span id="new_<?=$m['id']?>"><?=($m['gelesen'] == 0 && $m['send_from'] != $this->session->userdata('id')) ? "(neu)" : ""; ?></span>
 					<div style="float:right">
 						<input type="button" value="[ Lesen ]" onclick="sr.messages.toggleMsg('<?=$m['id']?>')" class=" btn-info btn-sm" style="color: #000000;padding-left:10px" />
-						<span style="margin-right:10px"><img src="/secure/snn/assets/img/icons/turn_right.png" onclick="sr.messages.replyMessage('<?=$m['id']?>', '<?=$m['id']?>')" title="reply" alt="reply" style="cursor:pointer" /></span>
+						<?php if ($m['send_from'] != $this->session->userdata('id')): ?>
+							<span style="margin-right:10px"><img src="/secure/snn/assets/img/icons/turn_right.png" onclick="sr.messages.replyMessage('<?=$m['id']?>', '<?=$m['send_from']?>')" title="reply" alt="reply" style="cursor:pointer" /></span>
+						<?php else: ?>
+							<span style="margin-right:20px">&nbsp;</span>
+						<?php endif; ?>
 						<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="sr.messages.deleteMsg('<?=$m['id']?>')" style="cursor:pointer" /></span>
 					</div>
 				</h4>		

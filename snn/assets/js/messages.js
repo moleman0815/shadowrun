@@ -20,7 +20,7 @@ $.extend (sr,{
 		init : function () {
 			console.log("messages initiated");
 		},
-		sendMessage : function () { 		
+		sendNewMessage : function () {
 			newMessageModal.style.display = "none";
 			replyMessageModal.style.display = "none";
 			$.ajax({
@@ -37,10 +37,28 @@ $.extend (sr,{
 				}
          	});
 		},
+		sendReplyMessage : function () {
+			newMessageModal.style.display = "none";
+			replyMessageModal.style.display = "none";
+			$.ajax({
+				url: '/secure/snn/desktop/sendMessage',
+				type: 'POST',
+				data: $('#replyMessage').serialize(),
+				success: function(data) {
+					var json = jQuery.parseJSON(data);
+					if (json['status'] == 'error') {
+						$('#sendMsgError').show("fast").html(json['msg']);
+					} else {
+						$('#sendMsgSuccess').show("fast").html(json['msg']);
+					}
+				}
+         	});
+		},
 		replyMessage : function (id, senderid) {
 			replyMessageModal.style.display = "block";
 			$.ajax({
 				url: '/secure/snn/desktop/replyMsg',
+				type: 'POST',
 				data: {id: id},
 				success: function(data) {
 					var json = jQuery.parseJSON(data);

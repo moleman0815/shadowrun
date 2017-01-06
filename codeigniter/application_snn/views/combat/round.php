@@ -105,7 +105,7 @@
 		<div class="col-md-12" style="float:left;">
 			<span class="newstitle">Bisheriger Kampfverlauf:</span>
 			<br />
-			<ul>
+			<ul style="list-style-type: none;">
 			<?php foreach($combat['combatlog'] as $c):?>
 				<li><?=preg_replace('/AAA/', '', $c)?></li>
 			<?php endforeach; ?>

@@ -221,9 +221,16 @@ class Desktop extends CI_Controller {
 	}
 	
 	public function sendMessage () {
-		$title = $this->input->post('title');
-		$receiver = $this->input->post('receiver');
-		$text = $this->input->post('msg_text');
+		if ($this->input->post('reply') == 1) {
+			$title = $this->input->post('replytitle');
+			$receiver = $this->input->post('replyreceiver');
+			$text = $this->input->post('reply_text');
+		} else {
+			$title = $this->input->post('title');
+			$receiver = $this->input->post('receiver');
+			$text = $this->input->post('msg_text');
+		}
+		
 		
 		if ($this->input->post('sendmsg') == true) {
 			if(empty($title)) {
