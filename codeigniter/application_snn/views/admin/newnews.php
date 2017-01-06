@@ -18,9 +18,6 @@
     		$("#success").fadeOut(7000);    	
     	<?php endif; ?>    	
 	});
-	$(function() {
-        $('.wymeditor').wymeditor();
-    })
 </script>
 <div class="col-lg-8">
 		<fieldset style="background-color: white">
