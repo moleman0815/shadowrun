@@ -35,7 +35,9 @@
 				<br />
 				<label class="control-label" for="adstext" style="width:150px">Werbung Text</label>
 				<br />
-				<?=form_textarea(array('id' => 'adstext', 'name' =>'adstext', "class" => "input-xlarge", "style" => "width:600px;height:150px", "value" => $ads[0]['text']));?>
+				<input type="hidden" id="adstext" name="adstext" value="<?=$ads[0]['text']?>" />
+				<trix-editor input="adstext" class="trix-content"></trix-editor>
+
 
 			<br /><br />
 			<label class="control-label" for="adsimage" style="width:150px">Werbung Bild</label>

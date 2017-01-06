@@ -50,7 +50,8 @@
 				<br />
 				<label class="control-label" for="newstext" style="width:150px">News Text</label>
 				<br />
-				<?=form_textarea(array('id' => 'newstext', 'name' =>'newstext', "class" => "input-xlarge", "style" => "width:600px;height:150px", "value" => $news[0]['newstext']));?>
+				<input type="hidden" id="newstext" name="newstext"  value="<?=$news[0]['newstext']?>" />
+				<trix-editor input="newstext" class="trix-content"></trix-editor>
 			</div>
 			<div style="clear:both"></div>
 			<div class="col-sm-12">

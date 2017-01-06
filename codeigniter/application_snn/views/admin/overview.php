@@ -31,7 +31,7 @@
 	
 </script>
 
-<div class="col-lg-8 admininterface">
+
 	<div class="newstitle">Admininterface</div>
 	<br />
 	<div id="tabs">
@@ -85,7 +85,8 @@
 			<fieldset>
 				<legend class="newstitle">Gegenstände</legend>	
 				<a href="/secure/snn/admin/insertItem"><div class="btn adminpanel"><i class="fa fa-motorcycle"></i>&nbsp;Neuer Gegenstand</div></a>	
-				<a href="/secure/snn/admin/itemsVerwalten"><div class="btn adminpanel"><i class="fa fa-plane"></i>&nbsp;Gegenstände verwalten</div></a>				
+				<a href="/secure/snn/admin/itemsVerwalten"><div class="btn adminpanel"><i class="fa fa-plane"></i>&nbsp;Gegenstände verwalten</div></a>
+				<a href="/secure/snn/admin/itemsImport"><div class="btn adminpanel"><i class="fa fa-plane"></i>&nbsp;Gegenstände importieren</div></a>				
 			</fieldset>
 		</div>				
 	</div>	
@@ -99,4 +100,3 @@
 		<a href="/secure/snn/admin/lastOnline"><button class="btn btn-warning btn-lb">Last online</button></a>			
 		<br />	&nbsp;	
 	<?php endif; ?>
-</div>

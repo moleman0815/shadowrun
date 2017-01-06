@@ -7,8 +7,9 @@
 $n_options = array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10'); 
 $r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'ork' => 'Ork', 'troll' => 'Troll');
 $options = '';
+#_debug($allganger);
 foreach($allganger as $g) {
-	$options .= '<option value="'.$g['gid'].'">'.$g['ganger_name'].'</option>';
+	$options .= '<option value="'.$g['gid'].'">Lv. '.$g['level'].' - '.$g['ganger_name'].'</option>';
 }
 ?>
 <script>
@@ -78,7 +79,7 @@ foreach($allganger as $g) {
 				<?php for($x=0; $x<count($story);$x++): ?>
 					<?php if ($x%2==0) { echo "</tr><tr>"; }?>
 					<td>
-						<img src="/secure/snn/assets/img/combat/storyimage/<?=$story[$x];?>" style="height:220px;width:220px" />
+						<img src="/secure/snn/assets/img/combat/storyimage/<?=$story[$x];?>" style="height:100px;width:100px" />
 						<?=form_radio(array('id' => substr($story[$x],0,-4), 'name' => 'storyimage', 'value' => $story[$x]), true);?>
 						<br />
 					</td>
@@ -115,7 +116,7 @@ foreach($allganger as $g) {
 				<br />
 
 				<?php for($x=0; $x<count($images);$x++): ?>
-					<img src="/secure/snn/assets/img/combat/missionsbanner/<?=$images[$x];?>" style="height:100px;width:800px" />
+					<img src="/secure/snn/assets/img/combat/missionsbanner/<?=$images[$x];?>" style="height:50px;width:200px" />
 					<?=form_radio(array('id' => substr($images[$x],0,-4), 'name' => 'missionsimage', 'value' => $images[$x]), true);?>
 					<br /></br />
 				<?php endfor; ?>

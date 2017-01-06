@@ -362,7 +362,7 @@ class Add_functions extends CI_Model {
 	public function getAllGanger() {
 		$this->db->select('*');
 		$this->db->from('ganger');
-		$this->db->order_by('ganger_name');
+		$this->db->order_by('level');
 		$query = $this->db->get();
 		return $query->result_array();
 	}	
@@ -743,7 +743,7 @@ class Add_functions extends CI_Model {
 
 	function avatar () {
 
-		$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/avatar/';
+		$config['upload_path'] = FCPATH.'assets/img/avatar/';
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['overwrite'] = TRUE;
 		$config['file_name'] = $this->session->userdata('id').'_avatar';
@@ -772,7 +772,7 @@ class Add_functions extends CI_Model {
 	}
 	
 	function insertAds () {
-		$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/uploads/';
+		$config['upload_path'] = FCPATH.'assets/img/uploads/';
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['overwrite'] = TRUE;
 		$config['file_name'] = 'banner_'.time().'_'.$_FILES['adsimage']['name'];
@@ -807,8 +807,8 @@ class Add_functions extends CI_Model {
 
 	function editAds () {
 		if ($this->input->post('deleteold')) {
-			unlink('/var/www/vhosts/default/htdocs/secure/snn/assets/img/uploads/'.$this->input->post('old_image'));
-			$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/uploads/';
+			unlink(FCPATH.'assets/img/uploads/'.$this->input->post('old_image'));
+			$config['upload_path'] = FCPATH.'assets/img/uploads/';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['overwrite'] = TRUE;
 			$config['file_name'] = 'banner_'.time().'_'.$_FILES['adsimage']['name'];
@@ -842,7 +842,7 @@ class Add_functions extends CI_Model {
 	}
 	
 	function insertCategory () {
-		$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/news/icons/';
+		$config['upload_path'] = FCPATH.'assets/img/news/icons/';
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['overwrite'] = TRUE;
 		$config['file_name'] = 'news_cat_'.time().'_'.$_FILES['catimage']['name'];
@@ -905,8 +905,8 @@ class Add_functions extends CI_Model {
 	function editCategory () {
 		#die($this->util->_debug($this->input->post()));
 		if ($this->input->post('delete_oldimage')) {
-			unlink('/var/www/vhosts/default/htdocs/secure/snn/assets/img/news/icons/'.$this->input->post('old_icon'));
-			$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/news/icons/';
+			unlink(FCPATH.'assets/img/news/icons/'.$this->input->post('old_icon'));
+			$config['upload_path'] = FCPATH.'assets/img/news/icons/';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['overwrite'] = TRUE;
 			$config['file_name'] = 'cat_news_'.time().'_'.$_FILES['catimage']['name'];
@@ -940,7 +940,7 @@ class Add_functions extends CI_Model {
 	}
 
 	function uploadImages () {
-		$config['upload_path'] = '/var/www/vhosts/default/htdocs/secure/snn/assets/img/combat/'.$this->input->post('imagetype').'/';
+		$config['upload_path'] = FCPATH.'assets/img/combat/'.$this->input->post('imagetype').'/';
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['overwrite'] = TRUE;
 		$config['file_name'] = $this->input->post('imagetype').'_'.time();
@@ -976,7 +976,7 @@ class Add_functions extends CI_Model {
 	}
 
 	function deleteUpload () {
-		if(unlink('/var/www/vhosts/default/htdocs/secure/snn/assets/img/combat/'.$this->input->post('type').'/'.$this->input->post('source'))) {
+		if(unlink(FCPATH.'assets/img/combat/'.$this->input->post('type').'/'.$this->input->post('source'))) {
 			return true;
 		} else {
 			return false;
@@ -1029,7 +1029,41 @@ class Add_functions extends CI_Model {
 		return $this->db->get()->result_array();
 	}
 	
+	function importItems () {
+		require(FCPATH.'assets/excel/php-excel-reader/excel_reader2.php');
+		require(FCPATH.'assets/excel/SpreadsheetReader_XLSX.php');
 
+		$config['upload_path'] = FCPATH.'tmp';
+		$config['allowed_types'] = 'xlsx';
+		$config['overwrite'] = TRUE;
+		$config['max_size']= '1000';
+		
+		$this->upload->initialize($config);
+		
+		if(!$this->upload->do_upload('itemfile')) {
+			return false;
+		} else {
+			$data = array();
+			$zdata = array('upload_data' => $this->upload->data());
+			$Reader = new SpreadsheetReader_XLSX($zdata['upload_data']['full_path']);
+			foreach ($Reader as $row) {
+				$data = array (
+						"name" => $row[0],
+						"ammo" => $row[1],
+						"damage" => $row[2],
+						"description" => $row[3],
+						"mode" => $row[4],
+						"cost" => $row[5],
+						"reduce" => $row[6],
+						"type" => $row[7]
+				);
+				if(!$this->db->insert('weapons', $data)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 }
 
 ?>	

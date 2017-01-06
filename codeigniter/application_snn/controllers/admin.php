@@ -33,8 +33,9 @@ class Admin extends CI_Controller {
 		$this->load->view('header');
 		$this->load->view('menu_header', $header);
 		$this->load->view('left_column', $left);
+		$this->load->view('div_md8');
 		$this->load->view('admin/overview', $data);
-		$this->load->view('right_column', $right);
+		$this->load->view('div_end');
 		$this->load->view('footer');			
 	}	
 
@@ -95,6 +96,35 @@ class Admin extends CI_Controller {
 		$this->load->view('admin/itemsverwalten', $data);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');			
+	}
+	
+	public function itemsImport () {
+		if ($this->input->post("sendfile") == true) {
+			if($this->add_functions->importItems()) {
+				$this->session->set_userdata('success', 'Die Gegenstände wurden erfolgreich importiert.');
+			} else {
+				$this->session->set_userdata('error', 'Beim Importieren der Gegenstände ist ein Fehler aufgetreten.');
+			}			
+		}
+		$data = array(
+				'error' => $error,
+				'success' => $success,
+		
+		);
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => false,
+				'show_friends' => false,
+		);
+		$right = array('show_ads' => false);
+		
+		$this->load->view('header');
+		$this->load->view('menu_header', $header);
+		$this->load->view('left_column', $left);
+		$this->load->view('div_md8');
+		$this->load->view('admin/importitems', $data);
+		$this->load->view('div_end');
+		$this->load->view('footer');
 	}
 
 	public function editItem () {
