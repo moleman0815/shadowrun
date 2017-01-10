@@ -263,8 +263,9 @@ class Main_db_assets extends CI_Model
     }
 
     function getFeedback () {
+    	$where = array('deleted' => '0');
         $this->db->order_by('time', 'DESC');
-        return $this->db->get('feedback')->result_array();
+        return $this->db->get_where('feedback', $where)->result_array();
     }   
 
     function sendFeedback () {
@@ -274,12 +275,32 @@ class Main_db_assets extends CI_Model
             'bereich' => $this->input->post('bereich'),
             'feedback' => $this->input->post('feedback'),
             'type' => $this->input->post('type'),            
-            'time' => time(),        
+            'time' => time(),  
+        	'uid' => $this->input->post('uid'),
             'status' => '0',
             'gelesen' => '0',
             );
         return ($this->db->insert('feedback', $data)) ? true : false;
     } 
+    
+    function editFeedback () {
+    	#_debugDie($this->input->post());
+    	$data = array(
+    			'autor' => $this->input->post('autor'),
+    			'title' => $this->input->post('title'),
+    			'bereich' => $this->input->post('bereich'),
+    			'feedback' => $this->input->post('feedback'),
+    			'type' => $this->input->post('type'),
+    			'time' => time(),
+    			'uid' => $this->input->post('uid'),
+    			'status' => $this->input->post('status'),
+    			'gelesen' => '0',
+    	);
+    	$this->db->where('fid', $this->input->post('fid'));
+    	
+    	return ($this->db->update('feedback', $data)) ? true : false;
+    }
+    
     
     function sendFeedbackAnswer () {
     	#_debugDie($this->input->post());
@@ -317,6 +338,16 @@ class Main_db_assets extends CI_Model
         $data = array('status' => '1');
         $this->db->where('fid', $id);
         return ($this->db->update('feedback', $data)) ? true : false;
+    }
+    
+    function deleteFeedback($id) {
+    	$data = array('deleted' => '1');
+    	$this->db->where('fid', $id);
+    	$this->db->update('feedback', $data);
+    }
+    
+    function receiveFeedback () {
+    	return $this->db->get_where('feedback', array('fid' => $this->input->post('fid')))->result_array();
     }
     
 }

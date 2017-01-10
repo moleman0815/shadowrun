@@ -227,6 +227,7 @@ legend {
 			        				$tooltip .= "Ammo: ".$w['ammo']."<br />";
 			            			$tooltip .= "Damage: ".$w['damage']."<br />";
 			            			$tooltip .= "Modus: ".$w['mode']."<br />";
+			            			$tooltip .= "Typ: ".strtoupper($w['subtype'])."<br />";
 			            			$tooltip .= "Rückstoß: -".$w['reduce']."<br /><br />";
 			        				$tooltip .= "<div>";
 			        			?>

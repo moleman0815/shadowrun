@@ -22,14 +22,16 @@ $(document).ready(function () {
     $(function () {
 		$("#product li").draggable({
 			revert:true,
-			
+			containment: "window",
+		    cursor: "crosshair",
 			drag:function () {
 				$(this).addClass("active");
 				$(this).closest("#product").addClass("active");
 			},
 			stop:function () {
 				$(this).removeClass("active").closest("#product").removeClass("active");
-			}
+			},
+			helper: 'clone',
 		});
 
 		$(".basket").droppable({

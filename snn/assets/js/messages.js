@@ -112,6 +112,36 @@ $.extend (sr,{
 					}
 				}
 			});
+		},
+		deleteFeedback : function (id) {
+			$.post('/secure/snn/desktop/deleteFeedback', {fid: id}, function(data)
+					{
+						location.reload();
+				});
+		},	
+		editFeedback : function (id) {
+			$.ajax({
+				url: '/secure/snn/desktop/receiveFeedback',
+				type: 'POST',
+				data: {'fid': id},
+				success: function (data) {
+					var json = jQuery.parseJSON(data);
+					if (json['status'] == 'success') {
+						$('#mode').val('edit');
+						$('#autor').val(json['data'][0]['autor']);
+						$('#title').val(json['data'][0]['title']);
+						$('#type').val(json['data'][0]['type']);
+						$('#bereich').val(json['data'][0]['bereich']);
+						$('#feedback').val(json['data'][0]['feedback']);
+						$('#fid').val(json['data'][0]['fid']);
+						$('#status').val(json['data'][0]['status']);
+
+						var element = document.getElementById("title");
+						element.scrollIntoView();
+					}
+				}
+			});
+
 		}
 	}		
 });

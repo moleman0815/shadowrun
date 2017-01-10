@@ -59,6 +59,12 @@ class Desktop extends CI_Controller {
 			$this->main_db_assets->deleteMessage($this->input->post('id'));							
 		}
 	}	
+	
+	public function deleteFeedback () {
+		if ($this->input->post('fid') == true) {
+			$this->main_db_assets->deleteFeedback($this->input->post('fid'));
+		}
+	}
 
 	public function replyMsg() {
 		if ($this->input->post('id') == true) {
@@ -72,9 +78,13 @@ class Desktop extends CI_Controller {
 	}
 	
 	public function updateNewMessage () {
-		if($this->main_db_assets->updateNewMessage()) {
+		if ($this->main_db_assets->updateNewMessage()) {
 			return true;
 		}
+	}
+	
+	public function receiveFeedback () {
+		echo json_encode(array('status' => 'success', 'data' => $this->main_db_assets->receiveFeedback()));
 	}
 	
 	public function shoutbox () {
@@ -402,13 +412,24 @@ class Desktop extends CI_Controller {
 			$title = $this->input->post('title');
 			$feedback = $this->input->post('feedback');
 			$bereich = $this->input->post('bereich');
+			$mode = $this->input->post('mode');
 			if ((!empty($title) && (!empty($feedback)) && (!empty($bereich)) )) {
-				if ($this->main_db_assets->sendFeedback()) {
-					$this->session->set_userdata('success', 'Dein Feedback wurde eingetragen.');
-					redirect('desktop/feedback');									
+				if ($mode == 'edit') {
+					if ($this->main_db_assets->editFeedback()) {
+						$this->session->set_userdata('success', 'Dein Feedback wurde editiert.');
+						redirect('desktop/feedback');
+					} else {
+						$this->session->set_userdata('error', 'Beim Editieren ist ein Fehler aufgetreten.');
+						redirect('desktop/feedback');
+					}
 				} else {
-					$this->session->set_userdata('error', 'Beim Versenden ist ein Fehler aufgetreten.');
-					redirect('desktop/feedback');									
+					if ($this->main_db_assets->sendFeedback()) {
+						$this->session->set_userdata('success', 'Dein Feedback wurde eingetragen.');
+						redirect('desktop/feedback');									
+					} else {
+						$this->session->set_userdata('error', 'Beim Versenden ist ein Fehler aufgetreten.');
+						redirect('desktop/feedback');									
+					}
 				}
 			} else {
 					$this->session->set_userdata('error', 'Bitte fülle alle Felder aus.');

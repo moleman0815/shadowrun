@@ -119,10 +119,19 @@
 			<div class="col-lg-8" style="border: 1px solid white;padding:5px">
 				<div><b><?=$f['title']?>: <span style="color: red"><?=strtoupper($f['type'])?></span></b><br />
 				<?php if($this->session->userdata('rank') == '1'): ?>
-					<span style="float:right;margin-right:15px;">Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?></span></div>
+					<span style="float:right;margin-right:15px;">
+						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
+						<?php if($this->session->userdata('rank') == '1' || $this->session->userdata('id') == $f['uid']): ?>
+							<br />
+							<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="if(confirm('Feedback wirklich loeschen?')) { sr.messages.deleteFeedback('<?=$f['fid']?>'); return true; } else { return false; }" style="cursor:pointer" /></span>
+							&nbsp;
+							<span><img src="/secure/snn/assets/img/icons/edit.png" title="edit" alt="edit" onclick="sr.messages.editFeedback('<?=$f['fid']?>')" style="cursor:pointer" /></span>
+						<?php endif; ?>
+					</span></div>
 				<?php else: ?>
 					<span style="float:right;margin-right:15px">Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?></span></div>
 				<?php endif; ?>
+
 				<?=$f['autor']?> schrieb am <?=date('d.m.Y H:i', $f['time'])?><br /><br />
 				<?=nl2br($f['feedback']);?>
 
@@ -155,14 +164,18 @@
 		<legend style="color:white">Feedback schreiben</legend>
 	<?=form_open_multipart('/desktop/feedback');?>
 	<?=form_hidden('sendFeedback', true);?>
+		<input type="hidden" name="uid" id="uid" value="<?=$this->session->userdata('id')?>" />
+		<input type="hidden" name="mode" id="mode" value="" />
+		<input type="hidden" name="fid" id="fid" value="" />
+		<input type="hidden" name="status" id="status" value="" />
 		<label class="control-label" for="title" style="width:150px">Titel</label>
 		<?=form_input(array('id' => 'title', 'name' =>'title', "class" => "input-xlarge"));?>
 		<br />
 		<label class="control-label" for="autor" style="width:150px">Name</label>
-		<input type="text" name='autor' class="input-xlarge" value="<?=ucfirst($this->session->userdata('name'))?>" readonly="readonly" />
+		<input type="text" name='autor' id="autor" class="input-xlarge" value="<?=ucfirst($this->session->userdata('name'))?>" readonly="readonly" />
 		<br />		
 		<label class="control-label" for="type" style="width:150px">Typ</label>
-		<select name="type">
+		<select name="type" id="type">
 			<option value="bug">Bug</option>
 			<option value="feature">Feature</option>
 			<option value="layout">Layout</option>
