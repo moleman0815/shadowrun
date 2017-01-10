@@ -70,9 +70,13 @@ class Combatzone extends CI_Controller {
 					'weapons' => $this->combat_model->getWeapons(),
 					'armor' => $this->combat_model->getArmor(),
 					'inv' =>  $this->combat_model->getInventory(),
+					'wpnoptions' => $this->combat_model->getWpnOptions(),
 				);		
 		} else {
-			$center = array();
+			$center = array(
+					
+					
+			);
 		}
 		$right = array(
 						'show_ads' => true,

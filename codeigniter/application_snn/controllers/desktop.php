@@ -414,6 +414,14 @@ class Desktop extends CI_Controller {
 					$this->session->set_userdata('error', 'Bitte fülle alle Felder aus.');
 					redirect('desktop/feedback');													
 			}
+		} else if ($this->input->post('sendfeedbackanswer')) {
+			if ($this->main_db_assets->sendFeedbackAnswer()) {
+				$this->session->set_userdata('success', 'Deine Feedbackantwort wurde eingetragen.');
+				redirect('desktop/feedback');
+			} else {
+				$this->session->set_userdata('error', 'Beim Versenden ist ein Fehler aufgetreten.');
+				redirect('desktop/feedback');
+			}
 		}
 		$header = array(
 				'name' => $this->session->userdata('name'),

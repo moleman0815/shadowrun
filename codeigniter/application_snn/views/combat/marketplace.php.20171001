@@ -7,10 +7,6 @@ if(!empty($char)) {
 	$inv_weapons = explode(';', $inv[0]['wid']);
 	$inv_armor = explode(';', $inv[0]['aid']);
 }
-foreach ($wpnoptions as $w) {
-	$wpnType .= '<option value="'.$w['subtype'].'">'.strtoupper($w['subtype']).'</option>'; 
-	
-}
 ?>
 
 <script>
@@ -61,24 +57,7 @@ foreach ($wpnoptions as $w) {
 				$('#submit').attr('disabled', false);				
 			}
 		}
-
-		function changeWeaponFilter () {
-			var filter = $('#wpn_filter :selected').val();
-			if (filter != "") {
-		 		$('#wpn_list').children().each(function(){
-		 			if ($(this).attr("data-subtype") != filter) {
-						$(this).hide("fast");
-		 			} else {
-		 				$(this).show("fast");
-		 			}		 			
-		 		});	
-			} else {
-		 		$('#wpn_list').children().each(function(){
-			 		$(this).show("fast");		 			
-		 		});
-			}
-		}
-		
+	
 </script>
 <style>
 
@@ -170,53 +149,12 @@ legend {
 	
 		</ul>	
 		<div id="buy">		
-			<div class="col-md-12" style="color: white">
-			<?=form_open_multipart('/combatzone/marketplace');?>
-			<?=form_hidden('buyItems', true);?>		
-				<div class="newstitle">Warenkorb</div>	
-				<br />
-				<div class="basket" id="weapon" style="color: white">
-	            	<div class="basket_list" style="color: white">
-						<div class="head" style="color: white">
-							<table style="color: white">
-								<tr>
-		                    		<td style="width:250px"><span>Produkt</span></td>
-		                    		<td style="width:70px"><span>Menge</span></td>
-		                    		<td style="width:70px"><span>Kosten</span></td>
-		                    		<td style="width:20px"></td>
-		                    	</tr>
-		                    </table>
-		                </div>	
-	            		<ul id="weapon">
-	            		</ul>
-	            		<ul id="armor">
-	            		</ul>   
-	            		<ul id="stuff">
-	            		</ul>                		         
-	            		<hr />		
-	            	<span style="float:right">Total: <input type="text" readonly name="total_cost" id="total_cost" style="width:70px" value="0" /> &yen;   </span>
-	            	<br />
-	            	<div id="cost-warning"></div>
-	            	<br />&nbsp;         		
-	            	</div>
-	            	<?=form_submit(array('id'=>'submit', 'value' => 'Gegenstände erwerben', 'name' => 'submit', 'class' => 'btn btn-primary btn-sm'));?>
-	            </div>
-
-				<?=form_close();?>	
-			</div>
-			<br />&nbsp;
-			<div class="col-md-12">
-				<div class="newstitle">Waffen -> Filter: 
-					<select name="wpn_filter" id="wpn_filter" onchange="changeWeaponFilter()">
-						<option value="">All</option>
-						<?=$wpnType?>
-					</select>
-					<span style="float:right;margin-left:20px;cursor:pointer" id="weapon_span" onclick="toggleMarketBoxes('weapon')"><img src="/secure/snn/assets/img/icons/add.png" />
-				</div>
+			<div class="col-md-6">
+				<div class="newstitle">Waffen<span style="float:right;margin-left:20px;cursor:pointer" id="weapon_span" onclick="toggleMarketBoxes('weapon')"><img src="/secure/snn/assets/img/icons/add.png" /></div>
 				<br />
 				<div style="display: none" id="weapon_box">
 		    		<section id="product">
-			        	<ul class="clear" id="wpn_list">
+			        	<ul class="clear">
 			        	<?php if(!empty($weapons[0])): ?>
 			        		<?php $i=1; foreach($weapons as $w): ?>
 			        			<?php if(in_array($w['wid'], $inv_weapons)) {continue;} ?>
@@ -230,11 +168,11 @@ legend {
 			            			$tooltip .= "Rückstoß: -".$w['reduce']."<br /><br />";
 			        				$tooltip .= "<div>";
 			        			?>
-			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-subtype="<?=$w['subtype']?>" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()" style="z-index:1000">
+			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()">
 			            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3>
 			      					Kosten: <b><?=$w['cost'];?> &yen;</b>
 			            		</li>
-			            		<?php if ($i%5 == 0): ?>
+			            		<?php if ($i%3 == 0): ?>
 			            			</ul><ul class="clear">
 			            		<?php endif; ?>
 			            		<?php $i++; ?>
@@ -264,7 +202,7 @@ legend {
 		        </div>
 				<div class="newstitle">Stuff<span style="float:right;margin-left:20px;cursor:pointer" id="stuff_span" onclick="toggleMarketBoxes('stuff')"><img src="/secure/snn/assets/img/icons/add.png" /></div>
 				<br />
-				<div style="display: none" id="stuff_box">			
+				<div style="display: block" id="stuff_box">			
 		    		<section id="product">
 		        	<ul class="clear">
 						<li data-id="medipack" data-type="stuff" data-cost="200">
@@ -281,7 +219,41 @@ legend {
 		        	</section>
 				</div>	        
 			</div>
-			
+			<?=form_open_multipart('/combatzone/marketplace');?>
+			<?=form_hidden('buyItems', true);?>		
+			<div class="col-md-6" style="color: white">
+				<div class="newstitle">Warenkorb</div>	
+				<br />
+				<div class="basket" id="weapon" style="color: white">
+	            	<div class="basket_list" style="color: white">
+						<div class="head" style="color: white">
+							<table style="color: white">
+								<tr>
+		                    		<td style="width:250px"><span>Produkt</span></td>
+		                    		<td style="width:70px"><span>Menge</span></td>
+		                    		<td style="width:70px"><span>Kosten</span></td>
+		                    		<td style="width:20px"></td>
+		                    	</tr>
+		                    </table>
+		                </div>	
+	            		<ul id="weapon">
+	            		</ul>
+	            		<ul id="armor">
+	            		</ul>   
+	            		<ul id="stuff">
+	            		</ul>                		         
+	            		<hr />		
+	            	<span style="float:right">Total: <input type="text" readonly name="total_cost" id="total_cost" style="width:70px" value="0" /> &yen;   </span>
+	            	<br />
+	            	<div id="cost-warning"></div>
+	            	<br />&nbsp;         		
+	            	</div>
+	            	<br />
+	            	<?=form_submit(array('id'=>'submit', 'value' => 'Gegenstände erwerben', 'name' => 'submit', 'class' => 'btn btn-primary btn-sm'));?>
+	            </div>
+
+				<?=form_close();?>	
+			</div>
 			<div style="clear:both"></div>
 		</div>
 		<div id="sell">

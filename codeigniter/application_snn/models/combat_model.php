@@ -77,13 +77,19 @@ class Combat_model extends CI_Model
 	function getInternInventory() {
 		return $this->db->get_where('inventory', array('cid' => $this->session->userdata('charid')))->result_array();
 	}
+	
+	function getWpnOptions () {
+		$sql = "SELECT distinct(subtype) FROM newsnet_weapons WHERE type='weapon' AND subtype != ''";
+		return $this->db->query($sql)->result_array();
+	}
 
 	function sellItems () {
 		$inv = $this->getInternInventory();
 		$weapons = $this->input->post('weapon');
 		$armor = $this->input->post('armor');
 		$money = $this->input->post('total_sell');
-		if (empty($weapon) && (empty($armor))) {
+
+		if (empty($weapons) && (empty($armor))) {
 			return false;
 		}
 

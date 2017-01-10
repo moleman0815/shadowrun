@@ -3,11 +3,8 @@
 	$this->session->unset_userdata('success');
 	$error = $this->session->userdata('error');
 	$this->session->unset_userdata('error');
-	$n_options = array();
-	for ($x=1; $x<21; $x++) {
-		array_push($n_options, $x);	
-	}
-	#$n_options = array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11'); 
+	
+	$n_options = array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15'); 
 	$m_options = array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10'); 
 	$r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'ork' => 'Ork', 'troll' => 'Troll');
 	$c_options = array('' => '', '' => '', '' => '', '' => '', '' => '');

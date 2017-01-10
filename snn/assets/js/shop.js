@@ -1,6 +1,24 @@
 $(document).ready(function () {
         $('#total_cost').val('0');
+        checkBoxes();
     });
+	
+	function checkBoxes () {
+		var wpnBox = sessionStorage.getItem("weapon_box");
+		var armorBox = sessionStorage.getItem("armor_box");
+		var stuffBox = sessionStorage.getItem("stuff_box");
+		if (wpnBox == 'open') {
+			toggleMarketBoxes("weapon");
+		}
+		if (armorBox == 'open') {
+			toggleMarketBoxes("armor");
+		}
+		if (stuffBox == 'open') {
+			toggleMarketBoxes("stuff");
+		}
+		
+	}
+
     $(function () {
 		$("#product li").draggable({
 			revert:true,
@@ -30,16 +48,16 @@ $(document).ready(function () {
 				if (itemId.html() != null && itemType == 'stuff') {
 					$('#' + move.attr("data-id") + '_amount').val(parseInt($('#' + move.attr("data-id") + '_amount').val())+1);
 					$('#' + move.attr("data-id") + '_cost').val(parseInt($('#' + move.attr("data-id") + '_cost').val())+parseInt(move.attr("data-cost")));
-					calculateCosts(move);					
+					calculateCosts(event);					
 					//itemId.find("input").val(parseInt(itemId.find("input").val()) + 1);
 				} else {
 					// Add the dragged item to the basket
 					if (move.attr("data-type") == 'weapon') {
-						addBasketWeapon(basket, move);
+						addBasketWeapon(basket, move, event);
 					} else if (move.attr("data-type") == 'stuff') {
-						addBasketStuff(basket, move);
+						addBasketStuff(basket, move, event);
 					} else {
-						addBasketArmor(basket, move);
+						addBasketArmor(basket, move, event);
 					}
 		
 					// Updating the quantity by +1" rather than adding it to the basket
@@ -115,7 +133,7 @@ $(document).ready(function () {
 			move.hide();
 		}
 
-        function addBasketStuff(basket, move) {			
+        function addBasketStuff(basket, move, event) {			
 			basket.find("ul[id^='stuff']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '" data-cost="' + move.attr("data-cost") + '">'
 					+ '<table class="table"><tr>'
 					+ '<td style="width:220px"><span class="name">' + move.find("h3").html() + '</span></td>'					
@@ -125,7 +143,7 @@ $(document).ready(function () {
 					+ '<td style="width:20px"><button class="minus">-</button></td>'
 					+ '</tr></table></li>'
 				);					
-			calculateCosts(move);
+			calculateCosts(event);
 		}
 
 		function calculatePrice(type, cash) {	
@@ -147,7 +165,7 @@ $(document).ready(function () {
 			var price = $(this).closest("li").attr("data-cost");
 			var id = $(this).closest("li").attr("data-id");
 			$('#item_'+id).show();
-			console.log(id);
+
 			$(this).closest("li").remove();
 			calculatePrice('sub', price);			
 		});
@@ -166,11 +184,13 @@ $(document).ready(function () {
         // The function that is triggered once delete button is pressed
         $(".basket ul li button.delete").live("click", function () {
 			$(this).closest("li").remove();
-			calculateCosts();			
+			calculateCosts(event);			
 		});
 
         // The function that is triggered once delete button is pressed
-        $(".basket ul li button.minus").live("click", function () {
+        $(".basket ul li button.minus").live("click", function (event) {
+        	console.log("test minus");
+        	
 			var id = $(this).closest("li").attr('data-id');
 			var cost = $(this).closest("li").attr('data-cost');
 			if ($('#'+id+'_amount').val() < '2') {
@@ -179,8 +199,9 @@ $(document).ready(function () {
 				$('#'+id+'_amount').val(parseInt($('#'+id+'_amount').val())-1);
 				$('#'+id+'_cost').val(parseInt($('#'+id+'_cost').val())-parseInt(cost));
 			}
-			console.log(cost);
-			calculateCosts();			
+
+			calculateCosts(event);
+					
 		});
     });
 
@@ -188,15 +209,17 @@ function toggleMarketBoxes(id) {
 	if ($('#'+id+'_box').is(":visible")) {
 		$('#'+id+'_box').hide('fast');
 		$('#'+id+'_span').html('<img src="/secure/snn/assets/img/icons/add.png" />');
+		sessionStorage.setItem(id+'_box', 'close');
 	} else {
 		$('#'+id+'_box').show('fast');
 		$('#'+id+'_span').html('<img src="/secure/snn/assets/img/icons/minus.png" />');		
+		sessionStorage.setItem(id+'_box', 'open');
 	}
 }
 
 
         // This function runs onc ean item is added to the basket
-        function addBasketWeapon(basket, move) {
+        function addBasketWeapon(basket, move, event) {
 			$(".basket ul[id^='weapon'] li").remove();
 			basket.find("ul[id^='weapon']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '">'
 					+ '<table class="table"><tr>'
@@ -207,9 +230,9 @@ function toggleMarketBoxes(id) {
 					+ '<td style="width:20px"><button class="delete">&#10005;</button></td>'
 					+ '</tr></table></li>'
 				);					
-			calculateCosts(move);
+			calculateCosts(event);
 		}
-        function addBasketArmor(basket, move) {
+        function addBasketArmor(basket, move, event) {
 			$(".basket ul[id^='armor'] li").remove();
 
 			basket.find("ul[id^='armor']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '">'
@@ -222,5 +245,5 @@ function toggleMarketBoxes(id) {
 					+ '</tr></table></li>'
 				);
 
-			calculateCosts(move);
+			calculateCosts(event);
 		}	

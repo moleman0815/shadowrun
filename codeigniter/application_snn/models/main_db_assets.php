@@ -280,6 +280,37 @@ class Main_db_assets extends CI_Model
             );
         return ($this->db->insert('feedback', $data)) ? true : false;
     } 
+    
+    function sendFeedbackAnswer () {
+    	#_debugDie($this->input->post());
+    	$data = array(
+    			'autor' => 'Alex',
+    			'title' => $this->input->post('feedbacktitle'),
+    			'bereich' => '1',
+    			'feedback' => $this->input->post('feedbacktext'),
+    			'type' => 'answer',
+    			'time' => time(),
+    			'status' => '0',
+    			'gelesen' => '0',
+    			'parent' => $this->input->post('feedbackParentid'),
+    	);
+    	if ($this->db->insert('feedback', $data)) {
+    		$lastid = $this->db->insert_id();
+    		$query = $this->db->get_where('feedback', array('fid' => $this->input->post('feedbackParentid')))->result_array();
+
+    		
+    		$child = $query[0]['child'].";".$lastid;
+
+    		$data = array('child' => $child);
+    		$this->db->where('fid', $this->input->post('feedbackParentid'));
+    		
+    		return ($this->db->update('feedback', $data)) ? true : false;
+    	} else {
+    		return false;
+    	}
+    	
+    	
+    }
 
     function changeFeedbackStatus () {
         $id = $this->input->post('fid');
