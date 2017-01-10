@@ -137,7 +137,7 @@ input, textarea, select {
 								<img src="/secure/snn/assets/img/avatar/<?=$avatar;?>" alt="" />
 							</div>
 						<?php endif; ?>
-						<?=$m['msg_text']?>
+						<?=nl2br($m['msg_text'])?>
 					</div>
 				<?php if($m['child'] != '0'):?>
 				<br />

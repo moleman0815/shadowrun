@@ -14,6 +14,13 @@
 </style>
 
 <script>
+// window.addEventListener("beforeunload", function (e) {
+// 	  var confirmationMessage = "Reload ist nicht gestattet.";
+
+// 	  e.returnValue = confirmationMessage;     // Gecko, Trident, Chrome 34+
+// 	  return confirmationMessage;              // Gecko, WebKit, Chrome <34
+// 	});
+	
 	$( document ).ready(function() {
     	<?php if($error): ?>	
     		$("#error").fadeOut(7000);    	

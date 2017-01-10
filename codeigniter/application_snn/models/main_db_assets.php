@@ -287,7 +287,7 @@ class Main_db_assets extends CI_Model
     	#_debugDie($this->input->post());
     	$data = array(
     			'autor' => $this->input->post('autor'),
-    			'title' => $this->input->post('title'),
+    			'title' => $this->input->post('title')." (edited)",
     			'bereich' => $this->input->post('bereich'),
     			'feedback' => $this->input->post('feedback'),
     			'type' => $this->input->post('type'),

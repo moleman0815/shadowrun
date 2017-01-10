@@ -121,15 +121,17 @@
 				<?php if($this->session->userdata('rank') == '1'): ?>
 					<span style="float:right;margin-right:15px;">
 						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
+					</span></div>
+				<?php else: ?>
+					<span style="float:right;margin-right:15px">
+						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
 						<?php if($this->session->userdata('rank') == '1' || $this->session->userdata('id') == $f['uid']): ?>
 							<br />
 							<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="if(confirm('Feedback wirklich loeschen?')) { sr.messages.deleteFeedback('<?=$f['fid']?>'); return true; } else { return false; }" style="cursor:pointer" /></span>
 							&nbsp;
 							<span><img src="/secure/snn/assets/img/icons/edit.png" title="edit" alt="edit" onclick="sr.messages.editFeedback('<?=$f['fid']?>')" style="cursor:pointer" /></span>
-						<?php endif; ?>
+						<?php endif; ?>	
 					</span></div>
-				<?php else: ?>
-					<span style="float:right;margin-right:15px">Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?></span></div>
 				<?php endif; ?>
 
 				<?=$f['autor']?> schrieb am <?=date('d.m.Y H:i', $f['time'])?><br /><br />

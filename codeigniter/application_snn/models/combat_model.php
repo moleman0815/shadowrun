@@ -561,6 +561,8 @@ class Combat_model extends CI_Model
 				$this->player['weapon_soak'] = (int)($this->player['weapon_soak']+6);
 				$this->player['weapon_damage'] = 'T';
 			}
+			
+			#_debugDie($this->player);
 	
 			for ($x=0;$x<$this->enemy[$target]['body'];$x++) {
 				$roll = $this->combat->_rollDiceWithRule();
@@ -691,8 +693,8 @@ class Combat_model extends CI_Model
 			}
 					
 				
-			#$enemy['weapon_soak'] = $enemy['weapon_soak_default'];
-			#$enemy['weapon_damage'] = $enemy['weapon_default'];
+			$enemy['weapon_soak'] = $enemy['weapon_soak_default'];
+			$enemy['weapon_damage'] = $enemy['weapon_default'];
 			error_log('in evaluateEnemyDamage finalized: ');
 		} else {
 			$this->finalizeFight();
