@@ -12,6 +12,7 @@ class Add_functions extends CI_Model {
         // Call the Model constructor
         parent::__construct();
         $this->load->model('util');
+       # $this->load->model('combat_model');
 		$this->load->library('upload');
         #$this->load->library('image_lib');
     }	
@@ -313,7 +314,7 @@ class Add_functions extends CI_Model {
 			'armed_longrange' => $this->input->post('armed_longrange'),
 			'armed_combat' => $this->input->post('armed_combat'),
 			'inidice' => $inidice,
-			'reaction_mod' => $reaction,
+			'reaction_mod' => 0,
 
 		);
 
@@ -357,6 +358,37 @@ class Add_functions extends CI_Model {
 			return false;
 		}
 	}	
+	
+	function getCharacterAndInventory() {
+		$this->db->select('*');
+		$this->db->from('chars');
+		$this->db->where('uid', $this->session->userdata('id'));
+		$query = $this->db->get()->result_array();
+		$data = array();
+		$inv = $this->combat_model->getInventory();
+		
+		if (!empty($query)) {
+			$avatar = $this->db->get_where('login', array('id' => $query[0]['uid']))->result_array();
+			$query[0]['avatar'] = $avatar[0]['avatar'];	
+			$query[0]['inidice_mod'] = 0;
+			if (!empty($inv[0]['cyberware'])) {
+				foreach($inv[0]['cyberware'] as $c) {
+					if ($c['cyberware_reaction'] != 0 && $c['cyberware_reaction'] != '') {
+						$query[0]['reaction_mod'] = $query[0]['reaction_mod']+$c['cyberware_reaction'];
+					}
+					if ($c['cyberware_ini'] != 0 && $c['cyberware_ini'] != '') {
+						$query[0]['inidice_mod'] = $query[0]['inidice_mod']+$c['cyberware_ini'];
+					}
+				}
+			}
+			$data['char'] = $query;
+			$data['inv'] = $inv;
+
+			return $data;
+		} else {
+			return false;
+		}
+	}
 
 
 	public function getAllGanger() {

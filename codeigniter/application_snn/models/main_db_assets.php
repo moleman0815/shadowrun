@@ -264,6 +264,7 @@ class Main_db_assets extends CI_Model
 
     function getFeedback () {
     	$where = array('deleted' => '0');
+    	$this->db->where('type != "feature2"');
         $this->db->order_by('time', 'DESC');
         return $this->db->get_where('feedback', $where)->result_array();
     }   
@@ -348,6 +349,28 @@ class Main_db_assets extends CI_Model
     
     function receiveFeedback () {
     	return $this->db->get_where('feedback', array('fid' => $this->input->post('fid')))->result_array();
+    }
+    
+    function sendFeatures () {	
+    	$data = array(
+    			'autor' => 'Alex',
+    			'title' => '',
+    			'bereich' => '',
+    			'feedback' => $this->input->post('feature'),
+    			'type' => 'feature2',
+    			'time' => time(),
+    			'uid' => '0',
+    			'status' => '0',
+    			'gelesen' => '0',
+    	);
+    	return ($this->db->insert('feedback', $data)) ? true : false;
+    }
+    
+    function getFeatures () {
+    	$where = array('deleted' => '0');
+    	$this->db->where('type', "feature2");
+    	$this->db->order_by('time', 'DESC');
+    	return $this->db->get_where('feedback', $where)->result_array();
     }
     
 }

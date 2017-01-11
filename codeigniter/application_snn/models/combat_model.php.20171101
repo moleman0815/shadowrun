@@ -387,7 +387,7 @@ class Combat_model extends CI_Model
 			/* evaluate first round */
 			if ($this->round == 0) {
 				$this->getInitiative();
-				$this->iniphase = max(array_keys($this->ini[0]));
+				$this->iniphase = max(array_keys($this->ini));
 				$this->round = '1';
 				return true;
 			} 			
@@ -401,18 +401,15 @@ class Combat_model extends CI_Model
 		error_log('in combatRound before itter: '.$this->iniphase);	
 
 		/* Iteration durch die Iniphasen */
-		$maxround = count($this->ini);
-		for ($x=0; $x<$maxround;$x++) {
-			for($this->iniphase = max(array_keys($this->ini[$x])); $this->iniphase > 0; $this->iniphase--) {
-				$this->checkResult();
-				
-				if (in_array($this->iniphase, array_keys($this->ini[$x]))) {
-					$this->fighterinround = $this->ini[$x][$this->iniphase];
-					$this->shootOut();
-				}
-				error_log('in combatRound after itter : '.$this->iniphase);						
+		for($this->iniphase = max(array_keys($this->ini)); $this->iniphase > 0; $this->iniphase--) {
+			$this->checkResult();
+			
+			if (in_array($this->iniphase, array_keys($this->ini))) {
+				$this->fighterinround = $this->ini[$this->iniphase];
+				$this->shootOut();
 			}
-		}
+			error_log('in combatRound after itter : '.$this->iniphase);						
+		}	
 		$this->evaluateNextRound();
 	}
 
@@ -425,7 +422,7 @@ class Combat_model extends CI_Model
 		$this->ini = array();
 		
 		$this->getInitiative();
-		$this->iniphase = max(array_keys($this->ini[0]));
+		$this->iniphase = max(array_keys($this->ini));
 		#_debugDie($this->ini);
 		
 		$this->_writeToSession();
@@ -745,8 +742,7 @@ class Combat_model extends CI_Model
  
 	/* berechnet die Initiative */
 	function getInitiative() {
- 		error_log('in getInitiative'); 		
- 		#_debugDie($this->player);
+ 		error_log('in getInitiative');
 		$reaction = ($this->player['reaction']+$this->player['reaction_mod']);
 		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction);
 		$this->calculateRounds($ini_player, $this->player['name']);		
@@ -755,26 +751,26 @@ class Combat_model extends CI_Model
 			$ini_enemy = (int)($this->combat->_calculateIni($this->enemy[$x]['inidice'])+$this->enemy[$x]['reaction']);
 			$this->calculateRounds($ini_enemy, $this->enemy[$x]['name']);
 		}		
+	_debugDie($this->ini);
 	}
 
 	/* Berechnet die Kampfrunden der Initiative */
 	function calculateRounds($count, $name) {
- 		error_log('in calculateRounds');		
-		if ($count > 10) {
-			$y = 0;
+ 		error_log('in calculateRounds');	
+ 		echo $count;	
+		if ($count > 10) {	
 			for ($x=$count;$x>0;$x-=10) {
 				if (empty($this->ini[$x]))	 {
-					$this->ini[$y][$x] = $name;
+					$this->ini[$x] = $name;
 				} else {
-					$this->ini[$y][$x] = $this->ini[$y][$x].";".$name;
+					$this->ini[$x] = $this->ini[$x].";".$name;
 				}
-				$y++;
 			}
 		} else {
 			if (empty($this->ini[$count]))	 {
-				$this->ini[0][$count] = $name;
+				$this->ini[$count] = $name;
 			} else {
-				$this->ini[0][$count] = $this->ini[$count].";".$name;
+				$this->ini[$count] = $this->ini[$count].";".$name;
 			}
 		}
 	}	

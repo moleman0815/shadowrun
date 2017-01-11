@@ -13,6 +13,10 @@
 	foreach ($friends as $f) {
 		array_push($nofriends, $f['id']);		
 	}
+	foreach ($r_options as $key => $value) {
+		$sel = ($key == $char[0]['race']) ? "selected='selected'" : "";
+		$races .= "<option value='".$key."' $sel>".$value."</option>";
+	}
 	#_debugDie($settings);
 ?>
 <style>
@@ -182,34 +186,30 @@ legend {
 				<label class="control-label select_width" for="charname">Charname</label>
 				<?php $so = (!empty($char)) ? $char[0]['charname'] : ''; ?>
 				<?=form_input(array('id' => 'charname', 'name' =>'charname', "class" => "input-xlarge", "value" => $so))?>
-				<br />
-				<label class="control-label select_width" for="race">Rasse</label>
-				<?php $so = (!empty($char)) ? array($char[0]['race']) : '';?>
-				<?=form_dropdown('race', $r_options, $so);?>
-				<br />
+				<br /><br />
 				<label class="control-label select_width" for="body">Konstitution</label>
-				<?php $so = (!empty($char)) ? array($char[0]['body']) : '';?>
-				<?=form_dropdown('body', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['body']) : '3';?>
+				<?=form_dropdown('body', $n_options, $so,'id="body"');?>
 				<br />		
 				<label class="control-label select_width" for="quickness">Schnelligkeit</label>
-				<?php $so = (!empty($char)) ? array($char[0]['quickness']) : '';?>
-				<?=form_dropdown('quickness', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['quickness']) : '3';?>
+				<?=form_dropdown('quickness', $n_options, $so,'id="quickness"');?>
 				<br />
 				<label class="control-label select_width" for="strength">Stärke</label>
-				<?php $so = (!empty($char)) ? array($char[0]['strength']) : '';?>
-				<?=form_dropdown('strength', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['strength']) : '3';?>
+				<?=form_dropdown('strength', $n_options, $so,'id="strength"');?>
 				<br />
 				<label class="control-label select_width" for="charisma">Charisma</label>
-				<?php $so = (!empty($char)) ? array($char[0]['charisma']) : '';?>
-				<?=form_dropdown('charisma', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['charisma']) : '3';?>
+				<?=form_dropdown('charisma', $n_options, $so,'id="charisma"');?>
 				<br />
 				<label class="control-label select_width" for="intelligence">Intelligenz</label>
-				<?php $so = (!empty($char)) ? array($char[0]['intelligence']) : '';?>
-				<?=form_dropdown('intelligence', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['intelligence']) : '3';?>
+				<?=form_dropdown('intelligence', $n_options, $so,'id="intelligence"');?>
 				<br />
 				<label class="control-label select_width" for="willpower">Willenskraft</label>
-				<?php $so = (!empty($char)) ? array($char[0]['willpower']) : '';?>
-				<?=form_dropdown('willpower', $n_options, $so);?>
+				<?php $so = (!empty($char)) ? array($char[0]['willpower']) : '3';?>
+				<?=form_dropdown('willpower', $n_options, $so,'id="willpower"');?>
 				<br />
 				<label class="control-label select_width" for="essence">Essenz</label>
 				<?=form_input('essence', "6", "readonly='readonly' style='width:45px'");?>
@@ -221,6 +221,12 @@ legend {
 			</div>
 			<div class="col-sm-6">
 				<br />
+				<label class="control-label select_width" for="race">Rasse</label>				
+				<select name="race" id="race" data-race="<?=$char[0]['race']?>">
+				 <?=$races?>
+				</select>
+				
+				<br /><br />			
 				<label class="control-label select_width" for="armed_longrange">Fernkampf</label>
 				<?php $so = (!empty($char)) ? array($char[0]['armed_longrange']) : '';?>
 				<?=form_dropdown('armed_longrange', $n_options, $so);?>
@@ -229,16 +235,7 @@ legend {
 				<?php $so = (!empty($char)) ? array($char[0]['armed_combat']) : '';?>
 				<?=form_dropdown('armed_combat', $n_options, $so);?>
 				<br />				
-<!--								
-				<label class="control-label select_width" for="reaction_mod">Reaktions Modifikator</label>
-				<?php $so = (!empty($char)) ? array($char[0]['reaction_mod']) : '';?>
-				<?=form_dropdown('reaction_mod', $m_options, $so);?>
-				<br />				
-				<label class="control-label select_width" for="inidice">Initiative Würfel</label>
-				<?php $so = (!empty($char)) ? array($char[0]['inidice']) : '';?>
-				<?=form_dropdown('inidice', $n_options, $so);?>
-				<br />						
--->				
+		
 			</div>
 			<div style="clear:both"></div>
 			<br /><br />

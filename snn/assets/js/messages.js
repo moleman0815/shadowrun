@@ -126,7 +126,7 @@ $.extend (sr,{
 				data: {'fid': id},
 				success: function (data) {
 					var json = jQuery.parseJSON(data);
-
+					console.log("",json);
 					if (json['status'] == 'success') {
 						$('#mode').val('edit');
 						$('#autor').val(json['data'][0]['autor']);
@@ -137,6 +137,7 @@ $.extend (sr,{
 						$('#fid').val(json['data'][0]['fid']);
 						$('#status').val(json['data'][0]['status']);
 						$('#uid').val(json['data'][0]['uid']);
+						$('#editStatusBox').show("fast");
 						var element = document.getElementById("title");
 						element.scrollIntoView();
 					}

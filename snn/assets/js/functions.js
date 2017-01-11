@@ -289,3 +289,30 @@ function toggleNews(id) {
 			});	
 		//
 	}	
+	
+var sr;
+if (!sr) {
+	sr = {};
+}
+$.extend (sr,{
+	functions: {
+		init : function () {
+			console.log("functions initiated");
+		},
+		changeRaceOnChar : function (race) {
+			var racebefore = $('#race').attr("data-race");
+			if (race != rcacebefore) {
+				if (racebefore != 'mensch') {
+					
+				}
+			}
+			console.log(racebefore);
+//			$elf = array('quickness' => '+1', 'charisma' => '+2');
+//			$zwerg = array('body' => '+1', 'strength' => '+2', 'willpower' => '+1');
+//			$ork = array('body' => '+3', 'strength' => '+2', 'charisma' => '1', 'intelligence' => '1');
+//			$troll = array('body' => '+5', 'strength' => '+4', 'quickness' => '1', 'charisma' => '2', 'intelligence' => '2');
+		}
+	}
+});
+
+sr.functions.init();		

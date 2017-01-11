@@ -363,8 +363,8 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 			);		
 		$center = array(
-				'char' => $this->add_functions->getCharacter(),			
-				'inv' => $this->combat_model->getInventory(),
+				'data' => $this->add_functions->getCharacterAndInventory(),			
+				#'inv' => $this->combat_model->getInventory(),
 			);
 		$right = array(
 				'show_ads' => true,

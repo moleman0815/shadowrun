@@ -67,11 +67,12 @@
 		<?php if($this->session->userdata('rank') <= '3'): ?>
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]</a><span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]</a>
                 <ul class="dropdown-menu" role="menu">                  
-                  <li><a href="/secure/snn/combatzone/inventory"><i class="fa fa-suitcase"></i>&nbsp;[Inventar]</a></li>
+                  <li><a href="/secure/snn/combatzone/inventory"><i class="fa fa-suitcase"></i>&nbsp;[Charakterbogen]</a></li>
                   <li><a href="/secure/snn/combatzone/marketplace"><i class="fa fa-credit-card"></i>&nbsp;[Marktplatz]</a></li>
                   <li><a href="/secure/snn/combatzone"><i class="fa fa-heartbeat"></i>&nbsp;[Missionen]</a></li>
+                  <li><a href="/secure/snn/combatzone/clinic"><i class="fa fa-ambulance"></i>&nbsp;[Schattenklinik]</a></li>
                 </ul>
             </li>
             
@@ -89,8 +90,13 @@
 */ ?>
             <li><a href="/secure/snn/desktop/einstellungen"><i class="fa fa-cogs"></i>&nbsp;[Einstellungen]</a></li>
             <li><a href="/secure/snn/desktop/messages"><i class="fa fa-newspaper-o"></i>&nbsp;[Nachrichten<span id="newMessagesHeader"></span>]</a></li>
-                       
-                <li><a href="/secure/snn/desktop/feedback"><i class="fa fa-street-view"></i>&nbsp;[Feedback]</a></li>            
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bar-chart"></i>&nbsp;[Betatest]</a>
+                <ul class="dropdown-menu" role="menu">            
+                	<li><a href="/secure/snn/desktop/feedback"><i class="fa fa-street-view"></i>&nbsp;[Feedback]</a></li>
+                	<li><a href="/secure/snn/desktop/features"><i class="fa fa-bolt"></i>&nbsp;[new Features/ Fixes]</a></li>
+                </ul>
+            </li>            
             
             <?php if($this->session->userdata('rank') <= '2'): ?>
               <li><a href="/secure/snn/admin"><i class="fa fa-university"></i>&nbsp;[Admin]</a></li>

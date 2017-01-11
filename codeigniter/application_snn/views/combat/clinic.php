@@ -95,6 +95,7 @@ ul {
 		</div>
 		<div style="clear:both"></div>
 		<br />
+		<div class="col-sm-12" style="background-color:black; padding: 10px">
 		<div class="col-sm-12">
 			<div class="newstitle">Cyberware</div>
 			<br />
@@ -154,7 +155,8 @@ ul {
 
 				<?=form_close();?>	
 			</div>		    		
-		</div>		
+		</div>	
+		</div>	
 	<?php else: ?>
 	<br />
 		<div class="errormsg">

@@ -119,11 +119,11 @@
 			<div class="col-lg-12" style="border: 1px solid white;padding:5px">
 				<div><b><?=$f['title']?>: <span style="color: red"><?=strtoupper($f['type'])?></span></b><br />
 					<span style="float:right;margin-right:15px;">				
-						<?php if($this->session->userdata('rank') == '1'): ?>
-							Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
-						<?php else: ?>
-							Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>						
-						<?php endif; ?>
+					<?php if($this->session->userdata('rank') == '1'): ?>
+						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
+					<?php else: ?>
+						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>						
+					<?php endif; ?>
 					<?php if($this->session->userdata('rank') == '1' || $this->session->userdata('id') == $f['uid']): ?>
 						<br />
 						<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="if(confirm('Feedback wirklich loeschen?')) { sr.messages.deleteFeedback('<?=$f['fid']?>'); return true; } else { return false; }" style="cursor:pointer" /></span>
@@ -140,6 +140,7 @@
 					<span style="float:right;margin-right:10px;cursor:pointer" onclick="openFeedbackModal('<?=$f['fid']?>')">[Antwort]</span>
 					<br />
 				<?php endif; ?>		
+				<br /><br />
 				<?php if (!empty($children)):?>
 					<?php foreach($children as $c): ?>
 					<?php if($c == 0) { continue; }?>
@@ -167,7 +168,6 @@
 		<input type="hidden" name="uid" id="uid" value="<?=$this->session->userdata('id')?>" />
 		<input type="hidden" name="mode" id="mode" value="" />
 		<input type="hidden" name="fid" id="fid" value="" />
-		<input type="hidden" name="status" id="status" value="" />
 		<label class="control-label" for="title" style="width:150px">Titel</label>
 		<?=form_input(array('id' => 'title', 'name' =>'title', "class" => "input-xlarge"));?>
 		<br />
@@ -179,11 +179,20 @@
 			<option value="bug">Bug</option>
 			<option value="feature">Feature</option>
 			<option value="layout">Layout</option>
+			<option value="wunsch">Wunsch</option>
 		</select>
 		<br />					
-		<label class="control-label" for="bereich" style="width:150px">Betroffener Bereich</label>
+		 <label class="control-label" for="bereich" style="width:150px">Betroffener Bereich</label>
 		<?=form_input(array('id' => 'bereich', 'name' =>'bereich', "class" => "input-xlarge"));?>
-		<br />			
+		<br />		
+		<div id="editStatusBox" style="display:none">
+		<label class="control-label" for="editStatus" style="width:150px">Status</label>
+		<select name="status" id="status">
+			<option value="0">Offen</option>
+			<option value="1">Geschlossen</option>
+		</select>	
+		</div>
+		<br />
 		<label class="control-label" for="feedback" style="width:150px">Feedback</label>
 		<br />
 		<?=form_textarea(array('id' => 'feedback', 'name' =>'feedback', "class" => "input-xlarge", "style" => "width:600px;height:150px"));?>

@@ -453,6 +453,32 @@ class Desktop extends CI_Controller {
 		$this->load->view('feedback', $data);		
 		$this->load->view('footer');		
 	}
+	
+	function features () {
+		if ($this->input->post('sendFeature')) {
+			$feature = $this->input->post('feature');
+			if (!empty($feature)) {				
+					if ($this->main_db_assets->sendFeatures()) {
+						$this->session->set_userdata('success', 'Dein Feature wurde eingetragen.');
+						redirect('desktop/features');
+					} else {
+						$this->session->set_userdata('error', 'Beim Versenden ist ein Fehler aufgetreten.');
+						redirect('desktop/features');
+					}				
+			} else {
+				$this->session->set_userdata('error', 'Bitte fülle alle Felder aus.');
+				redirect('desktop/features');
+			}
+		}
+		$header = array(
+				'name' => $this->session->userdata('name'),
+		);
+		$data = array('features' => $this->main_db_assets->getFeatures(),);
+		$this->load->view('header');
+		$this->load->view('menu_header', $header);
+		$this->load->view('features', $data);
+		$this->load->view('footer');
+	}
 
 	public function changeFeedbackStatus () {
 		if($this->main_db_assets->changeFeedbackStatus()) {
