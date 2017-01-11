@@ -24,7 +24,7 @@ input, textarea, select {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 450px;
+    width: 650px;
 }
 
 /* The Close Button */
@@ -168,7 +168,7 @@ input, textarea, select {
 			<input type="hidden" name="senderid" id="senderid" value="" />
 			<input type="hidden" name='receiverid' id="receiverid" />
 			<label for="replytitle">Titel</label><br />
-			<input type="text" name='replytitle' id="replytitle" />
+			<input type="text" name='replytitle' id="replytitle" style="width:95%"/>
 			<br />
 	
 			<label for="msg_title">Empfänger</label><br />
@@ -176,7 +176,7 @@ input, textarea, select {
 	
 			<br />
 			<label for="msg_text">Nachrichten Text</label><br />
-			<?=form_textarea('reply_text','', 'rows="5" cols="40" id="reply_text"');?>
+			<?=form_textarea('reply_text','', 'rows="10" cols="90" id="reply_text"');?>
 			<br />
 			<?=form_submit('senden', 'Absenden',  'class=" btn-info btn-sm"');?>
 			<?=form_close()?>
@@ -194,7 +194,7 @@ input, textarea, select {
 			<input type="hidden" name="sendmsg" id="sendmsg" value="true" />
 	
 			<label for="msg_title">Titel</label><br />
-			<input type="text" name="title" id="title" style="width: 90%"/>
+			<input type="text" name="title" id="title" style="width: 95%"/>
 			<br /><br />
 			<select name="receiver" id="receiver">
 			<option value="">Empfänger</option>
@@ -207,7 +207,7 @@ input, textarea, select {
 			</select>
 			<br />
 			<label for="msg_text">Nachrichten Text</label><br />
-			<textarea name="msg_text" id="msg_text" rows="10" cols="60"></textarea>
+			<textarea name="msg_text" id="msg_text" rows="10" cols="90"></textarea>
 			<br />
 			<?=form_submit('senden', 'Absenden',  'class=" btn-info btn-sm" style="color:black"');?>
 			</form>
