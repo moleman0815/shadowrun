@@ -2,18 +2,24 @@
 	$error = $this->session->userdata('error');
 	$this->session->unset_userdata('error');	
 
-	$opt_weapon = '<option value="">Waffe wählen</option>';
+	$opt_weapon = '<option value="">Fernkampfwaffe wählen</option>';
+	$opt_melee = '<option value="">Nahkampfwaffe wählen</option>';
 	$opt_armor = '<option value="">Rüstung wählen</option>';
 	if (!empty($inv[0]['weapon'])) {
 		foreach ($inv[0]['weapon'] as $w) {
-			$opt_weapon .= '<option value="'.$w['wid'].'">'.$w['name'].' ('.$w['damage'].')</option>';
+			if ($w['type'] == 'weapon') {
+				$opt_weapon .= '<option value="'.$w['wid'].'">'.$w['name'].' ('.$w['damage'].')</option>';
+			} else if ($w['type'] == 'melee') {
+				$opt_melee .= '<option value="'.$w['wid'].'">'.$w['name'].' ('.$w['damage'].')</option>';
+			}
 		}
 	}
 	if (!empty($inv[0]['armor'])) {
 		foreach ($inv[0]['armor'] as $w) {
 			$opt_armor .= '<option value="'.$w['wid'].'">'.$w['name'].' ('.$w['armor'].')</option>';
 		}
-	}	
+	}
+	#_debugDie($inv);
 ?>
 
 <style>
@@ -145,10 +151,17 @@ $( document ).ready(function() {
 				<div class="newstitle">Ausrüstung wählen</div>
 				<br />
 				<div class="col-sm-3">
-					<b>Waffe auswählen:</b>
+					<b>Fernkampfwaffe auswählen:</b>
 					<br /><br />
 					<select name="weapon">
 						<?=$opt_weapon;?>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<b>Nahkampfwaffe auswählen:</b>
+					<br /><br />
+					<select name="melee">
+						<?=$opt_melee;?>
 					</select>
 				</div>
 				<div class="col-sm-3">

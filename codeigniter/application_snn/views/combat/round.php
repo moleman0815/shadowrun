@@ -89,34 +89,39 @@
 				<tbody>
 				<tr>
 					<td><b>Name:</b></td>
-					<td><?=$combat['player']['name']?></td>
-					<td colspan="2"><?=$combat['player']['weapon_name']?></td>
-				</tr>
-				<tr>
-					<td><b>HP (p):</b></td><td>10/ <?=$combat['player']['health']?></td>
-					<td><b>Schaden:</b></td><td><?=$combat['player']['weapon_soak'].$combat['player']['weapon_default']?></td>
-				</tr>
-				<tr>
-					<td><b>HP (m):</b></td><td>10/ <?=$combat['player']['spirit']?></td>
-
-					<td><b>Munition:</b></td><td <?=$mclass;?>><?=$combat['player']['ammo']?></td>
-				</tr>	
-				<tr>					
-					<td><b>Zustand:</b></td><td <?=$hclass;?>><?=$combat['player']['status']?></td>
+					<td colspan="3"><?=$combat['player']['name']?></td>
 					
-					<td><b>Modus:</b></td><td><?=$combat['player']['fire_mode']?></td>
-				</tr>					
+				</tr>
+				<tr>
+					<td><b>HP:</b></td><td>10/ <?=$combat['player']['health']?></td>
+					<td><b>Zustand:</b></td><td <?=$hclass;?>><?=$combat['player']['status']?></td>
+				</tr>				
 				<tr>
 					<td><b>R&uuml;stung:</b></td><td><?=$combat['player']['armor']?></td>					
 					<td><b>Medipacks:</b></td><td <?=$mpclass;?>><?=$combat['player']['small_medipacks']?></td>
 				</tr>	
 				<tr>
-					<td><b>IniW&uuml;rfel:</b></td><td <?=$mpclass;?>><?=$combat['player']['inidice']?></td>
+					<td><b>IniW&uuml;rfel:</b></td><td><?=$combat['player']['inidice']?></td>
 					<td><b>ErsatzMunition:</b></td><td <?=$mpclass;?>><?=$combat['player']['maxammo']?></td>
 				</tr>
 				<tr>
-					<td><b>Reaktion:</b></td><td <?=$mpclass;?>><?=$combat['player']['reaction_mod']?></td>
-				</tr>										
+					<td><b>Reaktion:</b></td><td><?=($combat['player']['reaction']+$combat['player']['reaction_mod'])?></td>
+					<td colspan="2" style="border:none">&nbsp;</td>
+				</tr>		
+				<?php if($combat['player']['weapon_name']): ?>
+					<tr><td colspan="4" style="padding:1px;border:none">&nbsp;</td></tr>
+					<tr>				
+						<td><b>Fernkampf:</b></td>
+						<td colspan="3"><?=$combat['player']['weapon_name']?></td>
+					</tr>
+					<tr>
+						<td><b>Schaden:</b></td><td><?=$combat['player']['weapon_soak'].$combat['player']['weapon_default']?></td>
+						<td><b>Munition:</b></td><td <?=$mclass;?>><?=$combat['player']['ammo']?></td>
+					</tr>
+					<tr>
+						<td><b>Modus:</b></td><td><?=$combat['player']['fire_mode']?></td>
+					</tr>
+				<?php endif; ?>							
 				</tbody>
 			</table>
 			</div>

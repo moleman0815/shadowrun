@@ -103,19 +103,29 @@ ul {
 				<br />
 	    		<section id="product">
 	        	<ul class="clear">
-	        		<?php foreach($cyberware as $w): ?>
+	        		<?php $x=0; foreach($cyberware as $w): ?>
 	        			<?php if(in_array($w['wid'], $inv_cyberware)) {continue;} ?>
-	            		<li data-id="<?=$w['wid']?>" data-type="cyberware" data-cost="<?=$w['cost'];?>"  id="item_<?=$w['wid']?>" data-essence="<?=$w['cyberware_essence'];?>" >
+	        			<?php if($x%3 == 0) { echo "</ul><ul>"; }?>
+	        			<?php 
+	        				$tooltip = "";
+	        				$tooltip = "<div>";
+	        				$tooltip .= "Type: ".ucfirst($w['cyberware_type'])."<br />";
+	        				$tooltip .= "Ini: + ".$w['cyberware_ini']."D6<br />";
+        					$tooltip .= "Reaktion: + ".$w['cyberware_reaction']."<br />";
+        					$tooltip .= "Rüstung: + ".$w['cyberware_armor']."<br />";
+        					$tooltip .= "Mindeswurf: + ".$w['cyberware_mw']."<br />";
+        					$tooltip .= "KON: + ".$w['cyberware_body']."<br />";
+        					$tooltip .= "SCH: + ".$w['cyberware_quickness']."<br />";
+        					$tooltip .= "STR: + ".$w['cyberware_strength']."<br />";
+        					$tooltip .= "INT: + ".$w['cyberware_intelligence']."<br />";
+	        				$tooltip .= "<div>";
+	        			?>
+	            		<li data-id="<?=$w['wid']?>" data-type="cyberware" data-cost="<?=$w['cost'];?>"  id="item_<?=$w['wid']?>" data-essence="<?=$w['cyberware_essence'];?>"  onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()">
 	            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3>
-	            			Type: <?=ucfirst($w['cyberware_type']);?><br />
-	            			Ini: + <?=$w['cyberware_ini'];?>D6<br />
-	            			Reaktion: + <?=$w['cyberware_reaction'];?><br />
-	            			Rüstung: + <?=$w['cyberware_armor'];?><br />
-							Mindeswurf: + <?=$w['cyberware_mw'];?><br />
-							Essenz: - <?=$w['cyberware_essence'];?><br />
-							Kosten: <b><?=$w['cost'];?> &yen;</b>
-							<br />&nbsp;
+	            			Kosten: <b><?=$w['cost'];?> &yen;</b><br />
+	            			Essenz: - <?=$w['cyberware_essence'];?>																			
 	            		</li>
+	            		<?php $x++;?>
 	        		<?php endforeach; ?>
 	        	</ul>
 	        	</section>

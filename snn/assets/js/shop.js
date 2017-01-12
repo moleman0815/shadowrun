@@ -7,6 +7,7 @@ $(document).ready(function () {
 		var wpnBox = sessionStorage.getItem("weapon_box");
 		var armorBox = sessionStorage.getItem("armor_box");
 		var stuffBox = sessionStorage.getItem("stuff_box");
+		var meleeBox = sessionStorage.getItem("melee_box");
 		if (wpnBox == 'open') {
 			toggleMarketBoxes("weapon");
 		}
@@ -15,6 +16,9 @@ $(document).ready(function () {
 		}
 		if (stuffBox == 'open') {
 			toggleMarketBoxes("stuff");
+		}
+		if (meleeBox == 'open') {
+			toggleMarketBoxes("melee");
 		}
 		
 	}

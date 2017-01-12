@@ -68,6 +68,7 @@ class Combatzone extends CI_Controller {
 			$center = array(
 					'char' => $char,			
 					'weapons' => $this->combat_model->getWeapons(),
+					'melee' => $this->combat_model->getMeleeWeapons(),
 					'armor' => $this->combat_model->getArmor(),
 					'inv' =>  $this->combat_model->getInventory(),
 					'wpnoptions' => $this->combat_model->getWpnOptions(),
@@ -146,7 +147,7 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 			);		
 		$center = array(
-				'char' => $this->add_functions->getCharacter(),
+				'char' => $this->add_functions->getCharacterAndInventory(),
 				'avatar' => $this->main_db_assets->getAvatar(),
 				'missions' => $this->combat_model->getAllMissions('1'),
 				'stats' =>  $this->combat_model->getStatistics(),
@@ -379,5 +380,33 @@ class Combatzone extends CI_Controller {
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');
 	}	
+	
+	function foreignChar () {
+		$left = array(
+				'show_shoutbox' => true,
+				'show_messages' => true,
+				'shoutbox' => $this->main_db_assets->getShoutbox(),
+				'column_messages' => $this->main_db_assets->getColumnMessages(),
+				'show_friends' => true,
+				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
+		);
+		$center = array(
+				'data' => $this->add_functions->getForeignCharacterAndInventory(),
+				#'inv' => $this->combat_model->getInventory(),
+		);
+		$right = array(
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
+		);
+		$this->load->view('header');
+		$this->load->view('menu_header');
+		$this->load->view('left_column', $left);
+		$this->load->view('div_md8');
+		$this->load->view('combat/foreignchar', $center);
+		$this->load->view('right_column', $right);
+		$this->load->view('footer');
+	}
 }
 ?>

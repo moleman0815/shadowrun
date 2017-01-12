@@ -71,7 +71,6 @@
 		<table class="table table-condensed newselement">
 			<thead>
 				<tr>
-					<th>Geld</th>
 					<th>Waffen</th>
 					<th>Ersatzmunition</th>
 					<th>Medipack</th>
@@ -83,7 +82,6 @@
 			<tbody>
 				
 				<tr>
-					<td><?=$data['inv'][0]['money']?> &yen;</td>
 					<td>
 						<?php if(!empty($data['inv'][0]['weapon'])): ?>						
 							<?php foreach($data['inv'][0]['weapon'] as $w): ?>
@@ -120,10 +118,8 @@
 		<br />		
 	</div>
 	<?php else: ?>
-	<br />
 		<div class="errormsg">
-			Um an Missionen teilnehmen zu können, musst du erst deinen Charakter hinterlegen.<br />
-			<a href="/secure/snn/desktop/einstellungen/">HIER</a> gehts lang ....
+			Der Spieler hat bisher keinen Charakter im System hinterlegt.<br />
 		</div>
 		<br />
 	<?php endif; ?>

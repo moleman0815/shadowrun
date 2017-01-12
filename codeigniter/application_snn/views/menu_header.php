@@ -37,6 +37,18 @@
     text-decoration: none;
 }
 </style>
+<script>
+$(document).ready(function($) {
+    var stickyHeaderTop = $('nav').offset().top;
+    $(window).scroll(function(){ /*header-menu-wrap*/
+        if( $(window).scrollTop() > stickyHeaderTop ) {
+        $('nav').addClass("navbar-fixed-top");
+        } else {
+        $('nav').removeClass("navbar-fixed-top");
+        }
+    });
+}); 
+</script>
 <body class="<?=$class;?>">
 <script type="text/javascript" src="/secure/snn/assets/js/wz_tooltip.js"></script>	
 

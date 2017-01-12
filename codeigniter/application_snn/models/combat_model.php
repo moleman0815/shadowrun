@@ -44,8 +44,10 @@ class Combat_model extends CI_Model
 		return $query->result_array();
 	}
 	
-	function getInventory () {
-		$inv = $this->db->get_where('inventory', array('cid' => $this->session->userdata('charid')))->result_array();
+	function getInventory ($id) {
+		$id = ($id) ? $id : $this->session->userdata('charid');
+
+		$inv = $this->db->get_where('inventory', array('cid' => $id))->result_array();
 		#echo $inv[0]['wid'];
 		if (!empty($inv[0]['wid'])) {
 			$weapons = explode(';', $inv[0]['wid']);
@@ -219,6 +221,10 @@ class Combat_model extends CI_Model
 		$this->db->order_by('name', 'ASC');
 		return $this->db->get_where('weapons', array('type' => 'weapon'))->result_array();
 	}
+	function getMeleeWeapons() {
+		$this->db->order_by('name', 'ASC');
+		return $this->db->get_where('weapons', array('type' => 'melee'))->result_array();
+	}
 	function getArmor() {
 		$this->db->order_by('name', 'ASC');
 		return $this->db->get_where('weapons', array('type' => 'armor'))->result_array();
@@ -270,6 +276,10 @@ class Combat_model extends CI_Model
 		$c_armor = 0;
 		$c_reaction = 0;
 		$c_mw = 0;
+		$c_strength = 0;
+		$c_quickness = 0;
+		$c_body = 0;
+		$c_intelligence = 0;
 
 		/* cyberware not implemented */
 		if (!empty($inv[0]['cyberware'][0])) {
@@ -278,6 +288,10 @@ class Combat_model extends CI_Model
 				$c_armor = ($c['cyberware_armor'] > 0) ? $c_armor+(int)($c['cyberware_armor']) : $c_armor;
 				$c_reaction = ($c['cyberware_reaction'] > 0) ? $c_reaction+(int)($c['cyberware_reaction']) : $c_reaction;
 				$c_mw = ($c['cyberware_mw'] > 0) ? $c_mw+(int)($c['cyberware_mw']) : $c_mw;
+				$c_strength = ($c['cyberware_strength'] > 0) ? $c_strength+(int)($c['cyberware_strength']) : $c_strength;
+				$c_quickness = ($c['cyberware_quickness'] > 0) ? $c_quickness+(int)($c['cyberware_quickness']) : $c_quickness;
+				$c_body = ($c['cyberware_body'] > 0) ? $c_body+(int)($c['cyberware_body']) : $c_body;
+				$c_intelligence = ($c['cyberware_intelligence'] > 0) ? $c_intelligence+(int)($c['cyberware_intelligence']) : $c_intelligence;
 			}
 		}
 
@@ -302,14 +316,26 @@ class Combat_model extends CI_Model
 			}
 		}		
 
-		/* SC Werte werden ausgelesen und gespeichert */
-		$player['body'] = $char[0]['body'];
+		/* SC Waffe */
+		$mid = $this->input->post('melee');
+		for ($x=0;$x<count($inv[0]['weapon']);$x++) {
+			if ($mid == $inv[0]['weapon'][$x]['wid']) {
+				$melee = $inv[0]['weapon'][$x];
+			}
+		}
+		
+		/* SC Werte werden ausgelesen, modifiziert und gespeichert */
+		$player['body'] = ($char[0]['body']+$c_body);
+		$player['quickness'] = ($char[0]['quickness']+$c_quickness);
+		$player['strength'] = ($char[0]['strength']+$c_strength);
+		$player['intelligence'] = ($char[0]['intelligence']+$c_intelligence);
 		$player['cid'] = $char[0]['cid'];
 		$player['health'] = '10';
 		$player['spirit'] = '10';
-		$player['armor'] = $armor['armor']+$c_armor;
-		$player['reaction'] = floor(($char[0]['quickness']+$char[0]['intelligence'])/2);
+		$player['armor'] = ($armor['armor']+$c_armor);
+		$player['reaction'] = floor(($player['quickness']+$player['intelligence'])/2);
 		$player['combat'] = $char[0]['armed_longrange'];
+		$player['melee'] = $char[0]['armed_combat'];
 		$player['name'] = $char[0]['charname'];
 		$player['status'] = 'alive';
 		$player['weapon_name'] = $weapon['name'];
@@ -318,29 +344,35 @@ class Combat_model extends CI_Model
 		$player['weapon_damage'] = substr($weapon['damage'], -1);
 		$player['weapon_default'] = substr($weapon['damage'], -1);
 		$player['weapon_reduce'] = $weapon['reduce'];
+		$player['melee_name'] = $melee['name'];
+		$player['melee_damage'] = substr($melee['damage'], -1);
+		$player['melee_default'] = substr($melee['damage'], -1);
 		$player['fire_mode'] = $weapon['mode'];
 		$player['ammo'] = $weapon['ammo'];
 		$player['ammo_default'] = $weapon['ammo'];
 		$player['action'] = '';
 		$player['small_medipacks'] = $inv[0]['medipacks'];
 		$player['inidice'] = $char[0]['inidice']+$c_ini;
-		$player['reaction_mod'] = $char[0]['reaction_mod']+$c_reaction;
+		$player['reaction_mod'] = $c_reaction;
 		$player['money'] = $inv[0]['money'];
 		$player['maxammo'] = $inv[0]['maxammo'];
 		$player['avatar'] = $char[0]['avatar'];
 		$player['mw'] = $c_mw;
 
-
+		#_debugDie($player);
+		
 		$tmp = '"'.$player['name'].'"';
 		$enemy = array();
 		for($x=0;$x<count($ganger);$x++) {
 			$enemy[$x]['body'] = $ganger[$x][0]['body'];
+			$enemy[$x]['strength'] = $ganger[$x][0]['strength'];
 			$enemy[$x]['health'] = '10';			
 			$enemy[$x]['spirit'] = '10';
 			$enemy[$x]['armor'] = '1';	
 			$enemy[$x]['level'] = $ganger[$x][0]['level'];
 			$enemy[$x]['reaction'] = $ganger[$x][0]['reaction'];
 			$enemy[$x]['combat'] =  $ganger[$x][0]['armed_longrange'];
+			$enemy[$x]['melee'] =  $ganger[$x][0]['armed_combat'];
 			$enemy[$x]['name'] =  $ganger[$x][0]['ganger_name'];
 			$enemy[$x]['status'] = 'alive';
 			$enemy[$x]['inidice'] = $this->combat->_getIniDice($ganger[$x][0]['level']);
@@ -348,9 +380,11 @@ class Combat_model extends CI_Model
 			$enemy[$x]['weapon_soak_default'] = $this->combat->_getNSCWeaponSoak($ganger[$x][0]['level']);
 			$enemy[$x]['weapon_damage'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
 			$enemy[$x]['weapon_default'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
+			$enemy[$x]['melee_damage'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
+			$enemy[$x]['melee_default'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
 			array_push($this->fighters, $enemy[$x]["name"]);
 		}
-
+#_debugDie($enemy);
 		$this->player = $player;
 		$this->enemy = $enemy;
 		$this->enemies = count($this->enemy);
@@ -748,6 +782,7 @@ class Combat_model extends CI_Model
  		error_log('in getInitiative'); 		
  		#_debugDie($this->player);
 		$reaction = ($this->player['reaction']+$this->player['reaction_mod']);
+
 		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction);
 		$this->calculateRounds($ini_player, $this->player['name']);		
 

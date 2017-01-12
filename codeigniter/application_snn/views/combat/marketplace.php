@@ -205,8 +205,8 @@ legend {
 				<?=form_close();?>	
 			</div>
 			<br />&nbsp;
-			<div class="col-md-12">
-				<div class="newstitle">Waffen -> Filter: 
+			
+				<div class="newstitle">Schusswaffen -> Filter: 
 					<select name="wpn_filter" id="wpn_filter" onchange="changeWeaponFilter()">
 						<option value="">All</option>
 						<?=$wpnType?>
@@ -229,6 +229,39 @@ legend {
 			            			$tooltip .= "Modus: ".$w['mode']."<br />";
 			            			$tooltip .= "Typ: ".strtoupper($w['subtype'])."<br />";
 			            			$tooltip .= "Rückstoß: -".$w['reduce']."<br /><br />";
+			        				$tooltip .= "<div>";
+			        			?>
+			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-subtype="<?=$w['subtype']?>" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()" style="z-index:1000">
+			            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3>
+			      					Kosten: <b><?=$w['cost'];?> &yen;</b>
+			            		</li>
+			            		<?php if ($i%5 == 0): ?>
+			            			</ul><ul class="clear">
+			            		<?php endif; ?>
+			            		<?php $i++; ?>
+			        		<?php endforeach; ?>
+			        	<?php endif; ?>
+			        	</ul>
+		        	</section>
+		        	<br />
+		        </div>
+		        <div class="col-md-12">
+				<div class="newstitle">Nahkampfwaffen
+					<span style="float:right;margin-left:20px;cursor:pointer" id="melee_span" onclick="toggleMarketBoxes('melee')"><img src="/secure/snn/assets/img/icons/add.png" />
+				</div>
+				<br />
+				<div style="display: none" id="melee_box">
+		    		<section id="product">
+			        	<ul class="clear" id="wpn_list">
+			        	<?php if(!empty(melee[0])): ?>
+			        		<?php $i=1; foreach($melee as $w): ?>
+			        			<?php if(in_array($w['wid'], $inv_weapons)) {continue;} ?>
+			        			<?php 
+			        				$tooltip = "";
+			        				$tooltip = "<div>";
+			        				$tooltip .= $w['name']."<br />";
+			            			$tooltip .= "Damage: Str+".$w['damage']."<br />";
+			            			$tooltip .= "Reichweite: ".$w['reach']."<br />";
 			        				$tooltip .= "<div>";
 			        			?>
 			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-subtype="<?=$w['subtype']?>" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()" style="z-index:1000">

@@ -77,7 +77,7 @@ $(document).ready(function(){
 						<?php $i=0; foreach($friends as $m): ?>	
 							<?php $subclass = ($i%2 == 0) ? 'uneven' : '';?>					
 							<div class="<?=$subclass?>">
-								<?=ucfirst($m['nickname']);?>&nbsp;
+								<a href="/secure/snn/combatzone/foreignChar/<?=$m['id']?>" title="Show Character"><?=ucfirst($m['nickname']);?></a>&nbsp;
 								<?php if(($m['lastactive']+1200) > time()):?>
 									<span style="float:right"><img src="/secure/snn/assets/img/icons/power_on.png" alt="online" title="online" /></span>
 								<?php else: ?>

@@ -9,6 +9,8 @@
 			$answer[$f['fid']] = $f;
 		}
 	}
+	
+	#_debugDie($answer);
 
 ?>
 
@@ -50,7 +52,9 @@
     text-decoration: none;
     cursor: pointer;
 }
-	
+	ul.feedback_list, li.feedback_list	 {
+		text-decoration: none;
+	}
 	</style>
 
 
@@ -91,6 +95,23 @@
 		$('#feedbackParentid').val(fid);
 		newMessageModal.style.display = "block";
 	}
+
+	function changeFeedbackFilter() {
+		var filter = $('#feedback_filter :selected').val();
+		if (filter != "") {
+	 		$('#feedback_list').children().each(function(){
+	 			if ($(this).attr("data-subtype") != filter) {
+					$(this).hide("fast");
+	 			} else {
+	 				$(this).show("fast");
+	 			}		 			
+	 		});	
+		} else {
+	 		$('#feedback_list').children().each(function(){
+		 		$(this).show("fast");		 			
+	 		});
+		}
+	}
 	
 <?php endif; ?>		
 
@@ -99,24 +120,36 @@
 	input, textarea, select {
 		color: black;
 	}
+	ul, li {
+		list-style: none;
+	}
 </style>
 <div class="col-lg-2"></div>
 <div class="col-lg-8 newselement">
-	<div class="newstitle">Feedback</div>
+	<div class="newstitle">
+		Feedback
+		<select name="feedback_filter" id="feedback_filter" onchange="changeFeedbackFilter()">
+			<option value="">All</option>
+			<option value="0">offen</option>
+			<option value="1">fixed</option>			
+		</select>	
+	</div>
 	<br />
 	<?php if($error): ?>
 		<div class="alert alert-danger" style="z-index: 100;position: absolute; width:50%;left:25%;border: 3px solid black" id="error"><b><i class="fa fa-exclamation-circle"></i>&nbsp;<?=$error?></b></div>
 	<?php endif; ?>
 	<?php if($success): ?>
 		<div class="alert alert-success" style="z-index: 100;position: absolute; width:50%;left:25%;border: 3px solid black" id="success"><b><i class="fa fa-thumbs-up"></i>&nbsp;<?=$success?></b></div>
-	<?php endif; ?>		
+	<?php endif; ?>	
+		
 	<?php if(!empty($feedback)): ?>
+	<ul id="feedback_list">
 		<?php foreach($feedback as $f): ?>	
 		<?php if($f['type'] == 'answer') { continue; } ?>
 			<?php 
 				$children = explode(";", $f['child']);
 			?>
-			<div class="col-lg-12" style="border: 1px solid white;padding:5px">
+			<li class="col-lg-12" style="border: 1px solid white;padding:5px" data-subtype="<?=$f['status']?>">
 				<div><b><?=$f['title']?>: <span style="color: red"><?=strtoupper($f['type'])?></span></b><br />
 					<span style="float:right;margin-right:15px;">				
 					<?php if($this->session->userdata('rank') == '1'): ?>
@@ -142,7 +175,7 @@
 				<?php endif; ?>		
 				<br /><br />
 				<?php if (!empty($children)):?>
-					<?php foreach($children as $c): ?>
+					<?php foreach(array_reverse($children) as $c): ?>
 					<?php if($c == 0) { continue; }?>
 						<span style="color:green">
 						<b><?=$answer[$c]['autor'];?></b> (<?=date('d.m.Y - H:i', $answer[$c]['time'])?> uhr)<br />
@@ -151,11 +184,12 @@
 						<hr />
 					<?php endforeach; ?>
 				<?php endif; ?>
-			</div>
+
+			</li>
 			<div style="clear:both"></div>
 			<br />
 		<?php endforeach; ?>
-
+		</ul>
 		<br />
 	<?php endif; ?>
 <div style="clear:both"></div>	

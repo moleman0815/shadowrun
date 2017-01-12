@@ -39,6 +39,7 @@
 			<li><b><?=date('d.m.Y H:i', $f['time'])?></b><br />
 				<?=nl2br($f['feedback']);?>
 			</li>
+			<br />
 		<?php endforeach; ?>
 	</ul>
 	<?php endif; ?>

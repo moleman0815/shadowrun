@@ -115,7 +115,6 @@ class Main_db_assets extends CI_Model
         for($i=0; $i<count($data['messages']);$i++) {
         	if ($data['messages'][$i]['send_from'] == $this->session->userdata('id') && preg_match("/freundschaftsanfrage/i", $data['messages'][$i]["title"])) {
         		unset($data['messages'][$i]);
-        		echo "jaa";	
         	}
         }        
         

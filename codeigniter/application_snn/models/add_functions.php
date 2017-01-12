@@ -150,6 +150,8 @@ class Add_functions extends CI_Model {
     	$bmode=$this->input->post('mode');
     	if (!empty($bmode)) {
     		$mode = implode(';', $this->input->post('mode'));
+    	} else {
+    		$mode = '';
     	}
 
     	$essenz = str_replace(',', '.', $this->input->post('cyberware_essence'));
@@ -168,7 +170,11 @@ class Add_functions extends CI_Model {
     			'cyberware_reaction' => $this->input->post('cyberware_reaction'), 
     			'cyberware_armor' => $this->input->post('cyberware_armor'), 
     			'cyberware_mw' => $this->input->post('cyberware_mw'), 
-    			'cyberware_essence' => $essenz, 
+    			'cyberware_body' => $this->input->post('cyberware_body'),
+    			'cyberware_quickness' => $this->input->post('cyberware_quickness'),
+    			'cyberware_essence' => $essenz,
+    			'cyberware_strength' => $this->input->post('cyberware_strength'),
+    			'cyberware_intelligence' => $this->input->post('cyberware_intelligence'),
 
     		);
 		return ($this->db->insert('weapons', $data)) ? true : false;
@@ -198,7 +204,11 @@ class Add_functions extends CI_Model {
     			'cyberware_reaction' => $this->input->post('cyberware_reaction'), 
     			'cyberware_armor' => $this->input->post('cyberware_armor'), 
     			'cyberware_mw' => $this->input->post('cyberware_mw'), 
-    			'cyberware_essence' => $essenz,   			
+    			'cyberware_body' => $this->input->post('cyberware_body'),
+    			'cyberware_quickness' => $this->input->post('cyberware_quickness'),
+    			'cyberware_essence' => $essenz,
+    			'cyberware_strength' => $this->input->post('cyberware_strength'),
+    			'cyberware_intelligence' => $this->input->post('cyberware_intelligence'),   			
     		);
     		$this->db->where('wid', $this->input->post('wid'));
 		return ($this->db->update('weapons', $data)) ? true : false;
@@ -373,12 +383,15 @@ class Add_functions extends CI_Model {
 			$query[0]['inidice_mod'] = 0;
 			if (!empty($inv[0]['cyberware'])) {
 				foreach($inv[0]['cyberware'] as $c) {
-					if ($c['cyberware_reaction'] != 0 && $c['cyberware_reaction'] != '') {
-						$query[0]['reaction_mod'] = $query[0]['reaction_mod']+$c['cyberware_reaction'];
-					}
-					if ($c['cyberware_ini'] != 0 && $c['cyberware_ini'] != '') {
-						$query[0]['inidice_mod'] = $query[0]['inidice_mod']+$c['cyberware_ini'];
-					}
+					$query[0]['reaction_mod'] = ($c['cyberware_reaction'] > 0) ? ($query[0]['reaction_mod']+$c['cyberware_reaction']) : $query[0]['reaction_mod'];					
+					$query[0]['inidice_mod'] = ($c['cyberware_ini'] > 0) ?  ($query[0]['inidice_mod']+$c['cyberware_ini']) : $query[0]['inidice_mod'];
+
+#					$c_armor = ($c['cyberware_armor'] > 0) ? $c_armor+(int)($c['cyberware_armor']) : $c_armor;
+#					$c_mw = ($c['cyberware_mw'] > 0) ? $c_mw+(int)($c['cyberware_mw']) : $c_mw;
+					$query[0]['strength'] =($c['cyberware_strength'] > 0) ? $query[0]['strength']+(int)($c['cyberware_strength']).'*' : $query[0]['strength'];
+					$query[0]['quickness'] = ($c['cyberware_quickness'] > 0) ? $query[0]['quickness']+(int)($c['cyberware_quickness']).'*' : $query[0]['quickness'];
+					$query[0]['body'] = ($c['cyberware_body'] > 0) ? $query[0]['body']+(int)($c['cyberware_body']).'*' : $query[0]['body'];
+					$query[0]['intelligence'] = ($c['cyberware_intelligence'] > 0) ? $query[0]['intelligence']+(int)($c['cyberware_intelligence']).'*' : $query[0]['intelligence'];
 				}
 			}
 			$data['char'] = $query;
@@ -390,7 +403,49 @@ class Add_functions extends CI_Model {
 		}
 	}
 
+	function getForeignCharacterAndInventory() {
+		$this->db->where('uid', $this->session->userdata('id'));
+		$this->db->where('fid', $this->uri->segment(3));
+		$friend = $this->db->count_all_results('friends');
 
+		if ($this->session->userdata('rank') == 1 || $friend == 1) {
+			$this->db->select('*');
+			$this->db->from('chars');
+			$this->db->where('uid', $this->uri->segment(3));
+			$query = $this->db->get()->result_array();
+			$data = array();
+
+			$inv = $this->combat_model->getInventory($query[0]['cid']);
+		
+			if (!empty($query)) {
+				$avatar = $this->db->get_where('login', array('id' => $query[0]['uid']))->result_array();
+				$query[0]['avatar'] = $avatar[0]['avatar'];
+				$query[0]['inidice_mod'] = 0;
+				if (!empty($inv[0]['cyberware'])) {
+					foreach($inv[0]['cyberware'] as $c) {
+						$query[0]['reaction_mod'] = ($c['cyberware_reaction'] > 0) ? $query[0]['reaction_mod']+$c['cyberware_reaction'] : $query[0]['reaction_mod'];
+						$query[0]['inidice_mod'] = ($c['cyberware_ini'] > 0) ?  $query[0]['inidice_mod']+$c['cyberware_ini'] : $query[0]['inidice_mod'];
+		
+						#					$c_armor = ($c['cyberware_armor'] > 0) ? $c_armor+(int)($c['cyberware_armor']) : $c_armor;
+						#					$c_mw = ($c['cyberware_mw'] > 0) ? $c_mw+(int)($c['cyberware_mw']) : $c_mw;
+						$query[0]['strength'] =($c['cyberware_strength'] > 0) ? $query[0]['strength']+(int)($c['cyberware_strength']).'*' : $query[0]['strength'];
+						$query[0]['quickness'] = ($c['cyberware_quickness'] > 0) ? $query[0]['quickness']+(int)($c['cyberware_quickness']).'*' : $query[0]['quickness'];
+						$query[0]['body'] = ($c['cyberware_body'] > 0) ? $query[0]['body']+(int)($c['cyberware_body']).'*' : $query[0]['body'];
+						$query[0]['intelligence'] = ($c['cyberware_intelligence'] > 0) ? $query[0]['intelligence']+(int)($c['cyberware_intelligence']).'*' : $query[0]['intelligence'];
+					}
+				}
+				$data['char'] = $query;
+				$data['inv'] = $inv;
+		
+				return $data;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
 	public function getAllGanger() {
 		$this->db->select('*');
 		$this->db->from('ganger');
@@ -732,24 +787,29 @@ class Add_functions extends CI_Model {
 	}
 
 	function insertNews () {
-		#_debugDie($this->input->post());
+		$teaser = $this->input->post('newstext');
+		$teaser = strip_tags($teaser);
+		
 		$news = array (
 				'title' => $this->input->post('title'),
 				'newstext' => $this->input->post('newstext'),
 				'category' => $this->input->post('category'),
 				'date' => time(),
-				'teaser' => $this->input->post('newstext'),
+				'teaser' => $teaser,
 			);
 		return ($this->db->insert('news', $news)) ? true : false;
 	}
 
 	function editNews () {
+		$teaser = $this->input->post('newstext');
+		$teaser = strip_tags($teaser);
+		
 		$news = array (
 				'title' => $this->input->post('title'),
 				'newstext' => $this->input->post('newstext'),
 				'category' => $this->input->post('category'),
 				'date' => time(),
-				'teaser' => $this->input->post('newstext'),
+				'teaser' => $teaser,
 			);	
 		return ($this->db->update('news', $news, array('id' => $this->input->post('id')))) ? true : false;	
 

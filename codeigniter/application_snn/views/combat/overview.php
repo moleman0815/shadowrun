@@ -61,21 +61,13 @@
 		<ul>
 			<li><a href="#mission">Missionen</a></li>
 		  	<li><a href="#statistik">Statistik</a></li>
-		  	<?php if($this->session->userdata('rank') == '1'): ?>
-			<li><a href="#chars">Chars</a></li>
-		  	<?php endif; ?>
-	
 		</ul>	
-	<?php if($this->session->userdata('rank') == '1'): ?>
-		<div id="chars">
 
-		</div>
-	<?php endif; ?>
-	
 	<div id="mission">
 		Du hast folgenden Charakter im System hinterlegt:
 		<br /><br />
-		<table class="table table-condensed" style="font-size: 12px">
+		<div class="newstitle">Charakter <span class="small"> (* modifizierte Werte)</span></div>
+		<table class="table table-condensed newselement">
 			<thead>
 				<tr>
 					<?php if(!empty($avatar[0]['avatar'])): ?>
@@ -85,37 +77,33 @@
 					<?php endif; ?>
 					<th>Charname</th>
 					<th>Rasse</th>
-					<th>Kon</th>
-					<th>Sch</th>
-					<th>Str</th>
-					<th>Cha</th>
-					<th>Int</th>
-					<th>Will</th>
-					<th>Essenz</th>
-					<th>Magie</th>
-					<th>Fern</th>
-					<th>Nah</th>
+					<th>KON</th>
+					<th>SCH</th>
+					<th>STR</th>
+					<th>CHA</th>
+					<th>INT</th>					
+					<th>WIL</th>
+					<th>ESS</th>
+					<th>MAG</th>		
 				</tr>
 			</thead>
-			<tbody>
+			<tbody>				
 				<tr>
-				<?php if(!empty($avatar[0]['avatar'])): ?>				
-					<td><img src="/secure/snn/assets/img/avatar/<?=$avatar[0]['avatar'];?>" alt="" /></td>
-				<?php else: ?>
-					<td></td>
-				<?php endif; ?>
-					<td><button class="btn btn-default"><i class="info fa fa-heartbeat"></i>&nbsp;<?=ucfirst($char[0]['charname']);?></button></td>
-					<td><button class="btn btn-default"><?=ucfirst($char[0]['race']);?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['body'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['quickness'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['strength'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['charisma'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['intelligence'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['willpower'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['essence'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['magic'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['armed_longrange'];?></button></td>
-					<td><button class="btn btn-default"><?=$char[0]['armed_combat'];?></button></td>
+					<?php if(!empty($avatar[0]['avatar'])): ?>
+						<td><img src="/secure/snn/assets/img/avatar/<?=$avatar[0]['avatar'];?>" alt="" /></td>
+					<?php else: ?>
+						<td></td>
+					<?php endif; ?>
+					<td><?=ucfirst($char['char'][0]['charname']);?></td>
+					<td><?=ucfirst($char['char'][0]['race']);?></td>
+					<td><?=ucfirst($char['char'][0]['body']);?></td>
+					<td><?=ucfirst($char['char'][0]['quickness']);?></td>
+					<td><?=ucfirst($char['char'][0]['strength']);?></td>
+					<td><?=ucfirst($char['char'][0]['charisma']);?></td>
+					<td><?=ucfirst($char['char'][0]['intelligence']);?></td>
+					<td><?=ucfirst($char['char'][0]['willpower']);?></td>
+					<td><?=ucfirst($char['char'][0]['essence']);?></td>
+					<td><?=ucfirst($char['char'][0]['magic']);?></td>					
 				</tr>
 			</tbody>
 		</table>
