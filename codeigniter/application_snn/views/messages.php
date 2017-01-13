@@ -115,10 +115,14 @@ input, textarea, select {
 		<div>
 			<a name="<?=$m['id']?>" style="text-decoration:none"></a>
 				<h4>
-					<?=$m['title']?>
-					<span id="new_<?=$m['id']?>"><?=($m['gelesen'] == 0 && $m['send_from'] != $this->session->userdata('id')) ? "(neu)" : ""; ?></span>
+					<?=$m['title']?>					
+						<span id="new_<?=$m['id']?>"><?=($m['gelesen'] == 0 && $m['send_from'] != $this->session->userdata('id')) ? "(neu)" : ""; ?></span>
 					<div style="float:right">
-						<input type="button" value="[ Lesen ]" onclick="sr.messages.toggleMsg('<?=$m['id']?>')" class=" btn-info btn-sm" style="color: #000000;padding-left:10px" />
+						<?php if($m['send_from'] == $this->session->userdata('id')): ?>
+							<input type="button" value="[ Lesen ]" onclick="sr.messages.toggleMsgOwn('<?=$m['id']?>')" class=" btn-info btn-sm" style="color: #000000;padding-left:10px" />
+						<?php else: ?>
+							<input type="button" value="[ Lesen ]" onclick="sr.messages.toggleMsg('<?=$m['id']?>')" class=" btn-info btn-sm" style="color: #000000;padding-left:10px" />
+						<?php endif; ?>	
 						<?php if ($m['send_from'] != $this->session->userdata('id')): ?>
 							<span style="margin-right:10px"><img src="/secure/snn/assets/img/icons/turn_right.png" onclick="sr.messages.replyMessage('<?=$m['id']?>', '<?=$m['send_from']?>')" title="reply" alt="reply" style="cursor:pointer" /></span>
 						<?php else: ?>

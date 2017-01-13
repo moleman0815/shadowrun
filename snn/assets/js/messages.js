@@ -88,6 +88,16 @@ $.extend (sr,{
 			$('#new_'+id).html("");
 			this.updateNewMsg(id);
 		},
+		toggleMsgOwn : function (id) {
+			$('div[id^="msg"]').each(function(){
+				var fid = $(this).attr('id');
+				if (id != fid) {
+					$(this).hide('fast');
+				}			
+			});
+			$('#msg_'+id).toggle('fast');
+			$('#new_'+id).html("");
+		},
 		updateNewMsg : function (id) {
 			var self = this;
 			$.ajax({
