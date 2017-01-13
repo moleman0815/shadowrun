@@ -226,15 +226,33 @@ class Main_db_assets extends CI_Model
             }
 		} else {
 			$senderid = (!empty($post['senderid'])) ? $post['senderid'] : '0';
-			$data = array(
-				'title' => $post['title'],
-				'msg_text' => $post['msg_text'],
-				'send_to' =>  $post['receiver'],
-				'send_from' =>  $post['userid'],
-				'parent' => $senderid,
-				'date' => time(),			
-			);		
-        return ($this->db->insert('messages', $data)) ? true : false;            
+			if (count($post['receiver']) == 1) {
+				$data = array(
+					'title' => $post['title'],
+					'msg_text' => $post['msg_text'],
+					'send_to' =>  $post['receiver'],
+					'send_from' =>  $post['userid'],
+					'parent' => $senderid,
+					'date' => time(),			
+				);		
+	        	return ($this->db->insert('messages', $data)) ? true : false;
+			} else {
+				$counter = 0;
+				foreach ($post['receiver'] as $r) {
+					$data = array(
+							'title' => $post['title'],
+							'msg_text' => $post['msg_text'],
+							'send_to' =>  $r,
+							'send_from' =>  $post['userid'],
+							'parent' => $senderid,
+							'date' => time(),
+					);
+					if ($this->db->insert('messages', $data)) {
+						$counter++;
+					}
+				}
+				return ($counter == count($post['receiver'])) ? true : false;
+			}
 		}
 
 	}

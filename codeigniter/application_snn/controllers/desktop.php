@@ -245,7 +245,7 @@ class Desktop extends CI_Controller {
 		if ($this->input->post('sendmsg') == true) {
 			if(empty($title)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Titel.'));
-			} else if (empty($receiver)) {
+			} else if (empty($receiver[0])) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Empfänger.'));
 			} else if (empty($text)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Text.'));

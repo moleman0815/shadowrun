@@ -115,7 +115,10 @@ class CI_Combat {
 		return $dice[$level];
 	}
 	
-	function _getWeaponDamage($type) {	
+	function _getWeaponDamage($type) {
+		if ($type == "") {
+			return 0;
+		}
 		$damage = array(
 			'0' => "0",
 			'L' => "1",

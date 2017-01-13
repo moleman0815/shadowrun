@@ -190,13 +190,14 @@ input, textarea, select {
 		<fieldset>
 		<legend class="newstitle">Nachricht schreiben</legend>
 			<form action="#" id="writeMessage" enctype="text/html" method="post">
+			
 			<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
 			<input type="hidden" name="sendmsg" id="sendmsg" value="true" />
 	
 			<label for="msg_title">Titel</label><br />
 			<input type="text" name="title" id="title" style="width: 95%"/>
 			<br /><br />
-			<select name="receiver" id="receiver">
+			<select name="receiver[]" id="receiver" multiple size="7">
 			<option value="">Empfänger</option>
 			<?php
 					foreach ($receiver as $key => $value) {

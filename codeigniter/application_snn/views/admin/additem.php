@@ -25,6 +25,7 @@ function changeItemType (id) {
 	$('#type_armor').hide('fast');
 	$('#type_weapon').hide('fast');
 	$('#type_cyberware').hide('fast');
+	$('#type_melee').hide('fast');
 	$('#type_'+id).show('fast');
 }
 </script>
@@ -47,7 +48,7 @@ function changeItemType (id) {
 				<?=form_input(array('id' => 'itemname', 'name' =>'itemname', "class" => "input-xlarge"), '');?>
 				<br />
 				<label class="control-label select_width" for="type" style="width:150px">Gegenstandstyp</label>
-				<?=form_dropdown('type', array('' => 'Typ wählen', 'weapon' => 'Waffe', 'armor' => 'Rüstung', 'cyberware' => 'Cyberware'), '', 'id="type" onchange="changeItemType(this.value)"');?>
+				<?=form_dropdown('type', array('' => 'Typ wählen', 'weapon' => 'Waffe', 'armor' => 'Rüstung', 'cyberware' => 'Cyberware', 'melee' => Nahkampf), '', 'id="type" onchange="changeItemType(this.value)"');?>
 				<br />
 				<label class="control-label" for="cost" style="width:150px">Kosten</label>
 				<?=form_input(array('id' => 'cost', 'name' =>'cost', "class" => "input-xlarge"), '');?>								
@@ -56,6 +57,14 @@ function changeItemType (id) {
 				<label class="control-label" for="description" style="width:150px;" valign="top">Beschreibung</label>
 				<?=form_textarea(array('id' => 'description', 'name' =>'description', "class" => "input-xlarge"));?>
 				<br />								
+			</div>
+			<div class="col-sm-6">
+				<div id="type_melee" style="display:none;color: white">
+					<label class="control-label" for="ammo" style="width:150px">Schaden (zB 0L, 3M, ..)</label>
+					&nbsp;&nbsp;&nbsp;<?=form_input(array('id' => 'melee_damage', 'name' =>'melee_damage', "class" => "input-xlarge"), '');?><br />
+					<label class="control-label" for="ammo" style="width:150px">Reichweite</label>
+					<b>&plus;</b>&nbsp;<?=form_input(array('id' => 'reach', 'name' =>'reach', "class" => "input-xlarge"), '');?><br />
+				</div>
 			</div>
 			<div class="col-sm-6">
 				<div id="type_cyberware" style="display:none;color: white">

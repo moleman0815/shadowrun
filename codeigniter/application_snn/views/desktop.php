@@ -8,10 +8,9 @@
 				<div class="col-sm-2">
 					<img src="/secure/snn/assets/img/news/icons/<?=$n['icon'];?>" alt="<?=$n['cat_name'];?>" title="<?=$n['cat_name'];?>" />
 				</div>
-				<div class="col-sm-5">
+				<div class="col-sm-10">
 					von: <?=$n['autor'];?> am: <?=date('d.m.Y H:i', $n['date']);?>
-				</div>
-				<div class="col-sm-12">
+				
 					<br />
 					<span id="teaser_<?=$n['nid'];?>" style="display:block;border:1px solid grey;padding:5px;">
 						<?=$n['teaser'];?>

@@ -153,7 +153,8 @@ class Add_functions extends CI_Model {
     	} else {
     		$mode = '';
     	}
-
+    	$damage = ($this->input->post('type') == 'melee') ? $this->input->post('melee_damage') : $this->input->post('damage');
+    		  
     	$essenz = str_replace(',', '.', $this->input->post('cyberware_essence'));
     	$data = array(
     			'name' => $this->input->post('itemname'),
@@ -161,10 +162,11 @@ class Add_functions extends CI_Model {
     			'description' => $this->input->post('description'),
     			'type' => $this->input->post('type'),
     			'ammo' => $this->input->post('ammo'),
-    			'damage' => $this->input->post('damage'),
+    			'damage' => $damage,
     			'mode' => $mode,
     			'reduce' => $this->input->post('reduce'),
-    			'armor' => $this->input->post('armor'), 
+    			'armor' => $this->input->post('armor'),
+    			'reach' => $this->input->post('reach'),
     			'cyberware_type' => $this->input->post('cyberware_type'), 
     			'cyberware_ini' => $this->input->post('cyberware_ini'), 
     			'cyberware_reaction' => $this->input->post('cyberware_reaction'), 
@@ -187,7 +189,7 @@ class Add_functions extends CI_Model {
     		$mode = implode(';', $this->input->post('mode'));
     	}
     	$essenz = str_replace(',', '.', $this->input->post('cyberware_essence'));    	
-    	#_debugDie($this->input->post());
+    	$damage = ($this->input->post('type') == 'melee') ? $this->input->post('melee_damage') : $this->input->post('damage');
 
     	$data = array(
     			'name' => $this->input->post('itemname'),
@@ -195,10 +197,11 @@ class Add_functions extends CI_Model {
     			'description' => $this->input->post('description'),
     			'type' => $this->input->post('type'),
     			'ammo' => $this->input->post('ammo'),
-    			'damage' => $this->input->post('damage'),
+    			'damage' => $damage,
     			'mode' => $mode,
     			'reduce' => $this->input->post('reduce'),
     			'armor' => $this->input->post('armor'), 
+    			'reach' => $this->input->post('reach'),
     			'cyberware_type' => $this->input->post('cyberware_type'), 
     			'cyberware_ini' => $this->input->post('cyberware_ini'), 
     			'cyberware_reaction' => $this->input->post('cyberware_reaction'), 

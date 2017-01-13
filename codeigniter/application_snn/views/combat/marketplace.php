@@ -253,7 +253,7 @@ legend {
 				<div style="display: none" id="melee_box">
 		    		<section id="product">
 			        	<ul class="clear" id="wpn_list">
-			        	<?php if(!empty(melee[0])): ?>
+			        	<?php if(!empty($melee[0])): ?>
 			        		<?php $i=1; foreach($melee as $w): ?>
 			        			<?php if(in_array($w['wid'], $inv_weapons)) {continue;} ?>
 			        			<?php 

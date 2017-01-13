@@ -10,7 +10,7 @@
 
 <style>
 	td {
-		border: 1px solid white;
+		border: 1px solid #BEC6C8;
 		padding: 7px;
 	}
 	select {
@@ -61,18 +61,15 @@
 
 				?>
 				<br />
-
-			<b>Aktuelle Kampfrunde: </b><?=$combat['round']?><br />
-			<b>Aktuelle Phase: </b> <?= (isset($combat['iniphase'])) ? $combat['iniphase']+1 : max(array_keys($combat['ini'])); ?><br />
-			<br />
 			<b>Gegner</b><br />		
 			<?php foreach($combat['enemy'] as $e):?>
 			
-			<div style="border:1px solid white; padding: 3px;margin-bottom:3px">
-					<?=$e['name']?><br />
-					HP (p): 10/ <?=$e['health']?> || HP (m): 10/ <?=$e['spirit']?><br />
-					<?php $hclass = ($e['status'] == 'alive') ? 'style="color:green"' : 'style="color:red"'; ?>
-					Zustand: <span <?=$hclass?>><?=$e['status']?></span><br />
+			<div style="border:1px solid #BEC6C8; padding: 3px;margin-bottom:3px;background-color: #2E323B">
+					<?php $hclass = ($e['status'] == 'alive') ? 'style="color:green"': 'style="color:red"'; ?>
+					<b><?=$e['name']?></b>
+					<i class="fa fa-caret-right" aria-hidden="true"></i>
+					&nbsp; 
+					<i class="fa fa-heart" aria-hidden="true" <?=$hclass?>></i> <?=$e['health']?>/ 10 HP<br />				
 			</div>
 			
 			<?php endforeach; ?>
@@ -85,52 +82,59 @@
 				$mode = explode(';', $combat['player']['fire_mode']);
 			?>	
 			<div>
-			<table >
+			<table>
 				<tbody>
-				<tr>
-					<td><b>Name:</b></td>
-					<td colspan="3"><?=$combat['player']['name']?></td>
-					
+				<tr style="background-color: #2E323B">
+					<td colspan="1" style="border-right:none"><b><?=$combat['player']['name']?></b></td>
+					<td colspan="3" style="border-left:none">
+					<i class="fa fa-heart" aria-hidden="true" <?=$hclass?>></i> <?=$combat['player']['health']?>/ 10 HP</td>
 				</tr>
 				<tr>
-					<td><b>HP:</b></td><td>10/ <?=$combat['player']['health']?></td>
-					<td><b>Zustand:</b></td><td <?=$hclass;?>><?=$combat['player']['status']?></td>
-				</tr>				
+					<td><b>Initiative:</b></td>
+					<td colspan="3">
+						<?=$combat['player']['inidice']?>D +
+						<?=($combat['player']['reaction']+$combat['player']['reaction_mod'])?>						
+					</td>		
+				</tr>			
 				<tr>
 					<td><b>R&uuml;stung:</b></td><td><?=$combat['player']['armor']?></td>					
 					<td><b>Medipacks:</b></td><td <?=$mpclass;?>><?=$combat['player']['small_medipacks']?></td>
-				</tr>	
-				<tr>
-					<td><b>IniW&uuml;rfel:</b></td><td><?=$combat['player']['inidice']?></td>
-					<td><b>ErsatzMunition:</b></td><td <?=$mpclass;?>><?=$combat['player']['maxammo']?></td>
-				</tr>
-				<tr>
-					<td><b>Reaktion:</b></td><td><?=($combat['player']['reaction']+$combat['player']['reaction_mod'])?></td>
-					<td colspan="2" style="border:none">&nbsp;</td>
-				</tr>		
+				</tr>							
+
 				<?php if($combat['player']['weapon_name']): ?>
-					<tr><td colspan="4" style="padding:1px;border:none">&nbsp;</td></tr>
-					<tr>				
+					<tr><td colspan="4" style="padding:4px;border:none"></td></tr>
+					<tr style="background-color: #2E323B">				
 						<td><b>Fernkampf:</b></td>
 						<td colspan="3"><?=$combat['player']['weapon_name']?></td>
 					</tr>
 					<tr>
 						<td><b>Schaden:</b></td><td><?=$combat['player']['weapon_soak'].$combat['player']['weapon_default']?></td>
-						<td><b>Munition:</b></td><td <?=$mclass;?>><?=$combat['player']['ammo']?></td>
-					</tr>
-					<tr>
 						<td><b>Modus:</b></td><td><?=$combat['player']['fire_mode']?></td>
 					</tr>
-				<?php endif; ?>							
+					<tr>
+						<td><b>Munition:</b></td><td <?=$mclass;?>><?=$combat['player']['ammo']?></td>
+						<td><b>ErsatzMunition:</b></td><td><?=$combat['player']['maxammo']?></td>
+					</tr>
+				<?php endif; ?>
+				<?php if($combat['player']['melee_name']): ?>
+					<tr><td colspan="4" style="padding: 4px;border:none;"></td></tr>
+					<tr style="background-color: #2E323B">				
+						<td><b>Nahkampfwaffe:</b></td>
+						<td colspan="3"><?=$combat['player']['melee_name']?></td>
+					</tr>
+					<tr>
+						<td><b>Schaden</b></td><td><?=($combat['player']['strength']+$combat['player']['melee_add_damage']).$combat['player']['melee_default']?></td>
+						<td><b>Reichweite:</b></td><td>+<?=$combat['player']['melee_reach']?></td>
+					</tr>
+				<?php endif; ?>
 				</tbody>
 			</table>
 			</div>
 			<br />
 			
-			<br />
+
 		</div>
-				<div style="clear:both"></div>		
-		<br />		
+
 		<div class="col-md-12" style="float:left;">
 			<span class="newstitle">Bisheriger Kampfverlauf:</span>
 			<br />
@@ -139,8 +143,6 @@
 				<li><?=preg_replace('/AAA/', '', $c)?></li>
 			<?php endforeach; ?>
 			</ul>
-			<br />
-			<div>Aktuelle Runde <strong><?=$combat['round']?></strong> Iniphase <strong><?=(isset($combat['iniphase'])) ? $combat['iniphase']+1 : max(array_keys($combat['ini']));?></strong></div>		
 		</div>
 		
 		<div style="clear:both"></div>
@@ -149,27 +151,36 @@
 			<fieldset class="newselement">
 			<div><b>Welche Aktion möchtest du ausführen (zählt für beide Ini-Aktionen)?</b></div>
 			<br />
+			
 			<form action="/secure/snn/combatzone/nextRound" method="post" enctype="text/html" id="shootout-form" />
 			<input type="hidden" name="round" id="round" value="<?=$combat['round'];?>" />
 			<input type="hidden" name="weapon" id="weapon" value="<?=$_POST['weapon'];?>" />
+			<input type="hidden" name="weapon" id="melee" value="<?=$_POST['melee'];?>" />
 			<input type="hidden" name="armor" id="armor" value="<?=$_POST['armor'];?>" />
 			<?=form_hidden('sendAction', true);?>
 			<div class="col-md-6" style="color: white">
-			<?php if($combat['player']['ammo'] > 1): ?>
-				<?php if(in_array('HM', $mode)): ?>
-					<input type="radio" name="action" id="action" value="singleshot" />	- einzelner Schuß (-2 Munition)<br />
-				<?php endif; ?>
-				<?php if($combat['player']['ammo'] > 5): ?>
-					<?php if(in_array('SM', $mode)): ?>
-						<input type="radio" name="action" id="action" value="salve" /> - Salve (-6 Munition)<br />
+			<?php if($combat['player']['weapon_name']): ?>
+				<?php if($combat['player']['ammo'] > 1): ?>
+				<b>Fernkampf</b><br />
+					<?php if(in_array('HM', $mode)): ?>
+						<input type="radio" name="action" id="action" value="singleshot" />	- einzelner Schuß (-2 Munition)<br />
 					<?php endif; ?>
-				<?php endif; ?>
-				<?php if($combat['player']['ammo'] > 12): ?>		
-					<?php if(in_array('AM', $mode)): ?>
-						<input type="radio" name="action" id="action" value="automatic" />	- Automatik (-12 Munition)<br />
+					<?php if($combat['player']['ammo'] > 5): ?>
+						<?php if(in_array('SM', $mode)): ?>
+							<input type="radio" name="action" id="action" value="salve" /> - Salve (-6 Munition)<br />
+						<?php endif; ?>
 					<?php endif; ?>
+					<?php if($combat['player']['ammo'] > 12): ?>		
+						<?php if(in_array('AM', $mode)): ?>
+							<input type="radio" name="action" id="action" value="automatic" />	- Automatik (-12 Munition)<br />
+						<?php endif; ?>
+					<?php endif; ?>					
 				<?php endif; ?>
-				
+			<?php endif; ?>
+			<?php if($combat['player']['melee_name']): ?>
+			<br />
+				<b>Nahkampf</b><br />
+				<input type="radio" name="action" id="action" value="melee" />	- Nahkampf<br />
 			<?php endif; ?>
 			<br /><br />
 			<?php if($combat['player']['health'] < 10 && $combat['player']['small_medipacks'] > 0): ?>		

@@ -323,7 +323,8 @@ class Combat_model extends CI_Model
 				$melee = $inv[0]['weapon'][$x];
 			}
 		}
-		
+		$reach = ($player['race'] == 'troll') ? 1 : 0; 
+		#_debugDie($char);
 		/* SC Werte werden ausgelesen, modifiziert und gespeichert */
 		$player['body'] = ($char[0]['body']+$c_body);
 		$player['quickness'] = ($char[0]['quickness']+$c_quickness);
@@ -337,6 +338,7 @@ class Combat_model extends CI_Model
 		$player['combat'] = $char[0]['armed_longrange'];
 		$player['melee'] = $char[0]['armed_combat'];
 		$player['name'] = $char[0]['charname'];
+		$player['reach'] = $reach;
 		$player['status'] = 'alive';
 		$player['weapon_name'] = $weapon['name'];
 		$player['weapon_soak'] = substr($weapon['damage'], 0,-1);
@@ -347,6 +349,8 @@ class Combat_model extends CI_Model
 		$player['melee_name'] = $melee['name'];
 		$player['melee_damage'] = substr($melee['damage'], -1);
 		$player['melee_default'] = substr($melee['damage'], -1);
+		$player['melee_add_damage'] = substr($melee['damage'], 0,-1);
+		$player['melee_reach'] = ($melee['reach']+$player['reach']);
 		$player['fire_mode'] = $weapon['mode'];
 		$player['ammo'] = $weapon['ammo'];
 		$player['ammo_default'] = $weapon['ammo'];
@@ -471,8 +475,12 @@ class Combat_model extends CI_Model
 
 			foreach ($fighter as $f) {	
 				if ($f == $this->player['name']) {
-					array_push($this->combatlog, '<br />Iniphase '.($this->iniphase+1).' Spieler <b>'.ucfirst($this->player['name']).'</b> agiert.<br />');	
-					$this->playerShooting($this->round);
+					array_push($this->combatlog, '<br />Iniphase '.($this->iniphase+1).' Spieler <b>'.ucfirst($this->player['name']).'</b> agiert.<br />');
+					if ($this->player['action'] == 'melee') {
+						$this->playerMeleeAttack($this->round);
+					} else {
+						$this->playerShooting($this->round);
+					}
 				} else {
 					foreach ($this->enemy as $e) {
 						if ($f == $e['name']) {
@@ -530,8 +538,136 @@ class Combat_model extends CI_Model
 		}
 	}
 	
+	function playerMeleeAttack($inround) {
+		if ($this->player['action'] == 'melee') {
+			if ($this->player['target'] != "") {
+				$target = $this->getIndividuelTarget();
+			} else {
+				$target = ($this->enemies > 1) ? $this->getTarget() : $target = 0;
+			}
+			$playerMelee = $this->player['melee'];
+			$enemyMelee = $this->enemy[$target]['melee'];
+			$mwEnemy = ((4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach'])) < 2) ? 2 : (4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']));
+			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach'])) < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']));
+			$playerHit = $playerAll = $enemyHit = $enemyAll = array();
+
+			/* player roll */
+			for ($x=0;$x<$playerMelee;$x++) {
+				$roll = $this->combat->_rollDiceWithRule();
+				if ($roll >= $mwPlayer) {
+					array_push($playerHit, $roll);
+				}
+				array_push($playerAll, $roll);
+			} 
+			foreach ($playerAll as $s) { $playerFired .= $s.', '; }
+			/* enemy roll */
+			for ($x=0;$x<$enemyMelee;$x++) {
+				$roll = $this->combat->_rollDiceWithRule();
+				if ($roll >= $mwEnemy) {
+					array_push($enemyHit, $roll);
+				}
+				array_push($enemyAll, $roll);
+			}
+			foreach ($enemyAll as $s) { $enemyFired .= $s.', '; }
+			
+			array_push($this->combatlog, 'Nahkampf: '.ucfirst($this->player['name']).' w&uuml;rfelt '.$playerFired.' gegen den Mindestwurf: '.$mwPlayer.' und hat '.count($playerHit).' Erfolge.<br />');
+			array_push($this->combatlog, 'Nahkampf: '.ucfirst($this->enemy[$target]['name']).' w&uuml;rfelt '.$enemyFired.' gegen den Mindestwurf: '.$mwEnemy.' und hat '.count($enemyHit).' Erfolge.<br />');
+			$winner = (count($playerHit) >= count($enemyHit)) ? ucfirst($this->player['name']) : ucfirst($this->enemy[$target]['name']);			
+			
+			array_push($this->combatlog, 'Nahkampf: <b>'.$winner.'</b> hat den Nahkampf f&uuml;r sich gewonnen.<br />');
+						
+			if (count($playerHit) >= count($enemyHit)) {
+				$this->evaluatePlayerMeleeDamage($playerHit, $target);
+			} else {
+				$this->evaluateEnemyMeleeDamage($enemyHit, $target);
+			}
+			
+// 			_debug($this->combatlog);
+// 			_debug($this->enemy[$target]);			
+// 			_debugDie($this->player);
+		}
+	}
+	
+	function evaluatePlayerMeleeDamage($hits, $target) {	
+		/* increase damage in > 2 hits */
+		$this->player['melee_damage'] = (count($hits) > 2) ? $this->combat->calculateDamageIncrease($hits, $this->player['melee_damage']) : $this->player['melee_damage'];		
+		$enemyMw = ($this->player['strength']+$this->player['melee_add_damage']);
+		$enemyMwAfterArmor = (($enemyMw-$this->enemy[$target]['armor']) < 2) ? 2 : ($enemyMw-$this->enemy[$target]['armor']);
+		$enemyAll = $enemySoak = array();
+		/* soaking */
+		for($x=0;$x<$this->enemy[$target]['body'];$x++) {
+			$roll = $this->combat->_rollDiceWithRule();
+			if ($roll >= $enemyMwAfterArmor) {
+				array_push($enemySoak, $roll);
+			}
+			array_push($enemyAll, $roll);
+		}
+		foreach ($enemyAll as $s) { $enemySoaked .= $s.', '; }
+		/* decrease damage if > soaking */
+		$this->player['melee_damage'] = (count($enemySoak) > 1) ? $this->combat->calculateDamageDecrease($enemySoak, $this->player['melee_damage']) : $this->player['melee_damage'];
+		$healthBefore = $this->enemy[$target]['health'];
+		/* evaluate damage after increase and soaking */
+		$this->enemy[$target]['health'] = ($this->enemy[$target]['health']-$this->combat->_getWeaponDamage($this->player['melee_damage']));
+		if ($this->enemy[$target]['health'] < 10) {
+			if ($this->enemy[$target]['health'] > 0) {
+				$this->enemy[$target]['status'] = "wounded";
+			} else if ($this->enemy[$target]['health'] <= 0) {
+				$this->enemy[$target]['status'] = "dead";
+			}
+		}	
+		
+		if ($healthBefore == $this->enemy[$target]['health']) {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
+		} else {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. '.$this->enemy[$target]['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->enemy[$target]['health'].'</b><br />');
+		}
+		if ($this->enemy[$target]['status'] == "dead") {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> stirbt.</b><br />');
+		}
+		/* reset damage to default */		
+		$this->player['melee_damage'] = $this->player['melee_default'];
+	}
+	
+	function evaluateEnemyMeleeDamage($hits, $target) {		
+		$this->enemy[$target]['melee_damage'] = (count($hits) > 2) ? $this->combat->calculateDamageIncrease($hits, $this->enemy[$target]['melee_damage']) : $this->player['melee_damage'];
+		$playerMw = ($this->enemy[$target]['strength']+$this->enemy[$target]['melee_add_damage']);
+		$playerMwAfterArmor = (($playerMw-$this->player['armor']) <2) ? 2 : ($playerMw-$this->player['armor']);
+		$playerAll = $playerSoak = array();
+		/* soaking */
+		for($x=0;$x<$this->player['body'];$x++) {
+			$roll = $this->combat->_rollDiceWithRule();
+			if ($roll >= $playerMwAfterArmor) {
+				array_push($playerSoak, $roll);
+			}
+			array_push($playerAll, $roll);
+		}		
+		foreach ($playerAll as $s) { $playerSoaked .= $s.', '; }
+
+		 $this->enemy[$target]['melee_damage'] = (count($playerSoak) > 1) ? $this->combat->calculateDamageDecrease($playerSoak, $this->enemy[$target]['melee_damage']) : $this->enemy[$target]['melee_damage'];
+		 $healthBefore = $this->player['health'];
+		 $this->player['health'] = ($this->player['health']-$this->combat->_getWeaponDamage($this->enemy[$target]['melee_damage']));
+		if ($this->player['health'] < 10) {
+			if ($this->player['health'] > 0) {
+				$this->player['status'] = "wounded";
+			} else if ($this->player['health'] <= 0) {
+				$this->player['status'] = "dead";
+			}
+		}
+		
+		if ($healthBefore == $this->player['health']) {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
+		} else {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. '.$this->player['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->player['health'].'</b><br />');
+		}
+		if ($this->enemy[$target]['status'] == "dead") {
+			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> stirbt.</b><br />');
+		}
+		
+		$this->enemy[$target]['melee_damage'] = $this->enemy[$target]['melee_default'];
+	}
+	
 	function playerShooting($inround) {
- 		if ($this->player['action'] != 'cover' || $this->player['action'] != 'reload' || $this->player['action'] != 'smallheal') {
+ 		if ($this->player['action'] != 'cover' || $this->player['action'] != 'reload' || $this->player['action'] != 'smallheal' || $this->player['action'] != 'melee') {
  			error_log('in playerShooting');
 			for ($i=0;$i<2;$i++) {
 				if($this->status == 'running') {		

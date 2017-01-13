@@ -247,7 +247,8 @@ class Combatzone extends CI_Controller {
 
 	function fight () {
 		$weapon = $this->input->post('weapon');
-		if (empty($weapon)) {
+		$melee = $this->input->post('melee');
+		if (empty($weapon) && empty($melee)) {
 			$this->session->set_userdata('error', 'Du solltest besser eine Waffe auswählen, wenn du keine hast, solltest du im Marktplatz vorbei schauen.');
 			redirect('combatzone/combat_mission/'.$this->input->post('mid'));
 		}
