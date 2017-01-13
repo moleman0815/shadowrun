@@ -192,4 +192,18 @@ class CI_Combat {
 			return '0';
 		}
 	}
+	
+	function mwModByDamage($health) {
+		$damage = (10-$health);
+		
+		if ($damage == 0) {
+			return 0;
+		} else if ($damage == 1 || $damage == 2) {
+			return 1;
+		} else  if ($damage > 2 && $damage < 6) {
+			return 2;
+		}  else  if ($damage >= 6) {
+			return 3;
+		} 
+	}
 }

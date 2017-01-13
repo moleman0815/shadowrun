@@ -306,4 +306,26 @@ function linkify($text)
             echo "<!--Die zu inkludierende Datei: ".$file." existiert auf dem Server nicht.-->";
         }
     }
+    
+    function ciEmpty ($data) {
+    	if (is_array($data)) {
+    		if (array_key_exists('0', $data)) {
+    			return false;
+    		} else {
+    			return true;
+    		}
+    	} else {
+    		if (empty($data)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    
+    	}
+    }
+    
+    function emojiReplace ($text) {
+    	$text = preg_replace(':)', '<img src="/secure/snn/assets/img/icons/emoji/smilie.png">', $text);
+    	return $text;
+    }
 ?>

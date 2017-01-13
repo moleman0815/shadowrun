@@ -130,11 +130,10 @@
 				</tbody>
 			</table>
 			</div>
-			<br />
-			
-
+			<br />			
 		</div>
-
+		<div style="clear:both"></div>
+		<br />
 		<div class="col-md-12" style="float:left;">
 			<span class="newstitle">Bisheriger Kampfverlauf:</span>
 			<br />

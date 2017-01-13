@@ -362,8 +362,9 @@ class Combat_model extends CI_Model
 		$player['maxammo'] = $inv[0]['maxammo'];
 		$player['avatar'] = $char[0]['avatar'];
 		$player['mw'] = $c_mw;
+		$player['mw_mod'] = 0;
 
-		#_debugDie($player);
+
 		
 		$tmp = '"'.$player['name'].'"';
 		$enemy = array();
@@ -386,6 +387,7 @@ class Combat_model extends CI_Model
 			$enemy[$x]['weapon_default'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
 			$enemy[$x]['melee_damage'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
 			$enemy[$x]['melee_default'] = $this->combat->_getNSCWeaponDamage($ganger[$x][0]['level']);
+			$enemy[$x]['mw_mod'] = 0;
 			array_push($this->fighters, $enemy[$x]["name"]);
 		}
 #_debugDie($enemy);
@@ -443,7 +445,7 @@ class Combat_model extends CI_Model
 		for ($x=0; $x<$maxround;$x++) {
 			for($this->iniphase = max(array_keys($this->ini[$x])); $this->iniphase > 0; $this->iniphase--) {
 				$this->checkResult();
-				
+
 				if (in_array($this->iniphase, array_keys($this->ini[$x]))) {
 					$this->fighterinround = $this->ini[$x][$this->iniphase];
 					$this->shootOut();
@@ -547,8 +549,8 @@ class Combat_model extends CI_Model
 			}
 			$playerMelee = $this->player['melee'];
 			$enemyMelee = $this->enemy[$target]['melee'];
-			$mwEnemy = ((4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach'])) < 2) ? 2 : (4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']));
-			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach'])) < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']));
+			$mwEnemy = ((4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'] < 2) ? 2 : (4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'];
+			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod'] < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod'];
 			$playerHit = $playerAll = $enemyHit = $enemyAll = array();
 
 			/* player roll */
@@ -682,7 +684,7 @@ class Combat_model extends CI_Model
 					$allfired = array();	
 					for ($x=0;$x<$this->player['combat'];$x++) {
 						$roll = $this->combat->_rollDiceWithRule();
-						$mw = $this->combat->_getPitch($this->level)-(int)($this->player['mw']);
+						$mw = $this->combat->_getPitch($this->level)-(int)($this->player['mw'])+$this->player['mw_mod'];
 						
 						if ($this->player['action'] == 'salve') {
 							if ($i==0) {
@@ -805,7 +807,7 @@ class Combat_model extends CI_Model
 				for ($x=0;$x<$e['combat'];$x++) {		
 					$mod = ($this->player['action'] == 'cover')	? 3 : 0;
 					$roll = $this->combat->_rollDiceWithRule();
-					$mw =  $this->combat->_getPitch($this->level)+$mod;
+					$mw =  $this->combat->_getPitch($this->level)+$mod+$e['mw_mod'];
 
 					array_push($allfired, $roll);
 					if ($roll >= $mw) {
@@ -919,11 +921,11 @@ class Combat_model extends CI_Model
  		#_debugDie($this->player);
 		$reaction = ($this->player['reaction']+$this->player['reaction_mod']);
 
-		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction);
+		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction)-$this->player['mw_mod'];
 		$this->calculateRounds($ini_player, $this->player['name']);		
 
 		for($x=0;$x<count($this->enemy);$x++) {
-			$ini_enemy = (int)($this->combat->_calculateIni($this->enemy[$x]['inidice'])+$this->enemy[$x]['reaction']);
+			$ini_enemy = (int)($this->combat->_calculateIni($this->enemy[$x]['inidice'])+$this->enemy[$x]['reaction'])-$this->enemy[$x]['mw_mod'];
 			$this->calculateRounds($ini_enemy, $this->enemy[$x]['name']);
 		}		
 	}
@@ -934,7 +936,7 @@ class Combat_model extends CI_Model
 		if ($count > 10) {
 			$y = 0;
 			for ($x=$count;$x>0;$x-=10) {
-				if (empty($this->ini[$x]))	 {
+				if (empty($this->ini[$y][$x]))	 {
 					$this->ini[$y][$x] = $name;
 				} else {
 					$this->ini[$y][$x] = $this->ini[$y][$x].";".$name;
@@ -1023,13 +1025,18 @@ class Combat_model extends CI_Model
 			error_log('in checkResult - player dead');	
 			$this->status = 'fail';
 			$this->finalizeFight();
+		} else {
+			$this->player['mw_mod'] = $this->combat->mwModByDamage($this->player['health']);			 
 		}
 		$status = '';
-		foreach ($this->enemy as $e) {
-			if ($e['status'] == 'dead') {
+		for ($x=0;$x<count($this->enemy); $x++) {
+			if ($this->enemy[$x]['status'] == 'dead') {
 				$status++;
+			} else {
+				$this->enemy[$x]['mw_mod'] = $this->combat->mwModByDamage($this->enemy[$x]['health']);
 			}
-		}		
+		}
+
 		if ($status == $this->enemies) {
 			error_log('in checkResult - all enemy dead');	
 			$this->status = 'success';
