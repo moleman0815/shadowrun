@@ -66,6 +66,7 @@ input, textarea, select {
      	newMessageClose = document.getElementById('newMessageClose');
      	replyMessageModal = document.getElementById('replyMessageBox');
      	replyMessageClose = document.getElementById('replyMessageClose');
+     	//
 
      	newMessageBtn.onclick = function (){
      		newMessageModal.style.display = "block";
@@ -193,16 +194,36 @@ input, textarea, select {
 	<button type="button" id="newMessageClose" title="Close" class="close">X</button>
 		<fieldset>
 		<legend class="newstitle">Nachricht schreiben</legend>
-			<form action="#" id="writeMessage" enctype="text/html" method="post">
+  			<form action="#" id="writeMessage" enctype="text/html" method="post"> 
 			
-			<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
 			<input type="hidden" name="sendmsg" id="sendmsg" value="true" />
+			<?php if($this->session->userdata('rank') != 1): ?>
+				<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
+			<?php endif; ?>
+
 	
 			<label for="msg_title">Titel</label><br />
 			<input type="text" name="title" id="title" style="width: 95%"/>
-			<br /><br />
+			<br />
+			<?php if($this->session->userdata('rank') == 1): ?>
+				<br />
+				<b>Absender</b><br />
+				<select name="userid" id="userid">
+				<option value="">Absender w&auml;hlen</option>
+				<option value=""></option>
+				<?php
+						foreach ($receiver as $key => $value) {
+							if ($value['id'] == $this->session->userdata('id')) continue;
+							echo "<option value='".$value['id']."'>".ucfirst($value['nickname'])."</option>";
+						}	
+				?>
+				</select>
+			<?php endif; ?>
+			<br />
+			<b>Empfänger</b><br />
 			<select name="receiver[]" id="receiver" multiple size="7">
-			<option value="">Empfänger</option>
+			<option value="">Empfänger w&auml;hlen</option>
+			<option value=""></option>
 			<?php
 					foreach ($receiver as $key => $value) {
 						if ($value['id'] == $this->session->userdata('id')) continue;
@@ -210,6 +231,7 @@ input, textarea, select {
 					}	
 			?>
 			</select>
+			
 			<br />
 			<label for="msg_text">Nachrichten Text</label><br />
 			<textarea name="msg_text" id="msg_text" rows="10" cols="90"></textarea>

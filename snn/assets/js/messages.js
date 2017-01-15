@@ -22,7 +22,8 @@ $.extend (sr,{
 		},
 		sendNewMessage : function () {
 			newMessageModal.style.display = "none";
-			replyMessageModal.style.display = "none";
+			replyMessageModal.style.display = "none";			
+			//console.log($('#writeMessage').serialize());
 			$.ajax({
 				url: '/secure/snn/desktop/sendMessage',
 				type: 'POST',

@@ -10,12 +10,15 @@ class Main_db_assets extends CI_Model
 {
 	
 	var $mydb;
+	var $settings;
 
 
   function __construct()
     {
         // Call the Model constructor
         parent::__construct();
+        $this->load->model('add_functions');
+        $this->settings = $this->add_functions->readSettings();
     }
     
     function getNews($page) {
@@ -63,9 +66,23 @@ class Main_db_assets extends CI_Model
     }
 
     function countMessages () {
+    	$sendto = "";
+    	if ($this->session->userdata('rank') == 1) {
+    		$send = $this->db->get_where('login', array('rank' => 1))->result_array();
+    		$sendto = $this->db->or_where('send_to', $this->session->userdata('id'));
+    		foreach ($send as $q) {
+    			$sendto .= $this->db->or_where('send_to', $q['id']);
+    		}
+    	} else {
+    		$sendto = $this->db->where('send_to', $this->session->userdata('id'));
+   	}
+    	
         $this->db->where('deleted', '0');
-        $this->db->where('send_to', $this->session->userdata('id'));
-        $this->db->or_where('send_from', $this->session->userdata('id'));
+        #$this->db->where('send_to', $this->session->userdata('id'));
+        $sendto;
+        if ($this->settings[0]['show_own_messages'] == 1) {
+        	$this->db->or_where('send_from', $this->session->userdata('id'));
+        }
         $this->db->from('messages');
         $query = $this->db->get()->result_array();
 
@@ -99,18 +116,31 @@ class Main_db_assets extends CI_Model
 		$data = array();
 		$avatars = array();
 		$tmpAvatar = array();
+
+		$sendto = "";
+		if ($this->session->userdata('rank') == 1) {
+			$send = $this->db->get_where('login', array('rank' => 1))->result_array();
+				$sendto = $this->db->or_where('send_to', $this->session->userdata('id'));
+			foreach ($send as $q) {				
+				$sendto .= $this->db->or_where('send_to', $q['id']);
+			}
+		} else {
+			$sendto = $this->db->where('send_to', $this->session->userdata('id'));
+		}
 		
-	
         $this->db->select('messages.*');
-        $this->db->from('messages');       
-        $this->db->where('send_to', $this->session->userdata('id'));
-        #$this->db->where('send_to', $this->session->userdata('id'));
-        #$this->db->or_where('send_to', 2);
-        $this->db->or_where('send_from', $this->session->userdata('id'));
+        $this->db->from('messages');
+        $sendto;
+        //$this->db->where('send_to', $this->session->userdata('id'));
+        if ($this->settings[0]['show_own_messages'] == 1) {
+        	$this->db->or_where('send_from', $this->session->userdata('id'));
+        }
         $this->db->where('deleted', '0');
         $this->db->order_by("date", "DESC");
 		$this->db->limit($limit, $page);
         $data['messages'] = $this->db->get()->result_array();
+        
+        #_debugDie($data);
         
         for($i=0; $i<count($data['messages']);$i++) {
         	if ($data['messages'][$i]['send_from'] == $this->session->userdata('id') && preg_match("/freundschaftsanfrage/i", $data['messages'][$i]["title"])) {
@@ -135,7 +165,7 @@ class Main_db_assets extends CI_Model
         $this->db->from('login');
         $this->db->where('id', $this->session->userdata('id'));
         $data['avatar'][$this->session->userdata('id')] = $this->db->get()->result_array();
- 
+       # _debugDie($data);
         return $data;
     }
 
@@ -225,12 +255,13 @@ class Main_db_assets extends CI_Model
                 return false;
             }
 		} else {
+			
 			$senderid = (!empty($post['senderid'])) ? $post['senderid'] : '0';
 			if (count($post['receiver']) == 1) {
 				$data = array(
 					'title' => $post['title'],
 					'msg_text' => $post['msg_text'],
-					'send_to' =>  $post['receiver'],
+					'send_to' =>  $post['receiver'][0],
 					'send_from' =>  $post['userid'],
 					'parent' => $senderid,
 					'date' => time(),			
