@@ -31,8 +31,18 @@ class Main_db_assets extends CI_Model
         $this->db->order_by('news.date', 'DESC');
         $this->db->limit($limit, $page);        
 
-        $query = $this->db->get();
-        return $query->result_array();        
+        $query = $this->db->get()->result_array();
+        for ($x=0; $x<count($query);$x++) {
+        	$this->db->select('comments.*, login.nickname');
+        	$this->db->from('comments');
+        	$this->db->join('login', 'login.id = comments.uid');        	
+        	$this->db->where('nid', $query[$x]['nid']);
+        	$this->db->where('deleted', '0');
+        	$this->db->order_by('date', 'DESC');
+        	$query[$x]['comments'] = $this->db->get()->result_array();
+        }
+#_debugDie($query);
+        return $query;        
     }
 
     function countNews() {
@@ -243,7 +253,7 @@ class Main_db_assets extends CI_Model
 				'title' => $post['replytitle'],
 				'msg_text' => $post['reply_text'],
 				'send_to' =>  $post['receiverid'],
-				'send_from' =>  $post['userid'],
+				'send_from' =>  $post['senderid'],
 				'parent' => $post['senderid'],
 				'date' => time(),			
 			);
@@ -419,6 +429,23 @@ class Main_db_assets extends CI_Model
     	$this->db->where('type', "feature2");
     	$this->db->order_by('time', 'DESC');
     	return $this->db->get_where('feedback', $where)->result_array();
+    }
+    
+    function sendNewComment () {
+    	$data = array(
+    			'comment' => $this->input->post('comment'),
+    			'nid' => $this->input->post('newsid'),
+    			'uid' => $this->input->post('userid'),
+    			'deleted' => '0',
+    			'date' => time(),
+    	);
+    	return ($this->db->insert('comments', $data)) ? true : false;
+    }
+    
+    function deleteComment () {
+    	$data = array('deleted' => '1');
+    	$this->db->where('cid', $this->input->post('cid'));
+    	return ($this->db->update('comments', $data)) ? true : false;
     }
     
 }

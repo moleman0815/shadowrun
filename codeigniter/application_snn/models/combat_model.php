@@ -34,18 +34,47 @@ class Combat_model extends CI_Model
 		$this->db->select('*');
 		$this->db->from('missions');
 		$this->db->where('level', $level);
+		$this->db->where('mission_played', '0');
 		$query = $this->db->get();
         return $query->result_array();
 	}
 	
 	function getMissionData () {
 		$mid = ($this->uri->segment(3)) ? $this->uri->segment(3) : $this->session->userdata['missionlevel'];
-		$query = $this->db->get_where('missions', array('mid' => $mid));
-		return $query->result_array();
+		$query = $this->db->get_where('missions', array('mid' => $mid))->result_array();
+		if ($query[0]['special'] == 1) {
+			$query[0]['item'] = $this->db->get_where('items', array('iid' => $query[0]['specialitem']))->result_array();
+		}
+
+		return $query;
+	}
+	
+	function updateSpecialMission () {
+		$mid = ($this->uri->segment(3)) ? $this->uri->segment(3) : $this->session->userdata['missionlevel'];
+		$data = array('mission_played' => '1');
+		$this->db->where('mid', $mid);
+		$this->db->update('missions', $data);
+		
+		$data = array('mid' => $mid);
+		$missionData = $this->db->get_where('missions', $data)->result_array();
+		$inv = $this->getInventory();
+		$iids = explode(';', $inv[0]['siid']);
+		if (!in_array($missionData[0]['specialitem'], $iids)) {
+			array_push($iids, $missionData[0]['specialitem']);
+			$imploded = implode(';', $iids);
+			$data = array('siid' => $imploded);
+			$this->db->where('cid', $inv[0]['cid']);
+			$this->db->update('inventory', $data);
+		}
 	}
 	
 	function getInventory ($id) {
-		$id = ($id) ? $id : $this->session->userdata('charid');
+		if (!$id) {
+			$this->db->select('cid');
+			$this->db->where('uid', $this->session->userdata('id'));
+			$uid = $this->db->get('chars')->result_array();
+			$id = $uid[0]['cid'];
+		}
 
 		$inv = $this->db->get_where('inventory', array('cid' => $id))->result_array();
 		#echo $inv[0]['wid'];
@@ -73,6 +102,15 @@ class Combat_model extends CI_Model
 				$inv[0]['cyberware'][$x] = $cybers[0];
 			}
 		}
+
+		if(!empty($inv[0]['zid'])) {
+			$zauber = explode(';', $inv[0]['zid']);
+			for ($x=0;$x<count($zauber);$x++) {
+				$spells = $this->db->get_where('spells', array('zid' => $zauber[$x]))->result_array();
+				$inv[0]['spells'][$x] = $spells[0];
+			}
+		}
+
 		return $inv;
 	}
 
@@ -281,7 +319,6 @@ class Combat_model extends CI_Model
 		$c_body = 0;
 		$c_intelligence = 0;
 
-		/* cyberware not implemented */
 		if (!empty($inv[0]['cyberware'][0])) {
 			foreach ($inv[0]['cyberware'] as $c) {
 				$c_ini = ($c['cyberware_ini'] > 0) ? $c_ini+(int)($c['cyberware_ini']) : $c_ini;	
@@ -323,13 +360,15 @@ class Combat_model extends CI_Model
 				$melee = $inv[0]['weapon'][$x];
 			}
 		}
-		$reach = ($player['race'] == 'troll') ? 1 : 0; 
+		$reach = ($char[0]['race'] == 'troll') ? 1 : 0; 
 		#_debugDie($char);
 		/* SC Werte werden ausgelesen, modifiziert und gespeichert */
 		$player['body'] = ($char[0]['body']+$c_body);
 		$player['quickness'] = ($char[0]['quickness']+$c_quickness);
 		$player['strength'] = ($char[0]['strength']+$c_strength);
 		$player['intelligence'] = ($char[0]['intelligence']+$c_intelligence);
+		$player['willpower'] = ($char[0]['willpower']);
+		$player['magic'] = ($char[0]['magic']);
 		$player['cid'] = $char[0]['cid'];
 		$player['health'] = '10';
 		$player['spirit'] = '10';
@@ -350,7 +389,7 @@ class Combat_model extends CI_Model
 		$player['melee_damage'] = substr($melee['damage'], -1);
 		$player['melee_default'] = substr($melee['damage'], -1);
 		$player['melee_add_damage'] = substr($melee['damage'], 0,-1);
-		$player['melee_reach'] = ($melee['reach']+$player['reach']);
+		$player['melee_reach'] = ($melee['reach']);
 		$player['fire_mode'] = $weapon['mode'];
 		$player['ammo'] = $weapon['ammo'];
 		$player['ammo_default'] = $weapon['ammo'];
@@ -363,14 +402,17 @@ class Combat_model extends CI_Model
 		$player['avatar'] = $char[0]['avatar'];
 		$player['mw'] = $c_mw;
 		$player['mw_mod'] = 0;
+		$player['spells'] = $inv[0]['spells'];
 
-
+		
 		
 		$tmp = '"'.$player['name'].'"';
 		$enemy = array();
 		for($x=0;$x<count($ganger);$x++) {
+			$enemyreach = ($ganger[$x][0]['race'] == 'troll') ? 1 : 0;
 			$enemy[$x]['body'] = $ganger[$x][0]['body'];
 			$enemy[$x]['strength'] = $ganger[$x][0]['strength'];
+			$enemy[$x]['willpower'] = $ganger[$x][0]['willpower'];
 			$enemy[$x]['health'] = '10';			
 			$enemy[$x]['spirit'] = '10';
 			$enemy[$x]['armor'] = '1';	
@@ -380,6 +422,7 @@ class Combat_model extends CI_Model
 			$enemy[$x]['melee'] =  $ganger[$x][0]['armed_combat'];
 			$enemy[$x]['name'] =  $ganger[$x][0]['ganger_name'];
 			$enemy[$x]['status'] = 'alive';
+			$enemy[$x]['reach'] = $enemyreach;
 			$enemy[$x]['inidice'] = $this->combat->_getIniDice($ganger[$x][0]['level']);
 			$enemy[$x]['weapon_soak'] = $this->combat->_getNSCWeaponSoak($ganger[$x][0]['level']);
 			$enemy[$x]['weapon_soak_default'] = $this->combat->_getNSCWeaponSoak($ganger[$x][0]['level']);
@@ -480,6 +523,8 @@ class Combat_model extends CI_Model
 					array_push($this->combatlog, '<br />Iniphase '.($this->iniphase+1).' Spieler <b>'.ucfirst($this->player['name']).'</b> agiert.<br />');
 					if ($this->player['action'] == 'melee') {
 						$this->playerMeleeAttack($this->round);
+					} else if ($this->player['action'] == 'magic') { 
+						$this->playerMagicAttack();
 					} else {
 						$this->playerShooting($this->round);
 					}
@@ -506,6 +551,9 @@ class Combat_model extends CI_Model
 
 		$this->_readFromSession();
 		$this->player['action'] = $this->input->post('action');
+		$this->player['spell'] = $this->input->post('spell');
+		$this->player['spelllevel'] = ($this->input->post('spelllevel')) ? $this->input->post('spelllevel') : 3;
+		$this->player['spelldamage'] = ($this->input->post('spelldamage')) ? $this->input->post('spelldamage') : 'M';
 		$this->player['target'] = $this->input->post('target');
 		
 		#_debug($this->lastround);
@@ -540,6 +588,139 @@ class Combat_model extends CI_Model
 		}
 	}
 	
+	function playerMagicAttack () {
+		if (!ciEmpty($this->player['spell'])) {
+			
+			foreach($this->player['spells'] as $s) {
+				if ($s['zid'] == $this->player['spell']) {
+					$spell = $s;
+				}
+			}
+			array_push($this->combatlog, 'Zauber: '.ucfirst($this->player['name']).' versucht den Zauber <b>'.$spell['name'].'</b> zu wirken.<br />');
+			if (!empty($spell)) {
+				if ($spell['typ'] == "heilung") {
+					$this->resolveHealingMagic($spell);
+				} else if ($spell['typ'] == "kampf") {
+					$this->resolveCombatMagic($spell);
+				}
+			}			
+		}
+		
+		#_debugDie($this->player);
+	}
+	
+	function resolveHealingMagic ($spell) {
+		$wirkung = explode(';', $spell['wirkung']);
+		if ($wirkung[1] == 'ini') {
+			array_push($this->combatlog, 'Zauber: '.ucfirst($this->player['name']).' erh&ouml;ht seine Initiative W&uuml;rfel um  <b>'.$wirkung[0].'</b>.<br />');
+			$this->player['inidice'] = $this->player['inidice']+(int)$wirkung[0];
+			$this->soakMagic($spell['entzug']);
+		} else if ($wirkung[1] == 'heal') {
+			
+		}
+	}
+	
+	function resolveCombatMagic ($spell) {
+		$target = ($this->player['target'] != "") ? $this->getIndividuelTarget() : ($this->enemies > 1) ? $this->getTarget() : $target = 0;		
+		$playerAll = $playerHit = $enemySoak = $enemyAll = array();
+		
+		if ($spell['wirkung'] == '') {
+			array_push($this->combatlog, 'Zauber: '.ucfirst($this->player['name']).' zaubert einen '.$spell['name'].' auf '.$this->enemy[$target]['name'].'<br />');
+			/* Zauberprobe */
+			for ($i=0; $i<$this->player['spelllevel'];$i++) {
+				$roll = $this->combat->_rollDiceWithRule();
+				$targetMw = ($spell['mw'] == 'k') ? $this->enemy[$target]['body'] : $this->enemy[$target]['willpower'];
+				$playerMw = ($targetMw+$this->player['mw_mod']+$this->player['mw_mod_mental']);
+				if ($roll >= $playerMw) {
+					array_push($playerHit, $roll);
+				}
+				array_push($playerAll, $roll);
+			}
+			foreach ($playerAll as $s) { $targethit .= $s.', '; }
+			array_push($this->combatlog, 'Zauber: '.ucfirst($this->player['name']).' w&uuml;rfelt auf '.$targethit.' gegen einen Mindestwurf von '.$this->enemy[$target]['body'].' und erzielt '.count($playerHit).' Erfolge.<br />');
+			$spelldamage = $this->player['spelldamage'];
+			if (count($playerHit) > 2) {
+				$spelldamage = $this->combat->calculateDamageIncrease($playerHit, $spelldamage);
+			}
+	
+			/* NSC soaking */
+			for($x=0;$x<$this->enemy[$target]['willpower'];$x++) {
+				$roll = $this->combat->_rollDiceWithRule();
+				if ($roll >= $this->player['spelllevel']) {
+					array_push($enemySoak, $roll);
+				}
+				array_push($enemyAll, $roll);
+			}
+			foreach ($enemyAll as $s) { $enemySoaked .= $s.', '; }
+			
+			if (count($enemySoak) > 1) {
+				$spelldamage = $this->combat->calculateDamageDecrease($enemySoak, $spelldamage);
+			}
+			$damage = $this->combat->_getWeaponDamage($spelldamage);
+			$healthBefore = $this->enemy[$target]['health'];
+			/* evaluate damage after increase and soaking */
+			$this->enemy[$target]['health'] = ($this->enemy[$target]['health']-$damage);
+			if ($this->enemy[$target]['health'] < 10) {
+				if ($this->enemy[$target]['health'] > 0) {
+					$this->enemy[$target]['status'] = "wounded";
+				} else if ($this->enemy[$target]['health'] <= 0) {
+					$this->enemy[$target]['status'] = "dead";
+				}
+			}
+			if ($healthBefore == $this->enemy[$target]['health']) {
+				array_push($this->combatlog, 'Zauber: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$this->player['spelllevel'].' das sind '.count($enemySoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
+			} else {
+				array_push($this->combatlog, 'Zauber: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$this->player['spelllevel'].' das sind '.count($enemySoak).' Erfolge. '.$this->enemy[$target]['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->enemy[$target]['health'].'</b><br />');
+			}
+			if ($this->enemy[$target]['status'] == "dead") {
+				array_push($this->combatlog, 'Zauber: <b>'.$this->enemy[$target]['name'].'</b> stirbt.</b><br />');
+			}
+			$this->soakMagic($spell['entzug']);
+		}
+	}
+	
+	function soakMagic ($soak) {
+		$entzug = explode(';', $soak);
+		$playerAll = $playerHit = array();
+		
+		if ($entzug[1] == 'schadensniveau') {
+			$mw = $this->player['spelllevel']+$entzug[0];
+			$schaden = $this->player['spelldamage'];
+			
+			if (!empty($entzug[2])) {
+				for ($y=0;$y<$entzug[2];$y++) {
+					$schaden = $this->combat->_adjustBurstDamage($schaden);		
+				}
+			}
+		} else {
+			$mw = $this->player['magic']+$entzug[0];
+			$schaden = ucfirst($entzug[1]);
+		}
+		
+		for ($x=0;$x<$this->player['willpower'];$x++) {
+			$roll = $this->combat->_rollDiceWithRule();
+			if ($roll >= $mw) {
+				array_push($playerHit, $roll);
+			}
+			array_push($playerAll, $roll);
+		}
+		foreach ($playerAll as $s) { $playerFired .= $s.', '; }
+		$damageCode = $this->combat->calculateDamageDecrease($playerHit, $schaden);
+		$damage = $this->combat->_getWeaponDamage($damageCode);
+		$this->player['spirit'] = $this->player['spirit']-$damage;
+		array_push($this->combatlog, 'Zauber -> Entzug: '.ucfirst($this->player['name']).' w&uuml;rfelt '.$playerFired.'</b> gegen den Mindestwurf '.$mw.' und erzielt '.count($playerHit).' Erfolge, und bekommt '.$damage.' Punkte geistigen Schaden.<br />');
+		if ($this->player['spirit'] < 10) {
+			if ($this->player['spirit'] > 0) {
+				$this->player['status'] = "wounded";
+			} else if ($this->player['spirit'] <= 0) {
+				$this->player['status'] = "unconsious";
+			}
+		}
+		if ($this->player['status'] == "unconsious") {
+			array_push($this->combatlog, 'Zauber -> Entzug: <b>'.ucfirst($this->player['name']).'</b> wird ohnm&auml;chtig.</b><br />');
+		}
+	}
+	
 	function playerMeleeAttack($inround) {
 		if ($this->player['action'] == 'melee') {
 			if ($this->player['target'] != "") {
@@ -550,7 +731,7 @@ class Combat_model extends CI_Model
 			$playerMelee = $this->player['melee'];
 			$enemyMelee = $this->enemy[$target]['melee'];
 			$mwEnemy = ((4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'] < 2) ? 2 : (4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'];
-			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod'] < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod'];
+			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod']+$this->player['mw_mod_mental'] < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod']+$this->player['mw_mod_mental'];
 			$playerHit = $playerAll = $enemyHit = $enemyAll = array();
 
 			/* player roll */
@@ -576,7 +757,23 @@ class Combat_model extends CI_Model
 			array_push($this->combatlog, 'Nahkampf: '.ucfirst($this->enemy[$target]['name']).' w&uuml;rfelt '.$enemyFired.' gegen den Mindestwurf: '.$mwEnemy.' und hat '.count($enemyHit).' Erfolge.<br />');
 			$winner = (count($playerHit) >= count($enemyHit)) ? ucfirst($this->player['name']) : ucfirst($this->enemy[$target]['name']);			
 			
-			array_push($this->combatlog, 'Nahkampf: <b>'.$winner.'</b> hat den Nahkampf f&uuml;r sich gewonnen.<br />');
+			$ph = count($playerHit);
+			$eh = count($enemyHit);
+
+			$angriffe = 0;
+			if ($ph >= $eh) {
+				for($x=0;$x<$eh;$x++) {
+					unset($playerHit[$x]);
+				}
+				$angriffe = $ph-$eh;
+			} else {
+				for($x=0;$x<$ph;$x++) {
+					unset($enemyHit[$x]);
+				}
+				$angriffe = $eh-$ph;
+			}
+
+			array_push($this->combatlog, 'Nahkampf: <b>'.$winner.'</b> hat den Nahkampf, mit <b>'.$angriffe.'</b> Erfolgen, f&uuml;r sich gewonnen.<br />');
 						
 			if (count($playerHit) >= count($enemyHit)) {
 				$this->evaluatePlayerMeleeDamage($playerHit, $target);
@@ -661,7 +858,7 @@ class Combat_model extends CI_Model
 		} else {
 			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. '.$this->player['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->player['health'].'</b><br />');
 		}
-		if ($this->enemy[$target]['status'] == "dead") {
+		if ($this->player['status'] == "dead") {
 			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> stirbt.</b><br />');
 		}
 		
@@ -684,7 +881,7 @@ class Combat_model extends CI_Model
 					$allfired = array();	
 					for ($x=0;$x<$this->player['combat'];$x++) {
 						$roll = $this->combat->_rollDiceWithRule();
-						$mw = $this->combat->_getPitch($this->level)-(int)($this->player['mw'])+$this->player['mw_mod'];
+						$mw = $this->combat->_getPitch($this->level)-(int)($this->player['mw'])+$this->player['mw_mod']+$this->player['mw_mod_mental'];
 						
 						if ($this->player['action'] == 'salve') {
 							if ($i==0) {
@@ -921,7 +1118,7 @@ class Combat_model extends CI_Model
  		#_debugDie($this->player);
 		$reaction = ($this->player['reaction']+$this->player['reaction_mod']);
 
-		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction)-$this->player['mw_mod'];
+		$ini_player = (int)($this->combat->_calculateIni($this->player['inidice'])+$reaction)-$this->player['mw_mod']+$this->player['mw_mod_mental'];
 		$this->calculateRounds($ini_player, $this->player['name']);		
 
 		for($x=0;$x<count($this->enemy);$x++) {
@@ -1025,8 +1222,13 @@ class Combat_model extends CI_Model
 			error_log('in checkResult - player dead');	
 			$this->status = 'fail';
 			$this->finalizeFight();
+		} else if ($this->player['status'] == 'unconsious') {
+			error_log('in checkResult - player unconsious');
+			$this->status = 'unconsious';
+			$this->finalizeFight();
 		} else {
-			$this->player['mw_mod'] = $this->combat->mwModByDamage($this->player['health']);			 
+			$this->player['mw_mod'] = $this->combat->mwModByDamage($this->player['health']);
+			$this->player['mw_mod_mental'] = $this->combat->mwModByDamage($this->player['spirit']);
 		}
 		$status = '';
 		for ($x=0;$x<count($this->enemy); $x++) {
@@ -1067,13 +1269,19 @@ class Combat_model extends CI_Model
 			$result = 'Fleed';
 			$cash = '0';
 			$loss = $mission[0]['cash'];
-			$money = $this->player['money']+$loss;
+			$money = $this->player['money']-$loss;
 			array_push($this->combatlog, 'Der Run hat dich '.$loss.' &yen; gekostet.<br />');						
+		} else if ($this->status == 'unconsious') {
+			$result = "Ohnm&auml;chtig";
+			$cash = '0';
+			$loss = $mission[0]['cash'];
+			$money = $this->player['money']-$loss;
+			array_push($this->combatlog, 'Du wurdest ohnm&auml;chtig. Der Run hat dich '.$loss.' &yen; gekostet.<br />');						
 		} else {
 			$result = 'Lost';
 			$cash = '0';
 			$loss = (($mission[0]['level']*$tmp)*250);
-			$money = $this->player['money']+$loss;	
+			$money = $this->player['money']-$loss;	
 			array_push($this->combatlog, 'Durch deine Verletzungen verlierst du '.$loss.' &yen;.<br />');								
 		}
 		

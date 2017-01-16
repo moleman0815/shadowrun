@@ -1,5 +1,5 @@
 <?php
-	#_debug($data['char']);
+#	_debug($data['inv'][0]['spells']);
 ?>
 
 	<?php if(!empty($data['char'][0])): ?>
@@ -54,15 +54,21 @@
 					<th>Nahkampf</th>
 					<th>Fernkampf</th>
 					<th>IniW&uuml;rfel</th>
-					<th>Reaktion</th>		
+					<th>Reaktion</th>	
+					<?php if($data['char'][0]['magic'] > 0): ?>
+						<th>Magie</th>
+					<?php endif;?>	
 				</tr>
 			</thead>
 			<tbody>				
 				<tr>
-					<td><?=ucfirst($data['char'][0]['armed_combat']);?></td>
-					<td><?=ucfirst($data['char'][0]['armed_longrange']);?></td>
+					<td><?=$data['char'][0]['armed_combat'];?></td>
+					<td><?=$data['char'][0]['armed_longrange'];?></td>
 					<td><?=floor($data['char'][0]['inidice']+$data['char'][0]['inidice_mod']);?>D6</td>
-					<td>+<?=floor(($data['char'][0]['quickness']+$data['char'][0]['intelligence'])/2)+$data['char'][0]['reaction_mod'];?></td>							
+					<td>+<?=floor(($data['char'][0]['quickness']+$data['char'][0]['intelligence'])/2)+$data['char'][0]['reaction_mod'];?></td>
+					<?php if($data['char'][0]['magic'] > 0): ?>
+						<td><?=$data['char'][0]['magic'];?></td>
+					<?php endif; ?>							
 				</tr>
 			</tbody>
 		</table>
@@ -80,8 +86,7 @@
 					<th>Cyberware</th>		
 				</tr>
 			</thead>
-			<tbody>
-				
+			<tbody>				
 				<tr>
 					<td><?=$data['inv'][0]['money']?> &yen;</td>
 					<td>
@@ -115,6 +120,49 @@
 				</tr>
 			</tbody>
 		</table>
+		<?php if($data['char'][0]['magic'] > 0): ?>
+		<div class="newstitle">Zauber</div>				
+			<table class="table table-condensed newselement">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Typ</th>
+						<th>Subtype</th>
+						<th>MW</th>
+						<th>Entzug</th>
+						<th>Wirkung/ Schaden</th>						
+					</tr>
+				</thead>
+				<tbody>	
+					<?php foreach($data['inv'][0]['spells'] as $s):?>
+					<tr>
+						<td><?=$s['name']?></td>
+						<td><?=ucfirst($s['typ'])?></td>
+						<td><?=($s['subtype'] == 'p') ? 'physisch' : 'mental'?></td>
+						<td><?=($s['mw'] == 'k') ? 'Konstitution' : 'Speziell'?></td>
+						<td>
+							<?php 
+								$tmp = explode(';', $s['entzug']);
+								echo ($tmp[0] < 0) ? $tmp[0] : '+'.$tmp[0];
+								echo "(".ucfirst($tmp[1]).")";
+							?>
+						</td>
+						<td>
+							<?php 
+								if (empty($s['wirkung'])) {
+									echo "selbst gew&auml;hlt";
+								} else {
+									$tmp = explode(';', $s['wirkung']);
+									echo ($tmp[0] < 0) ? $tmp[0] : '+'.$tmp[0];
+									echo "(".ucfirst($tmp[1]).")";
+								}
+							?>
+						</td>
+					</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
 		<br />
 		<a href="/secure/snn/combatzone/marketplace"><button class="btn btn-warning btn-lb"><i class="fa fa-credit-card"></i>&nbsp;&nbsp;zum Marktplatz</button></a>
 		<br />		

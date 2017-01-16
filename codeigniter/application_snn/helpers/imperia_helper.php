@@ -307,14 +307,14 @@ function linkify($text)
         }
     }
     
-    function ciEmpty ($data) {
+    function ciEmpty ($data) {    	
     	if (is_array($data)) {
     		if (array_key_exists('0', $data)) {
     			return false;
     		} else {
     			return true;
     		}
-    	} else {
+    	} else {    		
     		if (empty($data)) {
     			return true;
     		} else {

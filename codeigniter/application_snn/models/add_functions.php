@@ -750,7 +750,10 @@ class Add_functions extends CI_Model {
 					'member' => $this->input->post('missionmember'),
 					'image' => $this->input->post('missionsimage'),
 					'gid' => implode(';', $this->input->post('missionganger')),
-				);
+					'special' => $this->input->post('special'),				
+					'specialitem' => $this->input->post('storyitem'),
+			);
+			
 			return ($this->db->insert('missions', $mission)) ? true : false;
 		}		
 	}
@@ -1158,6 +1161,54 @@ class Add_functions extends CI_Model {
 			}
 			return true;
 		}
+	}
+	
+	function generateStoryitem () {
+		$config['upload_path'] = FCPATH.'assets/img/combat/storyitem/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['overwrite'] = TRUE;
+		$config['file_name'] = 'storyitem_'.time();
+		
+		$this->upload->initialize($config);
+// 		_debug($_FILES);
+// 		_debug($this->upload->data('image'));
+// 		_debugDie($this->input->post());
+		if ($_FILES['image'][tmp_name] != '') {
+			if($this->upload->do_upload('image')) {
+				$upload_data = $this->upload->data();
+					
+				$img_config['image_library'] = 'gd2';
+				$img_config['source_image'] = $upload_data['full_path'];
+				$img_config['maintain_ratio'] = TRUE;
+				$img_config['width'] = '400';
+				$img_config['height'] = '400';
+			
+				$this->load->library('image_lib', $img_config);
+					
+				$this->image_lib->resize();
+				$image = $upload_data['file_name'];
+				
+				$data = array(
+						'itemname' => $this->input->post('itemname'),
+						'itemtext' => $this->input->post('itemtext'),
+						'image' => $image,
+				);
+			} else {
+				return false;
+			}
+		} else {
+			$data = array(
+					'itemname' => $this->input->post('itemname'),
+					'itemtext' => $this->input->post('itemtext'),
+					'image' => '',
+			);
+		}
+		return ($this->db->insert('items', $data)) ? true : false;
+	}
+	
+	function getStoryItems () {
+		$this->db->order_by('itemname', 'ASC');
+		return $this->db->get('items')->result_array();
 	}
 }
 

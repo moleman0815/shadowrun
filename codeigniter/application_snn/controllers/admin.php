@@ -370,6 +370,7 @@ class Admin extends CI_Controller {
 			'allganger' => $this->add_functions->getAllGanger(),
 			'johnson' => directory_map('assets/img/combat/johnson/'),
 			'story' => directory_map('assets/img/combat/storyimage/'),
+			'storyitems' => $this->add_functions->getStoryItems(),
 			);
 		$left = array(
 						'show_shoutbox' => false,
@@ -867,5 +868,39 @@ class Admin extends CI_Controller {
 		$this->load->view('admin/lastonline', $data);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');		
+	}
+	
+	public function generateStoryitem () {
+		$error = '';
+		$success = '';
+		if($this->input->post('sendStoryitem')) {
+			if ($this->input->post('itemname')) {
+				if($this->add_functions->generateStoryitem()) {
+					$this->session->set_userdata('success', 'Der Gegenstand wurde erfolgreich erstellt.');
+				} else {
+					$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
+				}
+			} else {
+				$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
+			}
+		}
+		$header = array('name' => $this->session->userdata('name'));
+		$data = array(
+				'error' => $error,
+				'success' => $success,
+	
+		);
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => false,
+				'show_friends' => false,
+		);
+		$right = array('show_ads' => false);
+		$this->load->view('header');
+		$this->load->view('menu_header', $header);
+		$this->load->view('left_column', $left);
+		$this->load->view('admin/generatestoryitem', $data);
+		$this->load->view('right_column', $right);
+		$this->load->view('footer');
 	}
 }

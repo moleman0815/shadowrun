@@ -56,13 +56,18 @@
 				<legend class="newstitle">Missionen</legend>			
 				<a href="/secure/snn/admin/generateMission"><div class="btn adminpanel"><i class="fa fa-folder"></i>&nbsp;Generate Mission</div></a>
 				<a href="/secure/snn/admin/editMission"><div class="btn adminpanel"><i class="fa fa-folder-open"></i>&nbsp;Edit Mission</div></a>
+				<br />
 				<a href="/secure/snn/admin/generateUpload/missionsbanner"><div class="btn adminpanel"><i class="fa fa-flag"></i>&nbsp;Banner hochladen</div></a>					
 				<a href="/secure/snn/admin/uploadVerwalten/missionsbanner"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Banner verwalten</div></a>
 				<br />				
 				<a href="/secure/snn/admin/generateUpload/johnson"><div class="btn adminpanel"><i class="fa fa-flag"></i>&nbsp;Johnson hochladen</div></a>					
-				<a href="/secure/snn/admin/uploadVerwalten/johnson"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Johnsons verwalten</div></a>				
+				<a href="/secure/snn/admin/uploadVerwalten/johnson"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Johnsons verwalten</div></a>
+				<br />				
 				<a href="/secure/snn/admin/generateUpload/storyimage"><div class="btn adminpanel"><i class="fa fa-flag"></i>&nbsp;Storybild hochladen</div></a>					
-				<a href="/secure/snn/admin/uploadVerwalten/storyimage"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Storybilder verwalten</div></a>								
+				<a href="/secure/snn/admin/uploadVerwalten/storyimage"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Storybilder verwalten</div></a>	
+				<br />				
+				<a href="/secure/snn/admin/generateStoryitem"><div class="btn adminpanel"><i class="fa fa-flag"></i>&nbsp;Storyitem erstellen</div></a>					
+				<a href="/secure/snn/admin/editStoryitem"><div class="btn adminpanel"><i class="fa fa-flag-checkered"></i>&nbsp;Storyitems verwalten</div></a>							
 			</fieldset>
 		</div>
 		<div id="news">

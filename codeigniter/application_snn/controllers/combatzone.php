@@ -233,7 +233,8 @@ class Combatzone extends CI_Controller {
 									'ganger' => $ganger,
 									'expense' => $data[$x]['expense'],
 									'extras' => $data[$x]['extras'],
-									'member' => $data[$x]['member']								
+									'member' => $data[$x]['member'],
+									'special' => $data[$x]['special'],
 								)
 							);
 				}
@@ -285,6 +286,12 @@ class Combatzone extends CI_Controller {
 	}
 
 	function combat_result () {
+		$combatlog = $this->combat_model->readCombatlogDB();
+		$mission = $this->combat_model->getMissionData();
+		if ($combatlog[0]['status'] == 'success' && $mission[0]['special'] == 1) {
+			$this->combat_model->updateSpecialMission();
+		}
+
 		$left = array(
 				'show_shoutbox' => true,
           		'show_messages' => true,
@@ -298,8 +305,8 @@ class Combatzone extends CI_Controller {
 		$center = array(
 				'char' => $this->add_functions->getCharacter(),
 				'ganger' => $this->combat_model->getMissionGanger(),
-				'combatstats' => $this->combat_model->readCombatlogDB(),
-				'mission' => $this->combat_model->getMissionData(),
+				'combatstats' => $combatlog,
+				'mission' => $mission,
 			);
 		$right = array(
 				'show_ads' => true,
@@ -345,9 +352,16 @@ class Combatzone extends CI_Controller {
 		$action = $this->input->post('action');
 		#_debugDie("here");
 		if (empty($action)) {
-				$this->session->set_userdata('error', 'Du hast keine Aktion ausgewählt!');
-				redirect('combatzone/combat_round');		
+			$this->session->set_userdata('error', 'Du hast keine Aktion ausgewählt!');
+			redirect('combatzone/combat_round');		
 		} else {
+			if ($action == 'magic') {
+				$spell = $this->input->post('spell');
+				if (empty($spell)) {
+					$this->session->set_userdata('error', 'Du hast keinen Zauber ausgewählt!');
+					redirect('combatzone/combat_round');
+				}
+			}
 			$this->combat_model->returnFromCombatRound();
 			redirect('combatzone/combat_round');
 			

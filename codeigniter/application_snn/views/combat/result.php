@@ -3,7 +3,7 @@
 	$status = $combatstats[0]['status'];
 	$combat = json_decode($combatstats[0]['combatlog']);
 	#$status = 'loss';
-
+	#_debug($mission);
 ?>
 
 	<a href="/secure/snn/combatzone"><div class="newstitle"><i class="fa fa-arrow-circle-left"></i>&nbsp; zurück</div></a>
@@ -78,7 +78,24 @@
 		<?php endif; ?>
 		<div style="clear:both"></div>		
 	</div>
-	<br >
+	<br />
+	<?php if($mission[0]['special'] == 1): ?>
+	<div class="newstitle">Du hast erfolgreich eine Storymission bespielt.</div>
+	<div class="tile col-sm-12 newselement">
+		Gratuliere, du hast eine Storymission bew&auml;ltigt und hast eine spezielle Belohnung erhalten.<br />
+		<br />
+		<div class="col-sm-12">
+			Du findest: <b><?=$mission[0]['item'][0]['itemname']?></b><br /><br />
+			<i><?=$mission[0]['item'][0]['itemtext']?></i>
+		</div>
+		<br /><br />
+		<div class="col-sm-12">
+			<img src="/secure/snn/assets/img/combat/storyitem/<?=$mission[0]['item'][0]['image']?>">
+		</div>
+
+	</div>
+	<br />&nbsp;
+	<?php endif; ?>
 	<div class="newstitle">Du hast folgende Ganger bekämpft</div>
 	<?php foreach($ganger as $r): ?>
 			

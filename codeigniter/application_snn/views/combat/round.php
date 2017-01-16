@@ -6,12 +6,13 @@
 	$this->session->unset_userdata('error');
 	#echo count($combat['ini']);
 	#_debugDie($combat['ini']);
+
 ?>
 
 <style>
 	td {
 		border: 1px solid #BEC6C8;
-		padding: 7px;
+		padding: 3px 7px;
 	}
 	select {
 		color: black;
@@ -30,7 +31,26 @@
     	<?php if($error): ?>	
     		$("#error").fadeOut(7000);    	
     	<?php endif; ?>
+    	$('input').click(function(e){
+        	var action = $(this).val();
+        	if(action == 'magic') {
+				$('#spellbox').show();
+        	} else {
+        		$('#spellbox').hide();
+        	}
+    	});
 	});
+
+	function checkCombatSpell() {
+		var type = $('select#spell :selected').attr('data-typ');
+		if (type == 'kampf') {
+			$('#spelllevel').show();
+			$('#spelldamage').show();
+		} else {
+			$('#spelllevel').hide();
+			$('#spelldamage').hide();
+		}
+	}
 
 </script>
 	<div class="col-md-12" style="color: white">
@@ -78,16 +98,23 @@
 			<?php 
 				$mclass = ($combat['player']['ammo'] < 5) ? 'style="color:red"' : ''; 
 				$mpclass = ($combat['player']['small_medipacks'] < 1) ? 'style="color:red"' : ''; 
-				$hclass = ($combat['player']['status'] == 'alive') ? 'style="color:green"' : 'style="color:red"'; 
+				$hclass = ($combat['player']['health'] == 10) ? 'style="color:green"' : 'style="color:red"';
+				$sclass = ($combat['player']['spirit'] == 10) ? 'style="color:green"' : 'style="color:red"';
 				$mode = explode(';', $combat['player']['fire_mode']);
+				#_debugDie($combat['player']);
 			?>	
 			<div>
 			<table>
 				<tbody>
 				<tr style="background-color: #2E323B">
-					<td colspan="1" style="border-right:none"><b><?=$combat['player']['name']?></b></td>
-					<td colspan="3" style="border-left:none">
-					<i class="fa fa-heart" aria-hidden="true" <?=$hclass?>></i> <?=$combat['player']['health']?>/ 10 HP</td>
+					<td colspan="4"><b><?=$combat['player']['name']?></b></td>
+				</tr>
+					<td colspan="1"><b>Physisch: </b></td>
+					<td colspan="3"><i class="fa fa-heart" aria-hidden="true" <?=$hclass?>></i> <?=$combat['player']['health']?>/ 10 HP</td>
+				</tr>
+				</tr>
+					<td colspan="1"><b>Geistig: </b></td>
+					<td colspan="3"><i class="fa fa-heart" aria-hidden="true" <?=$sclass?>></i> <?=$combat['player']['spirit']?>/ 10 HP</td>
 				</tr>
 				<tr>
 					<td><b>Initiative:</b></td>
@@ -126,6 +153,17 @@
 						<td><b>Schaden</b></td><td><?=($combat['player']['strength']+$combat['player']['melee_add_damage']).$combat['player']['melee_default']?></td>
 						<td><b>Reichweite:</b></td><td>+<?=$combat['player']['melee_reach']?></td>
 					</tr>
+				<?php endif; ?>
+				<?php if($combat['player']['magic'] > 0): ?>
+					<tr><td colspan="4" style="padding: 4px;border:none;"></td></tr>
+					<tr style="background-color: #2E323B">				
+						<td colspan="4"><b>Zauber:</b></td>
+					</tr>
+					<?php foreach($combat['player']['spells'] as $s): ?>
+						<tr>
+							<td colspan="4"><?=$s['name']; ?></td>
+						</tr>
+					<?php endforeach;?>
 				<?php endif; ?>
 				</tbody>
 			</table>
@@ -181,6 +219,36 @@
 				<b>Nahkampf</b><br />
 				<input type="radio" name="action" id="action" value="melee" />	- Nahkampf<br />
 			<?php endif; ?>
+			<?php if($combat['player']['magic'] > 0): ?>
+			<br />
+				<b>Zauber:</b><br />
+				<input type="radio" name="action" id="action" value="magic" />	- Zaubern<br />
+				<div id="spellbox" style="display:none">
+					<select name="spell" id="spell" onchange="checkCombatSpell()">
+						<option value="">Zauber ausw&auml;hlen</option>
+						<option value=""></option>
+					<?php foreach($combat['player']['spells'] as $s): ?>´
+						<option value="<?=$s['zid']?>" data-typ="<?=$s['typ']?>"><?=$s['name']?></option>
+					<?php endforeach; ?>
+					</select>
+					<br />
+					<select name="spelllevel" id="spelllevel" style="display:none">
+						<option value="">Stufe ausw&auml;hlen</option>
+						<option value=""></option>
+						<?php for($x=1; $x<($combat['player']['magic']+1);$x++) : ?>
+							<option value="<?=$x?>"><?=$x?></option>
+						<?php endfor; ?>
+					</select>
+					<select name="spelldamage" id="spelldamage" style="display:none">
+						<option value="">Schaden ausw&auml;hlen</option>
+						<option value=""></option>
+						<option value="L">L</option>
+						<option value="M">M</option>
+						<option value="S">S</option>
+						<option value="T">T</option>
+					</select>
+				</div>
+			<?php endif; ?>
 			<br /><br />
 			<?php if($combat['player']['health'] < 10 && $combat['player']['small_medipacks'] > 0): ?>		
 				<input type="radio" name="action" id="action" value="smallheal" /> - Medipack einwerfen (+3 Leben)<br />
@@ -192,7 +260,7 @@
 				<input type="radio" name="action" id="action" value="flee" /> - Aus dem Kampf fliehen!<br />
 			</div>
 			<div class="col-md-6" style="color: white">
-			<?php if($combat['player']['ammo'] > 1): ?>
+			<?php if($combat['player']['ammo'] > 1 || $combat['player']['melee_name']): ?>
 				Auf Gegner zielen: 
 				<select name="target">
 					<option value="">kein spezielles Ziel</option>

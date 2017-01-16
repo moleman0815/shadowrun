@@ -247,7 +247,7 @@ legend {
 		        </div>
 		        <div class="col-md-12">
 				<div class="newstitle">Nahkampfwaffen
-					<span style="float:right;margin-left:20px;cursor:pointer" id="melee_span" onclick="toggleMarketBoxes('melee')"><img src="/secure/snn/assets/img/icons/add.png" />
+					<span style="float:right;margin-left:20px;cursor:pointer" id="melee_span" onclick="toggleMarketBoxes('melee')"><img src="/secure/snn/assets/img/icons/add.png" /></span>
 				</div>
 				<br />
 				<div style="display: none" id="melee_box">

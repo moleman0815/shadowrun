@@ -5,7 +5,8 @@
 ?>
 <script>
 	$( document ).ready(function() {
-		var level = $('#missionlevel').val();
+		//var level = $('#missionlevel').val();
+		var level = '1';
 		changeDifficulty(level);
 
 		$( "#tabs" ).tabs();
@@ -27,15 +28,20 @@
 	select {
 		color: #000000;
 	}
+
 .table-striped>tbody>tr:nth-child(odd)>td, 
 .table-striped>tbody>tr:nth-child(odd)>th {
-   background-color: #123456;
+   background-color: #2E323B;
    color: white;
+   padding: 2px 5px;
+   font-size: 12px
  }
  .table-striped>tbody>tr:nth-child(even)>td, 
 .table-striped>tbody>tr:nth-child(even)>th {
    background-color: white;
    color: black;
+   padding: 2px 5px;
+   font-size: 12px   
  }
  .ui-widget-content {
 	background-image: none;
@@ -119,6 +125,7 @@
 
 		<br />
 		<div id="json_receiver"></div>
+		<span class="small">(* goldene Missionen sind Storymissionen und k&ouml;nnen insgesamt nur ein einziges Mal gespielt werden!)</span>
 	</div>
 	<div id="statistik">		
 		

@@ -142,7 +142,9 @@ class CI_Combat {
 
 	
 	function calculateDamageIncrease($shots, $damage) {
-		if (count($shots) == '3' || count($shots) == '4') {
+		if (count($shots) == '1' || count($shots) == '2') {
+			return $damage;
+		} else if (count($shots) == '3' || count($shots) == '4') {
 			if ($damage == 'L') {
 				return 'M';
 			} else if ($damage == 'M') {
@@ -164,7 +166,9 @@ class CI_Combat {
 	}
 	
 	function calculateDamageDecrease($shots, $damage) {
-		if (count($shots) == '2' || count($shots) == '3') {
+		if (count($shots) == 0 || count($shots) == 1) {
+			return $damage;
+		} else if (count($shots) == '2' || count($shots) == '3') {
 			if ($damage == 'L') {
 				return '0';
 			} else if ($damage == 'M') {

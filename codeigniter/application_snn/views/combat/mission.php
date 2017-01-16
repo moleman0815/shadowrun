@@ -19,7 +19,11 @@
 			$opt_armor .= '<option value="'.$w['wid'].'">'.$w['name'].' ('.$w['armor'].')</option>';
 		}
 	}
-	#_debugDie($inv);
+	$specialClass = '';
+	if ($mission[0]['special'] == '1') {
+		$specialClass = "gold";
+	}
+	#_debugDie($mission);
 ?>
 
 <style>
@@ -45,6 +49,10 @@ background: linear-gradient(135deg, rgba(97, 100, 101, 0.3) 0%, rgba(226, 244, 2
 	
 select {
 	color: black;
+}
+
+.gold {
+	background-color: #B8860B;
 }
 </style>
 <script>
@@ -90,7 +98,7 @@ $( document ).ready(function() {
 		<?php $anzahl = count(explode(';', $mission[0]['gid'])); ?>
 		<div class="col-md-12">
 			<fieldset class="newselement">
-				<legend class="newstitle"><?=$mission[0]['title']?></legend>
+				<legend class="newstitle  <?=$specialClass?>"><?=$mission[0]['title']?></legend>
 				<?php if($mission[0]['image']): ?>
 					<div class="col-sm-12">
 						<img src="/secure/snn/assets/img/combat/missionsbanner/<?=$mission[0]['image']?>" style="width:100%"/>
@@ -114,7 +122,11 @@ $( document ).ready(function() {
 				<div class="col-sm-12">
 					<br />
 					<?=$mission[0]['text']?><br />
-				</div>					
+				</div>		
+				<?php if($mission[0]['special'] == 1): ?>
+					Bei dieser Mission handelt es sich um eine spezielle Storymission.<br />
+					Storymissionen sind selten und k&ouml;nnen nur ein einziges Mal gespielt werden. Daf&uuml;r winken mit besonderen Gegenst&auml;nden oder Informationen als Belohnung, welche euch im sp&auml;teren Spiel n&uuml;tzlich werden k&ouml;nnen. 
+				<?php endif;?>			
 			</fieldset>
 		</div>
 		<div style="clear:both"></div>
@@ -178,7 +190,7 @@ $( document ).ready(function() {
 		<?php if(!empty($ganger[0])): ?>
 			<?php foreach($ganger as $r): ?>			
 				<div class="col-md-12">
-				<fieldset class="newselement">
+				<fieldset class="newselement" style="padding:5px">
 					<span class="ganger_name"><?=$r[0]['ganger_name']?> </span><br />
 					<div class="col-md-4">
 						<div class="col-md-6">
@@ -231,7 +243,6 @@ $( document ).ready(function() {
 					<div style="clear:both"></div>
 					<br />
 					<div class="col-md-12" >
-						<br />
 						<?=$r[0]['bio']?>		
 					</div>
 				</fieldset>
@@ -240,12 +251,13 @@ $( document ).ready(function() {
 				<br />
 			<?php endforeach; ?>
 		<?php endif; ?>
-			<div class="col-sm-12 newselement">
+			<div class="col-sm-12">
+			<fieldset class="newselement">
           	<center><?=form_submit(array('id'=>'submit', 'value' => 'Start Mission', 'name' => 'submit', 'class' => 'btn btn-danger'),'', 'style="width: 300px"');?></center>
 			<?=form_close();?>					
-				<br />
 				<div id="combat_result"></div>
 			</div>
+			</fieldset>
 	<?php else: ?>
 		<div class="errormsg">
 			Um an Missionen teilnehmen zu können, musst du erst deinen Charakter hinterlegen.<br />

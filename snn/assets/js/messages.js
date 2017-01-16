@@ -8,6 +8,8 @@ var newMessageModal;
 var newMessageClose;
 var replyMessageModal;
 var replyMessageClose;
+var newCommentModal;
+var newCommentClose;
 
 $( document ).ready(function() { 	
 	$('#sendMsgError').hide();
@@ -19,6 +21,46 @@ $.extend (sr,{
 	messages: {
 		init : function () {
 			console.log("messages initiated");
+		},
+		toggleComment : function (nid) {
+			$('#newsid').val(nid);
+			$('#comment').val('');
+			newCommentModal.style.display = "block";
+		},
+		toggleNewsComment : function (nid) {
+			var status = $('#commentbox_'+nid).css('display');
+			if (status == 'none') {
+				$('#commentbox_'+nid).show();
+			} else {
+				$('#commentbox_'+nid).hide();
+			}
+		},
+		sendNewComment : function () {
+			newCommentModal.style.display = "none";
+			$.ajax({
+				url: '/secure/snn/desktop/sendNewComment',
+				type: 'POST',
+				data: $('#writeComment').serialize(),
+				success : function (data) {
+					var json = jQuery.parseJSON(data);
+					console.log('', json);
+					if (json['status'] == 'error') {
+						$('#sendMsgError').show("fast").html(json['msg']);
+					} else {
+						$('#sendMsgSuccess').show("fast").html(json['msg']);
+					}
+				}
+			});
+		},
+		deleteComment : function (cid) {
+			$.ajax({
+				url: '/secure/snn/desktop/deleteComment',
+				type: 'POST',
+				data: {cid: cid},
+				success : function (data) {
+					location.reload();
+				}
+			});
 		},
 		sendNewMessage : function () {
 			newMessageModal.style.display = "none";
@@ -63,11 +105,12 @@ $.extend (sr,{
 				data: {id: id},
 				success: function(data) {
 					var json = jQuery.parseJSON(data);
+					console.log("", json);
 					$('#replytitle').val('Re: '+json.title);
 					$('#receiverid').val(json.receiver_id);
 					$('#replyreceiver').val(json.receiver);
 					$('#reply_text').val(json.msg);
-				
+					$('#senderid').val(json.sender_id);
 					$('#replyForm').click();
 				}
 			});
@@ -156,8 +199,10 @@ $.extend (sr,{
 			});
 
 		}
-	}		
+	},
+
 });
 
 sr.messages.init();
+
 

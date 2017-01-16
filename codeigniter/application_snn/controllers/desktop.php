@@ -69,7 +69,7 @@ class Desktop extends CI_Controller {
 	public function replyMsg() {
 		if ($this->input->post('id') == true) {
 			$data = $this->main_db_assets->replyMessage($this->input->post('id'));			
-			echo json_encode(array('status' => 'success', 'title' => $data[0]['title'], 'receiver' => $data[0]['nickname'], 'receiver_id' => $data[0]['send_from'], 'msg' => $data[0]['msg_text']));			
+			echo json_encode(array('status' => 'success', 'title' => $data[0]['title'], 'receiver' => $data[0]['nickname'], 'receiver_id' => $data[0]['send_from'], 'msg' => $data[0]['msg_text'], 'sender_id' => $data[0]['send_to']));			
 		}
 	}
 	
@@ -489,6 +489,27 @@ class Desktop extends CI_Controller {
 			$this->session->set_userdata('error', 'Ein Felder ist aufgetreten.');			
 			echo json_encode(array('status' => 'false'));
 		}		
+	}
+	
+	public function sendNewComment () {
+		$comment = $this->input->post('comment');
+		if (empty($comment)) {
+			echo json_encode(array('status' => 'error', 'msg' => 'Ein Fehler ist aufgetreten. Bitte geben Sie einen Text ein.'));
+		} else {
+			if($this->main_db_assets->sendNewComment()) {
+				echo json_encode(array('status' => 'success', 'msg' => 'Ihr Kommentar wurde eingetragen.'));
+			} else {
+				echo json_encode(array('status' => 'error', 'msg' => 'Ein Fehler ist aufgetreten.'));
+			}
+		}
+	}
+	
+	public function deleteComment () {
+		if($this->main_db_assets->deleteComment()) {
+			echo json_encode(array('status' => 'success', 'msg' => 'Ihr Kommentar wurde gelöscht.'));
+		} else {
+			echo json_encode(array('status' => 'error', 'msg' => 'Ein Fehler ist aufgetreten.'));
+		}
 	}
 
 	public function logout () {

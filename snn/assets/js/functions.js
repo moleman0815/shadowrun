@@ -167,19 +167,23 @@ function toggleNews(id) {
 			success: function (data) {
 				var json = jQuery.parseJSON(data);
 				var html = '<table class="table table-striped table-hover" style="cursor:pointer"><thead><tr><th>Level</th><th>Titel</th><th>Text</th><th>Typ</th><th>Ganger</th><th>Runner</th><th>Gewinn</th><th>Kosten</th><th>NPCs</th></tr></thead><tbody>';							
-				
+				console.log("",json);
 				if (json.status == 'success') {
 					$.each(json['data'], function (i, item) {
+						var specialClass = '';
+						if (item.special == '1') {
+							specialClass = 'style="background-color: #B8860B"';
+						}
 						html += '<tr onclick="window.location.href=\'/secure/snn/combatzone/combat_mission/'+item.mid+'\';">';
-						html += '<td>'+item.level+'</td>';
-						html += '<td>'+item.title+'</td>';
-						html += '<td>'+item.text+'</td>';
-						html += '<td>'+item.type+'</td>';
-						html += '<td>'+item.ganger+'</td>';
-						html += '<td>'+item.member+'</td>';
-						html += '<td>'+item.cash+' &yen;</td>';
-						html += '<td>'+item.expense+'</td>';
-						html += '<td>'+item.extras+'</td>';							
+						html += '<td '+specialClass+'>'+item.level+'</td>';
+						html += '<td '+specialClass+'>'+item.title+'</td>';
+						html += '<td '+specialClass+'>'+item.text+'</td>';
+						html += '<td '+specialClass+'>'+item.type+'</td>';
+						html += '<td '+specialClass+'>'+item.ganger+'</td>';
+						html += '<td '+specialClass+'>'+item.member+'</td>';
+						html += '<td '+specialClass+'>'+item.cash+' &yen;</td>';
+						html += '<td '+specialClass+'>'+item.expense+'</td>';
+						html += '<td '+specialClass+'>'+item.extras+'</td>';							
 						html += '</tr>';
 					});
 					html += '</tbody></table>';
