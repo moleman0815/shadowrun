@@ -3,6 +3,8 @@
 
 class Admin extends CI_Controller {
 
+	var $header;
+	
 	function Admin() {
 		parent::__construct();
 		$this->load->helper(array('form', 'url', 'directory'));			
@@ -11,7 +13,11 @@ class Admin extends CI_Controller {
 			$this->load->model('add_functions');		
 			$this->load->model('util');	
 			$this->load->library('pagination');		
-			$this->add_functions->setActive();			
+			$this->add_functions->setActive();	
+			$this->header = array(
+					'name' => $this->session->userdata('name'),
+					'systemnews' => $this->add_functions->getSystemNews(),
+			);
 		} else {
 			redirect('/desktop/overview');
 		}
@@ -31,7 +37,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('div_md8');
 		$this->load->view('admin/overview', $data);
@@ -54,7 +60,7 @@ class Admin extends CI_Controller {
 				$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
 			}
 		}
-		$header = array('name' => $this->session->userdata('name'));
+
 		$data = array(
 						'error' => $error,
 						'success' => $success,
@@ -67,7 +73,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/additem', $data);
 		$this->load->view('right_column', $right);
@@ -77,7 +83,7 @@ class Admin extends CI_Controller {
 	public function itemsVerwalten() {
 		$error = '';
 		$success = '';
-		$header = array('name' => $this->session->userdata('name'));
+
 		$data = array(
 				'error' => $error,
 				'success' => $success,
@@ -91,7 +97,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/itemsverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -119,7 +125,7 @@ class Admin extends CI_Controller {
 		$right = array('show_ads' => false);
 		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('div_md8');
 		$this->load->view('admin/importitems', $data);
@@ -137,7 +143,7 @@ class Admin extends CI_Controller {
 				redirect('admin/editItem/'.$this->input->post('wid'));				
 			}
 		}
-		$header = array('name' => $this->session->userdata('name'));
+
 		$data = array(
 				'item' => $this->add_functions->getItemById(),
 
@@ -149,7 +155,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/edititem', $data);
 		$this->load->view('right_column', $right);
@@ -197,7 +203,7 @@ class Admin extends CI_Controller {
 			}
 		}
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 			'ganger' => $this->add_functions->getGanger($this->uri->segment(3)),
 			'images' => directory_map('assets/img/combat/ganger/'),
@@ -210,7 +216,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/editganger', $data);
 		$this->load->view('right_column', $right);
@@ -218,7 +224,6 @@ class Admin extends CI_Controller {
 	}
 
 	public function gangerVerwalten() {
-		$header = array('name' => $this->session->userdata('name'));	
 		$data = array(
 			'allganger' => $this->add_functions->getAllGanger(),
 			);			
@@ -229,7 +234,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/gangerverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -258,8 +263,6 @@ class Admin extends CI_Controller {
 			}
 		}
 
-
-		$header = array('name' => $this->session->userdata('name'));
 		$data = array(
 			'images' => directory_map('assets/img/combat/ganger/'),
 			);
@@ -270,7 +273,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/generateganger', $data);
 		$this->load->view('right_column', $right);
@@ -288,7 +291,7 @@ class Admin extends CI_Controller {
 				redirect('admin/generateUpload/'.$this->input->post('imagetype'));
 			}
 		}
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array();
 		$left = array(
 						'show_shoutbox' => false,
@@ -298,7 +301,7 @@ class Admin extends CI_Controller {
 		$right = array('show_ads' => false);		
 		$data = array('type' => $this->uri->segment('3'));
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/generateupload', $data);
 		$this->load->view('right_column', $right);
@@ -306,7 +309,7 @@ class Admin extends CI_Controller {
 	}
 
 	public function uploadVerwalten() {
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array();
 		$left = array(
 						'show_shoutbox' => false,
@@ -319,7 +322,7 @@ class Admin extends CI_Controller {
 				'type' => $this->uri->segment('3'),
 			);	
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/uploadverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -364,7 +367,6 @@ class Admin extends CI_Controller {
 		}
 
 
-		$header = array('name' => $this->session->userdata('name'));
 		$data = array(
 			'images' => directory_map('assets/img/combat/missionsbanner/'),
 			'allganger' => $this->add_functions->getAllGanger(),
@@ -379,7 +381,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/generatemission', $data);
 		$this->load->view('right_column', $right);
@@ -420,7 +422,6 @@ class Admin extends CI_Controller {
 		}
 
 
-		$header = array('name' => $this->session->userdata('name'));
 		$data = array(
 			'images' => directory_map('assets/img/combat/missionsbanner/'),
 			'johnson' => directory_map('assets/img/combat/johnson/'),
@@ -439,7 +440,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/editmission', $data);
 		$this->load->view('right_column', $right);
@@ -467,7 +468,7 @@ class Admin extends CI_Controller {
 			}
 		}
 		
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'categories' => $this->add_functions->getCategories(),
 			);
@@ -478,9 +479,41 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/newnews', $data);
+		$this->load->view('right_column', $right);
+		$this->load->view('footer');
+	}
+	
+	public function newSystemNews () {
+		if ($this->input->post('sendSystemNews')) {
+			if ($this->input->post('title')) {
+				if ($this->add_functions->insertSystemNews()) {
+					$this->session->set_userdata('success', 'Die News wurde erfolgreich eingetragen.');
+					redirect('admin/newSystemNews');
+				} else {
+					$this->session->set_userdata('error', 'Beim Erstellen ist ein Fehler aufgetreten.');
+					redirect('admin/newSystemNews');
+				}
+			} else {
+				$this->session->set_userdata('error', 'Bitte gib einen Titel ein.');
+				redirect('admin/newSystemNews');
+			}
+		}
+	
+		
+		$data = array();
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => false,
+				'show_friends' => false,
+		);
+		$right = array('show_ads' => false);
+		$this->load->view('header');
+		$this->load->view('menu_header', $this->header);
+		$this->load->view('left_column', $left);
+		$this->load->view('admin/newsystemnews', $data);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');
 	}
@@ -496,7 +529,7 @@ class Admin extends CI_Controller {
 				}				
 			}
 			
-			$header = array('name' => $this->session->userdata('name'));
+			
 			$data = array(
 					'categories' => $this->add_functions->getCategories(),
 					'newsError' => $newsError,
@@ -509,7 +542,7 @@ class Admin extends CI_Controller {
 				);
 			$right = array('show_ads' => false);		
 			$this->load->view('header');
-			$this->load->view('menu_header', $header);
+			$this->load->view('menu_header', $this->header);
 			$this->load->view('left_column', $left);
 			$this->load->view('admin/newuser', $data);
 			$this->load->view('right_column', $right);
@@ -539,7 +572,7 @@ class Admin extends CI_Controller {
 				}
 			}
 			
-			$header = array('name' => $this->session->userdata('name'));
+			
 			$data = array(
 					'news' =>  $this->add_functions->getNews(),
 					'categories' => $this->add_functions->getCategories(),
@@ -553,7 +586,7 @@ class Admin extends CI_Controller {
 				);
 			$right = array('show_ads' => false);		
 			$this->load->view('header');
-			$this->load->view('menu_header', $header);
+			$this->load->view('menu_header', $this->header);
 			$this->load->view('left_column', $left);
 			$this->load->view('admin/editnews', $data);
 			$this->load->view('right_column', $right);
@@ -564,7 +597,7 @@ class Admin extends CI_Controller {
 		$newsError = '';
 		$newsSuccess = '';
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 						'newsError' => $newsError,
 						'newsSuccess' => $newsSuccess,
@@ -577,7 +610,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/userverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -601,7 +634,7 @@ class Admin extends CI_Controller {
 		$config['per_page'] = 10;
 		$this->pagination->initialize($config);		
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 						'newsError' => $newsError,
 						'newsSuccess' => $newsSuccess,
@@ -616,12 +649,37 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/newsverwalten', $data);
 		$this->load->view('right_column', $right);
 		$this->load->view('footer');	
 	}	
+	
+	public function editSystemNews ()  {
+		$newsError = '';
+		$newsSuccess = '';
+	
+		$data = array(
+				'news' => $this->main_db_assets->getSystemNews($page),	
+		);
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => false,
+				'show_friends' => false,
+		);
+		$right = array('show_ads' => false);
+		$this->load->view('header');
+		$this->load->view('menu_header', $this->header);
+		$this->load->view('left_column', $left);
+		$this->load->view('admin/editsystemnews', $data);
+		$this->load->view('right_column', $right);
+		$this->load->view('footer');
+	}
+	
+	public function toggleSystemNews () {
+		$this->main_db_assets->toggleSystemNews();
+	}
 
 	public function deleteNews () {
 		if ($this->add_functions->deleteNews()) {
@@ -640,7 +698,7 @@ class Admin extends CI_Controller {
 		$config['per_page'] = 10;
 		$this->pagination->initialize($config);		
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 						'newsError' => $newsError,
 						'newsSuccess' => $newsSuccess,
@@ -655,7 +713,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/adsverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -684,7 +742,7 @@ class Admin extends CI_Controller {
 
 		}
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array();
 		$left = array(
 						'show_shoutbox' => false,
@@ -693,7 +751,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/newads', $data);
 		$this->load->view('right_column', $right);
@@ -724,7 +782,7 @@ class Admin extends CI_Controller {
 			}
 		}
 						
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'ads' =>  $this->add_functions->getAds(),
 			);
@@ -735,7 +793,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/editads', $data);
 		$this->load->view('right_column', $right);
@@ -759,7 +817,7 @@ class Admin extends CI_Controller {
 
 		}
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'catError' => $catError,
 				'catSuccess' => $catSuccess,
@@ -771,7 +829,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/newcat', $data);
 		$this->load->view('right_column', $right);
@@ -783,7 +841,7 @@ class Admin extends CI_Controller {
 		$newsSuccess = '';
 
 
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 						'newsError' => $newsError,
 						'newsSuccess' => $newsSuccess,
@@ -797,7 +855,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/categoryverwalten', $data);
 		$this->load->view('right_column', $right);
@@ -831,7 +889,7 @@ class Admin extends CI_Controller {
 			}
 		}
 						
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'ads' =>  $this->add_functions->getCategory(),
 				'catError' => $catError,
@@ -844,7 +902,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/editcat', $data);
 		$this->load->view('right_column', $right);
@@ -852,7 +910,7 @@ class Admin extends CI_Controller {
 	}
 
 	public function lastOnline () {				
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'online' =>  $this->add_functions->lastOnline(),
 			);
@@ -863,7 +921,7 @@ class Admin extends CI_Controller {
 			);
 		$right = array('show_ads' => false);		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/lastonline', $data);
 		$this->load->view('right_column', $right);
@@ -884,7 +942,7 @@ class Admin extends CI_Controller {
 				$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
 			}
 		}
-		$header = array('name' => $this->session->userdata('name'));
+		
 		$data = array(
 				'error' => $error,
 				'success' => $success,
@@ -897,7 +955,7 @@ class Admin extends CI_Controller {
 		);
 		$right = array('show_ads' => false);
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('admin/generatestoryitem', $data);
 		$this->load->view('right_column', $right);

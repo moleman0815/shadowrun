@@ -74,9 +74,14 @@
 			<fieldset>
 				<legend class="newstitle">Nachrichten</legend>	
 				<a href="/secure/snn/admin/newNews"><div class="btn adminpanel"><i class="fa fa-keyboard-o"></i>&nbsp;News schreiben</div></a>
-				<a href="/secure/snn/admin/newsVerwalten"><div class="btn adminpanel"><i class="fa fa-laptop"></i>&nbsp;News verwalten</div></a>				
+				<a href="/secure/snn/admin/newsVerwalten"><div class="btn adminpanel"><i class="fa fa-laptop"></i>&nbsp;News verwalten</div></a><br />				
 				<a href="/secure/snn/admin/insertCategory"><div class="btn adminpanel"><i class="fa fa-server"></i>&nbsp;Neue Kategorie</div></a>	
-				<a href="/secure/snn/admin/categoryVerwalten"><div class="btn adminpanel"><i class="fa fa-tasks"></i>&nbsp;Kategorie verwalten</div></a>				
+				<a href="/secure/snn/admin/categoryVerwalten"><div class="btn adminpanel"><i class="fa fa-tasks"></i>&nbsp;Kategorie verwalten</div></a>
+				<?php if($this->session->userdata('rank') < '1'): ?>
+					<br />
+					<a href="/secure/snn/admin/newSystemNews"><div class="btn adminpanel"><i class="fa fa-keyboard-o"></i>&nbsp;Systemnachricht schreiben</div></a>
+					<a href="/secure/snn/admin/editSystemNews"><div class="btn adminpanel"><i class="fa fa-keyboard-o"></i>&nbsp;Systemnachricht verwalten</div></a>
+				<?php endif; ?>				
 			</fieldset>
 		</div>
 		<div id="ads">
@@ -97,7 +102,7 @@
 	</div>	
 	<br />	
 	<br /> &nbsp;
-	<?php if($this->session->userdata('rank') == '1'): ?>
+	<?php if($this->session->userdata('rank') < '1'): ?>
 		<hr />
 		<br />
 		<a href="/secure/snn/admin/newUser"><button class="btn btn-warning btn-lb">Neuer User</button></a>	

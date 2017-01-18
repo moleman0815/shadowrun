@@ -43,12 +43,12 @@ $.extend (sr,{
 				data: $('#writeComment').serialize(),
 				success : function (data) {
 					var json = jQuery.parseJSON(data);
-					console.log('', json);
 					if (json['status'] == 'error') {
 						$('#sendMsgError').show("fast").html(json['msg']);
 					} else {
 						$('#sendMsgSuccess').show("fast").html(json['msg']);
 					}
+					location.reload().delay(1500);
 				}
 			});
 		},
@@ -57,6 +57,16 @@ $.extend (sr,{
 				url: '/secure/snn/desktop/deleteComment',
 				type: 'POST',
 				data: {cid: cid},
+				success : function (data) {
+					location.reload();
+				}
+			});
+		},
+		toggleSystemNews : function (id) {
+			$.ajax({
+				url: '/secure/snn/admin/toggleSystemNews',
+				type: 'POST',
+				data: {id: id},
 				success : function (data) {
 					location.reload();
 				}

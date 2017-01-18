@@ -165,6 +165,30 @@ class CI_Combat {
 		}
 	}
 	
+	function calculateMeleeDamageIncrease($shots, $damage) {
+		if (count($shots) == '1'){
+			return $damage;
+		} else if (count($shots) == '2' || count($shots) == '3') {
+			if ($damage == 'L') {
+				return 'M';
+			} else if ($damage == 'M') {
+				return 'S';
+			} else {
+				return 'T';
+			}
+		} else if (count($shots) == '4' || count($shots) == '5') {
+			if ($damage == 'L') {
+				return 'S';
+			} else if ($damage == 'M') {
+				return 'T';
+			} else {
+				return 'T';
+			}
+		} else {
+			return 'T';
+		}
+	}
+	
 	function calculateDamageDecrease($shots, $damage) {
 		if (count($shots) == 0 || count($shots) == 1) {
 			return $damage;

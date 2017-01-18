@@ -3,7 +3,7 @@
 	$this->session->unset_userdata('sb_success');
 	$sb_error = $this->session->userdata('sb_error');
 	$this->session->unset_userdata('sb_error');	
-
+	#_debugDie($shoutbox);
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -15,6 +15,11 @@ $(document).ready(function(){
    <?php endif; ?>   
 });
 </script>
+<style>
+	select {
+		color: black;
+	}
+</style>
 
 <div class="col-md-2">
 	<?php if($sb_error): ?>
@@ -34,8 +39,8 @@ $(document).ready(function(){
 				<div id="sberror"></div>
 				<span class="advbroad">Shoutbox</span>
 				<br />
-				<?php if (!empty($shoutbox)): ?>
-					<?php $x=0; foreach ($shoutbox as $s): ?>
+				<?php if (!empty($shoutbox['shoutbox'])): ?>
+					<?php $x=0; foreach ($shoutbox['shoutbox'] as $s): ?>
 						<?php $subclass = ($x%2 == 0) ? 'uneven' : '';?>
 						<div class="sb_textblock <?=$subclass?>">
 							<span><?=date('d.m.Y H:i', $s['sb_time']);?>
@@ -53,7 +58,21 @@ $(document).ready(function(){
 				<span><a href="/secure/snn/desktop/shoutbox">>> Shoutbox Archiv</a></span>
 				<div style="margin:5px">
 					<?=form_open_multipart(base_url() . 'desktop/newShoutbox')?>
-					<?=form_hidden('userid', $this->session->userdata('id'))?>
+					<?php if($this->session->userdata('rank') > 1): ?>
+						<?=form_hidden('userid', $this->session->userdata('id'))?>
+					<?php else: ?>
+						<select name="userid">
+							<option value="">Absender w&auml;hlen</option>
+							<?php foreach($shoutbox['receiver'] as $r): ?>							
+								<option value="<?=$r['id']?>">
+								<?=ucfirst($r['nickname'])?>
+								<?php if ($r['rank'] == '3'): ?>
+    								&nbsp;(NSC)
+								<?php endif; ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					<?php endif; ?>
 					<?=form_hidden('from', '/'.$this->uri->segment(1).'/'.$this->uri->segment(2))?>
 					<?=form_textarea(array('name' => 'sb_text', 'class' => 'sb_text', 'rows' => '3'));?>
 					

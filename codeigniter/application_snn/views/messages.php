@@ -197,7 +197,7 @@ input, textarea, select {
   			<form action="#" id="writeMessage" enctype="text/html" method="post"> 
 			
 			<input type="hidden" name="sendmsg" id="sendmsg" value="true" />
-			<?php if($this->session->userdata('rank') != 1): ?>
+			<?php if($this->session->userdata('rank') > 1): ?>
 				<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
 			<?php endif; ?>
 
@@ -205,7 +205,7 @@ input, textarea, select {
 			<label for="msg_title">Titel</label><br />
 			<input type="text" name="title" id="title" style="width: 95%"/>
 			<br />
-			<?php if($this->session->userdata('rank') == 1): ?>
+			<?php if($this->session->userdata('rank') <= 1): ?>
 				<br />
 				<b>Absender</b><br />
 				<select name="userid" id="userid">
@@ -213,8 +213,13 @@ input, textarea, select {
 				<option value=""></option>
 				<?php
 						foreach ($receiver as $key => $value) {
-							if ($value['id'] == $this->session->userdata('id')) continue;
-							echo "<option value='".$value['id']."'>".ucfirst($value['nickname'])."</option>";
+							#if ($value['id'] == $this->session->userdata('id')) continue;
+							echo "<option value='".$value['id']."'>";
+    						echo ucfirst($value['nickname']);
+    						if ($value['rank'] == '3') {
+    							echo " (NSC)";
+    						}
+    						echo "</option>";
 						}	
 				?>
 				</select>
@@ -227,7 +232,12 @@ input, textarea, select {
 			<?php
 					foreach ($receiver as $key => $value) {
 						if ($value['id'] == $this->session->userdata('id')) continue;
-						echo "<option value='".$value['id']."'>".ucfirst($value['nickname'])."</option>";
+						echo "<option value='".$value['id']."'>";
+						echo ucfirst($value['nickname']);
+						if ($value['rank'] == '3' && $this->session->userdata('rank') <= 1) {
+							echo " (NSC)";
+						}
+						echo "</option>";
 					}	
 			?>
 			</select>

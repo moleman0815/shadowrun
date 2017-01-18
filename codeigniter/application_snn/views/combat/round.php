@@ -17,6 +17,16 @@
 	select {
 		color: black;
 	}
+	.combatlog {
+		color: #000000;
+		padding: 0px;
+		background-image: url(/secure/snn/assets/img/layout/trans4.png);
+		font-weight: bold;
+		width: 100%;
+		display: block;
+		margin-bottom: -5px;
+		border-radius: 3px;
+	}
 </style>
 
 <script>
@@ -40,6 +50,10 @@
         	}
     	});
 	});
+
+	function toggleCombatRound (id) {
+		$('#'+id).toggle();
+	}
 
 	function checkCombatSpell() {
 		var type = $('select#spell :selected').attr('data-typ');
@@ -109,10 +123,11 @@
 				<tr style="background-color: #2E323B">
 					<td colspan="4"><b><?=$combat['player']['name']?></b></td>
 				</tr>
+				<tr>
 					<td colspan="1"><b>Physisch: </b></td>
 					<td colspan="3"><i class="fa fa-heart" aria-hidden="true" <?=$hclass?>></i> <?=$combat['player']['health']?>/ 10 HP</td>
 				</tr>
-				</tr>
+				<tr>
 					<td colspan="1"><b>Geistig: </b></td>
 					<td colspan="3"><i class="fa fa-heart" aria-hidden="true" <?=$sclass?>></i> <?=$combat['player']['spirit']?>/ 10 HP</td>
 				</tr>
@@ -154,7 +169,7 @@
 						<td><b>Reichweite:</b></td><td>+<?=$combat['player']['melee_reach']?></td>
 					</tr>
 				<?php endif; ?>
-				<?php if($combat['player']['magic'] > 0): ?>
+				<?php if($combat['player']['magic'] > 0 && !empty($combat['player']['spells'])): ?>
 					<tr><td colspan="4" style="padding: 4px;border:none;"></td></tr>
 					<tr style="background-color: #2E323B">				
 						<td colspan="4"><b>Zauber:</b></td>
@@ -177,8 +192,23 @@
 			<br />
 			<ul style="list-style-type: none;">
 			<?php foreach($combat['combatlog'] as $c):?>
-				<li><?=preg_replace('/AAA/', '', $c)?></li>
+			<?php 
+				if (preg_match('/systemcreateheader/i', $c)) {
+					$tmp = explode(';', $c);
+					echo "<div class='combatlog' style='cursor: pointer' title='click to open' onclick=\"toggleCombatRound('".$tmp[1]."')\">";
+				} else if (preg_match('/systemcloseheader/i', $c)) {
+					echo "</div>";
+				} else if (preg_match('/systemcreatediv/i', $c)) {
+					echo "<div id='".$tmp[1]."' style='display: none'>";
+				} else if (preg_match('/systemclosediv/i', $c)) {
+					echo "</div>";
+				} else {				
+					echo "<li>".$c."</li>";
+				}
+			?>
+				
 			<?php endforeach; ?>
+			
 			</ul>
 		</div>
 		
@@ -188,7 +218,7 @@
 			<fieldset class="newselement">
 			<div><b>Welche Aktion möchtest du ausführen (zählt für beide Ini-Aktionen)?</b></div>
 			<br />
-			
+
 			<form action="/secure/snn/combatzone/nextRound" method="post" enctype="text/html" id="shootout-form" />
 			<input type="hidden" name="round" id="round" value="<?=$combat['round'];?>" />
 			<input type="hidden" name="weapon" id="weapon" value="<?=$_POST['weapon'];?>" />
@@ -219,7 +249,7 @@
 				<b>Nahkampf</b><br />
 				<input type="radio" name="action" id="action" value="melee" />	- Nahkampf<br />
 			<?php endif; ?>
-			<?php if($combat['player']['magic'] > 0): ?>
+			<?php if($combat['player']['magic'] > 0 && !empty($combat['player']['spells'])): ?>
 			<br />
 				<b>Zauber:</b><br />
 				<input type="radio" name="action" id="action" value="magic" />	- Zaubern<br />

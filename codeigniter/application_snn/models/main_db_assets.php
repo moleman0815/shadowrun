@@ -67,18 +67,19 @@ class Main_db_assets extends CI_Model
     }
 
     function getReceiver () {
-        $this->db->select('nickname, id');
+        $this->db->select('nickname, id, rank');
         $this->db->from('login');
-        $this->db->where('rank !=', '0');
+        #$this->db->where('rank !=', '0');
         $this->db->order_by("nickname", "ASC"); 
         $query = $this->db->get();
         return $query->result_array();
     }
 
+
     function countMessages () {
     	$sendto = "";
-    	if ($this->session->userdata('rank') == 1) {
-    		$send = $this->db->get_where('login', array('rank' => 1))->result_array();
+    	if ($this->session->userdata('rank') < 1) {
+    		$send = $this->db->get_where('login', array('rank' => 4))->result_array();
     		$sendto = $this->db->or_where('send_to', $this->session->userdata('id'));
     		foreach ($send as $q) {
     			$sendto .= $this->db->or_where('send_to', $q['id']);
@@ -109,6 +110,10 @@ class Main_db_assets extends CI_Model
     	$this->db->where('gelesen', '0');
     	$this->db->where('deleted', '0');
     	$this->db->where('send_to', $this->session->userdata('id'));
+    	if ($this->session->userdata('rank') < 1) {
+    			$this->db->where('send_to', '4');
+    	}
+    	
     	$this->db->from('messages');
     	return  $this->db->count_all_results();
     }
@@ -128,8 +133,9 @@ class Main_db_assets extends CI_Model
 		$tmpAvatar = array();
 
 		$sendto = "";
-		if ($this->session->userdata('rank') == 1) {
-			$send = $this->db->get_where('login', array('rank' => 1))->result_array();
+		if ($this->session->userdata('rank') < 1) {
+			$send = $this->db->get_where('login', array('rank' => 1, 'rank' => '4'))->result_array();
+			#_debugDie($send);
 				$sendto = $this->db->or_where('send_to', $this->session->userdata('id'));
 			foreach ($send as $q) {				
 				$sendto .= $this->db->or_where('send_to', $q['id']);
@@ -161,6 +167,9 @@ class Main_db_assets extends CI_Model
         foreach ($data['messages'] as $value) {
         	if (!in_array($value['send_from'], $avatars) && $value['send_from'] != $this->session->userdata('id')) {
         		array_push($avatars, $value['send_from']);
+        	}
+        	if (!in_array($value['send_to'], $avatars) && $value['send_to'] != $this->session->userdata('id')) {
+        		array_push($avatars, $value['send_to']);
         	}
         }
         
@@ -208,8 +217,10 @@ class Main_db_assets extends CI_Model
         $this->db->where('shoutbox.deleted', '0');
         $this->db->order_by("sb_time", "desc"); 
         $this->db->limit('7');
-        $query = $this->db->get();
-        return $query->result_array();
+        $data['shoutbox'] = $this->db->get()->result_array();
+        
+        $data['receiver'] = $this->getReceiver();
+        return $data;
     }
     
     function getShoutboxFull () {
@@ -224,8 +235,13 @@ class Main_db_assets extends CI_Model
 
 	function sendShoutbox() {
 		$post = $this->input->post(NULL, TRUE);
+		if ($post['userid'] == '') {
+			$userid = $this->session->userdata('id');
+		} else {
+			$userid = $post['userid'];
+		}
 		$data = array(
-					'login_id' => $post['userid'],
+					'login_id' => $userid,
 					'sb_text' => $post['sb_text'],
 					'sb_time' => time(),
 			);
@@ -246,20 +262,24 @@ class Main_db_assets extends CI_Model
 	
 	function sendMessage() {
 		$post = $this->input->post(NULL, TRUE);
-		
+		if ($post['senderid'] == '') {
+			$senderid = $this->session->userdata('id');
+		} else {
+			$senderid = $post['senderid'];
+		}
 		$data = array();
 		if (isset($post['reply']) && $post['reply']  == '1') {
 			$data = array(
 				'title' => $post['replytitle'],
 				'msg_text' => $post['reply_text'],
 				'send_to' =>  $post['receiverid'],
-				'send_from' =>  $post['senderid'],
+				'send_from' =>  $senderid,
 				'parent' => $post['senderid'],
 				'date' => time(),			
 			);
             if($this->db->insert('messages', $data)) {
                 $data = array('child' => $this->db->insert_id());       
-                $this->db->where('id', $post['senderid']);
+                $this->db->where('id', $senderid);
                 return ($this->db->update('messages', $data)) ? true : false;
             } else {
                 return false;
@@ -448,6 +468,23 @@ class Main_db_assets extends CI_Model
     	return ($this->db->update('comments', $data)) ? true : false;
     }
     
+    function getSystemNews () {
+    	return $this->db->get('notes')->result_array();
+    }
+    
+    function toggleSystemNews () {
+    	$this->db->where('id', $this->input->post('id'));
+    	$query = $this->db->get_where('notes', $data)->result_array();
+    	
+    	$data = array('online' => '0');
+    	$this->db->update('notes', $data);
+    	$newOnline = ($query[0]['online'] == 1) ? 0 : 1;
+    	
+    	$data = array('online' => $newOnline);
+    	$this->db->where('id', $this->input->post('id'));
+    	$this->db->update('notes', $data);
+    	
+    }
 }
 
 ?>    

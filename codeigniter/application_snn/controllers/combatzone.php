@@ -4,6 +4,7 @@
 class Combatzone extends CI_Controller {
 
 	var $settings;
+	var $header;
 	
 	function Combatzone() {
 		parent::__construct();
@@ -15,6 +16,10 @@ class Combatzone extends CI_Controller {
 			$this->load->model('add_functions');	
 			$this->add_functions->setActive();
 			$this->settings = $this->add_functions->readSettings();
+			$this->header = array(
+					'name' => $this->session->userdata('name'),
+					'systemnews' => $this->add_functions->getSystemNews(),
+			);
 		} else {
 			redirect('/login');
 		}
@@ -85,7 +90,7 @@ class Combatzone extends CI_Controller {
 						'settings' => $this->settings,
 		);
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md10');	
 		$this->load->view('combat/marketplace', $center);
@@ -128,7 +133,7 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 		);
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md10');	
 		$this->load->view('combat/clinic', $center);
@@ -159,7 +164,7 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 		);
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/overview', $center);
@@ -190,7 +195,7 @@ class Combatzone extends CI_Controller {
 		);
 		//_debugDie($center);
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/mission', $center);
@@ -277,7 +282,7 @@ class Combatzone extends CI_Controller {
 
 
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/round', $center);
@@ -315,7 +320,7 @@ class Combatzone extends CI_Controller {
 		);	
 
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/result', $center);
@@ -340,7 +345,7 @@ class Combatzone extends CI_Controller {
 		);
 		$center = array('combat' => $this->combat_model->getInfightData());					
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/round', $center);
@@ -388,7 +393,7 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 		);
 		$this->load->view('header');
-		$this->load->view('menu_header');		
+		$this->load->view('menu_header', $this->header);		
 		$this->load->view('left_column', $left);	
 		$this->load->view('div_md8');	
 		$this->load->view('combat/inventory', $center);
@@ -416,7 +421,7 @@ class Combatzone extends CI_Controller {
 				'settings' => $this->settings,
 		);
 		$this->load->view('header');
-		$this->load->view('menu_header');
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('div_md8');
 		$this->load->view('combat/foreignchar', $center);

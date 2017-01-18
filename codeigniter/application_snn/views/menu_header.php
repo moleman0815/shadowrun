@@ -11,6 +11,7 @@
       $class = 'desktop';
     }
   }
+
 ?>
 
 <style>
@@ -35,6 +36,11 @@
     color: #fff;
     outline: 0 none;
     text-decoration: none;
+}
+.alert-info {
+    color: #31708F;
+    background-color: #D9EDF7;
+    border-color: #BCE8F1;
 }
 </style>
 <script>
@@ -122,6 +128,15 @@ $(document).ready(function($) {
   </nav>
   <div class="container-fluid"><!-- Container from menu -->
     <div class="row"><!-- row from menu -->
-
+	<?php if(!empty($systemnews[0])): ?>
+		<div class="col-sm-3">&nbsp;</div>
+		<div class="alert alert-info col-sm-6">
+			<h3>Systemnachricht!</h3>
+			<strong><?=$systemnews[0]['title']?></strong><br />
+			<?=$systemnews[0]['text']?>
+		</div>
+		<div class="col-sm-3">&nbsp;</div>
+		<div style="clear:both"></div>
+	<?php endif;?>
 
 

@@ -22,6 +22,7 @@ class Combat_model extends CI_Model
 	var $inicounter;
 	var $cash;
 	var $lost;
+	var $rndId;
 
 	function __construct() {
         // Call the Model constructor
@@ -462,8 +463,12 @@ class Combat_model extends CI_Model
 
 	function beginnFighting () {
 		error_log('in beginnFighting');
+		$this->rndId  = rand(10000, 1000000);
 		if ($this->round > 0) {
-			array_push($this->combatlog, 'AAA <h3>Kampfrunde '.$this->round.' beginnt.</h3><br />');
+			array_push($this->combatlog, 'systemcreateheader;'.$this->rndId);
+			array_push($this->combatlog, '<h3>Kampfrunde '.$this->round.' beginnt. (Klick zum &ouml;ffnen)</h3>');
+			array_push($this->combatlog, 'systemcloseheader');
+			array_push($this->combatlog, 'systemcreatediv;'.$this->rndId);
 		}
 		if($this->status == 'running') {
 			$this->checkResult();
@@ -510,7 +515,7 @@ class Combat_model extends CI_Model
 		$this->getInitiative();
 		$this->iniphase = max(array_keys($this->ini[0]));
 		#_debugDie($this->ini);
-		
+		array_push($this->combatlog, 'systemclosediv');
 		$this->_writeToSession();
 	}
 
@@ -555,9 +560,6 @@ class Combat_model extends CI_Model
 		$this->player['spelllevel'] = ($this->input->post('spelllevel')) ? $this->input->post('spelllevel') : 3;
 		$this->player['spelldamage'] = ($this->input->post('spelldamage')) ? $this->input->post('spelldamage') : 'M';
 		$this->player['target'] = $this->input->post('target');
-		
-		#_debug($this->lastround);
-		#_debugDie($this->player);
 		
 		if ($this->player['action'] == 'cover') {
 			array_push($this->combatlog, 'Iniphase '.($this->iniphase+1).' <b>'.ucfirst($this->player['name']).'</b> geht in Deckung.<br />');	
@@ -728,10 +730,22 @@ class Combat_model extends CI_Model
 			} else {
 				$target = ($this->enemies > 1) ? $this->getTarget() : $target = 0;
 			}
+			
+			$playerReach = ($this->player['reach']+$this->player['melee_reach']);
+			$playerMod = ($this->player['mw_mod']+$this->player['mw_mod_mental']);
+			$enemyReach = ($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach']);
+			$enemyMod = $this->enemy[$target]['mw_mod'];
+			$mwPlayer = (4+$playerMod);
+			$mwEnemy = (4+$enemyMod);
+			if ($playerReach > $enemyReach) {
+				$mwPlayer = ((4-$playerReach)+$playerMod < 2) ? 2 : (4-$playerReach+$playerMod);
+			} else if ($enemyReach > $playerReach) {
+				$mwEnemy = ((4-$enemyReach+$enemyMod) < 2) ? 2 : (4-$enemyReach+$enemyMod);				
+			}
 			$playerMelee = $this->player['melee'];
 			$enemyMelee = $this->enemy[$target]['melee'];
-			$mwEnemy = ((4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'] < 2) ? 2 : (4-($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])+($this->player['reach']+$this->player['melee_reach']))+$this->enemy[$target]['mw_mod'];
-			$mwPlayer = ((4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod']+$this->player['mw_mod_mental'] < 2) ? 2 : (4+($this->enemy[$target]['reach']+$this->enemy[$target]['melee_reach'])-($this->player['reach']+$this->player['melee_reach']))+$this->player['mw_mod']+$this->player['mw_mod_mental'];
+			
+			/* arrays */
 			$playerHit = $playerAll = $enemyHit = $enemyAll = array();
 
 			/* player roll */
@@ -753,8 +767,8 @@ class Combat_model extends CI_Model
 			}
 			foreach ($enemyAll as $s) { $enemyFired .= $s.', '; }
 			
-			array_push($this->combatlog, 'Nahkampf: '.ucfirst($this->player['name']).' w&uuml;rfelt '.$playerFired.' gegen den Mindestwurf: '.$mwPlayer.' und hat '.count($playerHit).' Erfolge.<br />');
-			array_push($this->combatlog, 'Nahkampf: '.ucfirst($this->enemy[$target]['name']).' w&uuml;rfelt '.$enemyFired.' gegen den Mindestwurf: '.$mwEnemy.' und hat '.count($enemyHit).' Erfolge.<br />');
+			array_push($this->combatlog, 'Nahkampf -> Spieler: <b>'.ucfirst($this->player['name']).'</b> w&uuml;rfelt '.$playerFired.' gegen den Mindestwurf: '.$mwPlayer.' und hat '.count($playerHit).' Erfolge.<br />');
+			array_push($this->combatlog, 'Nahkampf -> Gegner: <b>'.ucfirst($this->enemy[$target]['name']).'</b> w&uuml;rfelt '.$enemyFired.' gegen den Mindestwurf: '.$mwEnemy.' und hat '.count($enemyHit).' Erfolge.<br />');
 			$winner = (count($playerHit) >= count($enemyHit)) ? ucfirst($this->player['name']) : ucfirst($this->enemy[$target]['name']);			
 			
 			$ph = count($playerHit);
@@ -765,31 +779,38 @@ class Combat_model extends CI_Model
 				for($x=0;$x<$eh;$x++) {
 					unset($playerHit[$x]);
 				}
+				unset($enemyHit);
 				$angriffe = $ph-$eh;
 			} else {
 				for($x=0;$x<$ph;$x++) {
 					unset($enemyHit[$x]);
 				}
+				unset($playerHit);
 				$angriffe = $eh-$ph;
 			}
 
-			array_push($this->combatlog, 'Nahkampf: <b>'.$winner.'</b> hat den Nahkampf, mit <b>'.$angriffe.'</b> Erfolgen, f&uuml;r sich gewonnen.<br />');
-						
-			if (count($playerHit) >= count($enemyHit)) {
-				$this->evaluatePlayerMeleeDamage($playerHit, $target);
-			} else {
+			array_push($this->combatlog, 'Nahkampf -> Vergleich: <b>'.$winner.'</b> hat den Nahkampf, mit <b>'.$angriffe.'</b> Erfolgen, f&uuml;r sich gewonnen.<br />');
+
+			if (count($enemyHit) > count($playerHit)) {
+				echo "here";
 				$this->evaluateEnemyMeleeDamage($enemyHit, $target);
+			} else {
+				$this->evaluatePlayerMeleeDamage($playerHit, $target);
 			}
 			
-// 			_debug($this->combatlog);
+ 			#_debugDie($this->combatlog);
 // 			_debug($this->enemy[$target]);			
-// 			_debugDie($this->player);
+ 			#_debugDie($this->player);
 		}
 	}
 	
 	function evaluatePlayerMeleeDamage($hits, $target) {	
-		/* increase damage in > 2 hits */
-		$this->player['melee_damage'] = (count($hits) > 2) ? $this->combat->calculateDamageIncrease($hits, $this->player['melee_damage']) : $this->player['melee_damage'];		
+		/* increase damage in > 1 hits */
+		if (count($hits) > 1) {
+			$dmgBefore = $this->player['melee_damage'];
+			$this->player['melee_damage'] = $this->combat->calculateMeleeDamageIncrease($hits, $this->player['melee_damage']);
+			array_push($this->combatlog, 'Nahkampf -> Erh&ouml;hung: <b>'.ucfirst($this->player['name']).'</b> erh&ouml;ht den Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['melee_damage'].'</b>.<br />');
+		}
 		$enemyMw = ($this->player['strength']+$this->player['melee_add_damage']);
 		$enemyMwAfterArmor = (($enemyMw-$this->enemy[$target]['armor']) < 2) ? 2 : ($enemyMw-$this->enemy[$target]['armor']);
 		$enemyAll = $enemySoak = array();
@@ -803,7 +824,10 @@ class Combat_model extends CI_Model
 		}
 		foreach ($enemyAll as $s) { $enemySoaked .= $s.', '; }
 		/* decrease damage if > soaking */
-		$this->player['melee_damage'] = (count($enemySoak) > 1) ? $this->combat->calculateDamageDecrease($enemySoak, $this->player['melee_damage']) : $this->player['melee_damage'];
+		if (count($enemySoak) > 1) {
+			$soakBefore = $this->player['melee_damage']; 
+			$this->player['melee_damage'] = $this->combat->calculateDamageDecrease($enemySoak, $this->player['melee_damage']);
+		}
 		$healthBefore = $this->enemy[$target]['health'];
 		/* evaluate damage after increase and soaking */
 		$this->enemy[$target]['health'] = ($this->enemy[$target]['health']-$this->combat->_getWeaponDamage($this->player['melee_damage']));
@@ -816,9 +840,9 @@ class Combat_model extends CI_Model
 		}	
 		
 		if ($healthBefore == $this->enemy[$target]['health']) {
-			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
+			array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
 		} else {
-			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. '.$this->enemy[$target]['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->enemy[$target]['health'].'</b><br />');
+			array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->enemy[$target]['name'].'</b> w&uuml;rfelt '.$enemySoaked.' gegen '.$enemyMwAfterArmor.' das sind '.count($enemySoak).' Erfolge. '.$this->enemy[$target]['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->enemy[$target]['health'].'</b><br />');
 		}
 		if ($this->enemy[$target]['status'] == "dead") {
 			array_push($this->combatlog, 'Nahkampf: <b>'.$this->enemy[$target]['name'].'</b> stirbt.</b><br />');
@@ -828,7 +852,12 @@ class Combat_model extends CI_Model
 	}
 	
 	function evaluateEnemyMeleeDamage($hits, $target) {		
-		$this->enemy[$target]['melee_damage'] = (count($hits) > 2) ? $this->combat->calculateDamageIncrease($hits, $this->enemy[$target]['melee_damage']) : $this->player['melee_damage'];
+		echo "enemy";
+		if (count($hits) > 1) {
+			$dmgBefore = $this->enemy[$target]['melee_damage'];
+			$this->enemy[$target]['melee_damage'] = $this->combat->calculateMeleeDamageIncrease($hits, $this->enemy[$target]['melee_damage']);
+			array_push($this->combatlog, 'Nahkampf -> Erh&ouml;hung: <b>'.ucfirst($this->enemy[$target]['name']).'</b> erh&ouml;ht den Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->enemy[$target]['melee_damage'].'</b>.<br />');
+		}
 		$playerMw = ($this->enemy[$target]['strength']+$this->enemy[$target]['melee_add_damage']);
 		$playerMwAfterArmor = (($playerMw-$this->player['armor']) <2) ? 2 : ($playerMw-$this->player['armor']);
 		$playerAll = $playerSoak = array();
@@ -842,7 +871,11 @@ class Combat_model extends CI_Model
 		}		
 		foreach ($playerAll as $s) { $playerSoaked .= $s.', '; }
 
-		 $this->enemy[$target]['melee_damage'] = (count($playerSoak) > 1) ? $this->combat->calculateDamageDecrease($playerSoak, $this->enemy[$target]['melee_damage']) : $this->enemy[$target]['melee_damage'];
+		 if (count($playerSoak) > 1) {
+		 	$soakBefore = $this->enemy[$target]['melee_damage'];
+		 	$this->enemy[$target]['melee_damage'] = $this->combat->calculateDamageDecrease($playerSoak, $this->enemy[$target]['melee_damage']);
+		 	array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->player['name'].'</b> schafft es den Schaden von <b>'.$soakBefore.'</b> auf <b>'.$this->enemy[$target]['melee_damage'].'</b> zu senken.<br />');
+		 }
 		 $healthBefore = $this->player['health'];
 		 $this->player['health'] = ($this->player['health']-$this->combat->_getWeaponDamage($this->enemy[$target]['melee_damage']));
 		if ($this->player['health'] < 10) {
@@ -854,12 +887,12 @@ class Combat_model extends CI_Model
 		}
 		
 		if ($healthBefore == $this->player['health']) {
-			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
+			array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. Er wiedersteht dem Schaden.<br />');
 		} else {
-			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. '.$this->player['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->player['health'].'</b><br />');
+			array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->player['name'].'</b> w&uuml;rfelt '.$playerSoaked.' gegen '.$playerMwAfterArmor.' das sind '.count($playerSoak).' Erfolge. '.$this->player['name'].' Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->player['health'].'</b><br />');
 		}
 		if ($this->player['status'] == "dead") {
-			array_push($this->combatlog, 'Nahkampf: <b>'.$this->player['name'].'</b> stirbt.</b><br />');
+			array_push($this->combatlog, 'Nahkampf -> Soaking: <b>'.$this->player['name'].'</b> stirbt.</b><br />');
 		}
 		
 		$this->enemy[$target]['melee_damage'] = $this->enemy[$target]['melee_default'];
@@ -904,12 +937,12 @@ class Combat_model extends CI_Model
 						$fired .= $s.', ';
 					}
 	
-					array_push($this->combatlog, ucfirst($this->player['name']).' w&uuml;rfelt '.$fired.' gegen den Mindestwurf: '.$mw.'.<br />');										
+					array_push($this->combatlog, ucfirst('Fernkampf -> Spieler w&uuml;rfelt: '.$this->player['name']).' w&uuml;rfelt '.$fired.' gegen den Mindestwurf: '.$mw.'.<br />');										
 					if (!empty($shots)){
-						array_push($this->combatlog, 'Schuss Nummer '.($i+1).' von <b>'.ucfirst($this->player['name']).'</b> hat mit '.count($shots).' Erfolgen getroffen.<br />');	
+						array_push($this->combatlog, 'Fernkampf -> Sch&uuml;sse: Schuss Nummer '.($i+1).' von <b>'.ucfirst($this->player['name']).'</b> hat mit '.count($shots).' Erfolgen getroffen.<br />');	
 						$this->evaluatePlayerDamage($shots);
 					} else {	
-						array_push($this->combatlog, 'Schuss Nummer '.($i+1).' <b>'.ucfirst($this->player['name']).'</b> hat verfehlt.<br />');		
+						array_push($this->combatlog, 'Fernkampf -> Sch&uuml;sse: Schuss Nummer '.($i+1).' <b>'.ucfirst($this->player['name']).'</b> hat verfehlt.<br />');		
 					}
 					error_log('in playerShooting shooting');				
 				} else {
@@ -947,44 +980,58 @@ class Combat_model extends CI_Model
 			error_log('in evaluatePlayerDamage target: '.$target);	
 			
 			if ($this->player['action'] == 'salve') {
+				$dmgBefore = $this->player['weapon_damage'];
 				$this->player['weapon_soak'] = (int)($this->player['weapon_soak']+3);
 				$this->player['weapon_damage'] = $this->combat->_adjustBurstDamage($this->player['weapon_damage']);
+				array_push($this->combatlog, 'Fernkampf -> Angriff: <b>'.ucfirst($this->player['name']).'</b> feuert eine Salve und steigert seinen Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
 			} else if ($this->player['action'] == 'automatic') {
+				$dmgBefore = $this->player['weapon_damage'];
 				$this->player['weapon_soak'] = (int)($this->player['weapon_soak']+6);
 				$this->player['weapon_damage'] = 'T';
+				array_push($this->combatlog, 'Fernkampf -> Angriff: <b>'.ucfirst($this->player['name']).'</b> feuert einen automatischen Feuerstoﬂ und steigert seinen Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
 			}
-			
+			if (count($shots) > 2) {
+				$dmgBefore = $this->player['weapon_damage'];
+				$this->player['weapon_damage'] = $this->combat->calculateDamageIncrease($shots, $this->player['weapon_damage']);
+				array_push($this->combatlog, 'Fernkampf -> Angriff: <b>'.ucfirst($this->player['name']).'</b> erh&ouml;ht durch seine Erfolge den Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
+			}
 			#_debugDie($this->player);
 	
+			$enemyMin = (($this->player['weapon_soak']-$this->enemy[$target]['armor']) < '2') ? '2' : ($this->player['weapon_soak']-$this->enemy[$target]['armor']);
+			$enemyAll = array();
 			for ($x=0;$x<$this->enemy[$target]['body'];$x++) {
 				$roll = $this->combat->_rollDiceWithRule();
 				/* Mindestwurf berechnung */
-				$min = (($this->player['weapon_soak']-$this->enemy[$target]['armor']) < '2') ? '2' : ($this->player['weapon_soak']-$this->enemy[$target]['armor']);
-				if ($roll > $min) {
+				
+				if ($roll >= $enemyMin) {
 					array_push($soaking, $roll);
 				} 
+				array_push($enemyAll, $roll);
 			}
+			foreach ($enemyAll as $s) { $enemySoaked .= $s.', '; }
+			
 
-			if (count($shots) > 2) {
-				$this->player['weapon_damage'] = $this->combat->calculateDamageIncrease($shots, $this->player['weapon_damage']);
-			}
 			if (count($soaking) > 1) {
+				$dmgBefore = $this->player['weapon_damage'];
 				$this->player['weapon_damage'] = $this->combat->calculateDamageDecrease($soaking, $this->player['weapon_damage']);
-			}					
+				array_push($this->combatlog, 'Fernkampf -> Widerstand: <b>'.ucfirst($this->enemy[$target]['name']).'</b> w&uuml;rfelt <b>'.$enemySoaked.'</b> gegen einen Mindeswurf von <b>'.$enemyMin.'</b> das sind <b>'.count($soaking).'</b> Erfolge. Der Schaden reduziert sich von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
+			} else {
+				array_push($this->combatlog, 'Fernkampf -> Widerstand: <b>'.ucfirst($this->enemy[$target]['name']).'</b> w&uuml;rfelt <b>'.$enemySoaked.'</b> gegen einen Mindeswurf von <b>'.$enemyMin.'</b> das sind <b>'.count($soaking).'</b> Erfolge.<br />');
+			}
 			$weapondamage  = (int)($this->combat->_getWeaponDamage($this->player['weapon_damage']));
 					
 			if ($weapondamage < 1)	 {
-				array_push($this->combatlog, "<b>".ucfirst($this->player['name']).'</b> schiesst auf <i>'.$this->enemy[$target]['name']."</i> verursacht aber keinen Schaden. <br /><i>".$this->enemy[$target]['name']."</i> Leben bleibt bei ".$this->enemy[$target]['health']."<br />");
+				array_push($this->combatlog, "<b>".ucfirst($this->player['name']).'</b> schiesst auf <i>'.$this->enemy[$target]['name']."</i> verursacht aber keinen Schaden. <b>".$this->enemy[$target]['name']."</b> Leben bleibt bei ".$this->enemy[$target]['health']."<br />");
 			} else {
 				$damage = $this->enemy[$target]['health']-$weapondamage;
 				$this->enemy[$target]['health_before'] = $this->enemy[$target]['health'];
 
 				$this->enemy[$target]['health'] = $damage;
-				array_push($this->combatlog, "<b>".ucfirst($this->player['name']).'</b> schiesst auf <i>'.$this->enemy[$target]['name']."</i> und macht ".$weapondamage." Schaden. <br /><i>".$this->enemy[$target]['name']."</i> Leben sinkt von ".$this->enemy[$target]['health_before']." auf ".$this->enemy[$target]['health']."<br />");
+				array_push($this->combatlog, "Fernkampf -> Schaden: <b>".ucfirst($this->player['name']).'</b> schiesst auf <i>'.$this->enemy[$target]['name']."</i> und macht ".$weapondamage." Schaden. <b>".$this->enemy[$target]['name']."</b> Leben sinkt von ".$this->enemy[$target]['health_before']." auf ".$this->enemy[$target]['health']."<br />");
 				$this->enemy[$target]['status'] = 'wounded';
 				if ($this->enemy[$target]['health'] < 1) {
 					$this->enemy[$target]['status'] = 'dead';
-					array_push($this->combatlog, "<i>".$this->enemy[$target]['name']."</i> stirbt");
+					array_push($this->combatlog, "Fernkampf -> Schaden: <i>".$this->enemy[$target]['name']."</i> stirbt");
 				}				
 			}
 			$this->player['weapon_soak'] = $this->player['weapon_soak_default'];
@@ -998,8 +1045,7 @@ class Combat_model extends CI_Model
 	function enemyShooting($e) {
  		error_log('in enemyShooting');				
 		for ($i=0;$i<2;$i++) {
-			$shots = array();			
-			$allfired = array();
+			$shots = $allfired = array();						
 			if($this->status == 'running') {
 				for ($x=0;$x<$e['combat'];$x++) {		
 					$mod = ($this->player['action'] == 'cover')	? 3 : 0;
@@ -1015,13 +1061,13 @@ class Combat_model extends CI_Model
 				foreach ($allfired as $s) {
 					$fired .= $s.', ';
 				}
-				array_push($this->combatlog, ucfirst($e['name']).' w&uuml;rfelt '.$fired.' gegen den Mindestwurf: '.$mw.'.<br />');					
+				array_push($this->combatlog, "Fernkampf -> Gegner w&uuml;rfelt: <b>".ucfirst($e['name']).'</b> w&uuml;rfelt <b>'.$fired.'</b> gegen den Mindestwurf <b>'.$mw.'</b>.<br />');					
 
 				if (!empty($shots)){
-					array_push($this->combatlog, 'Schuss Nummer '.($i+1).' von <i>'.ucfirst($e['name']).'</i> hat mit '.count($shots).' Erfolgen getroffen.<br />');	
+					array_push($this->combatlog, 'Fernkampf -> Gegner w&uuml;rfelt:  Schuss Nummer '.($i+1).' von <b>'.ucfirst($e['name']).'</b> hat mit <b>'.count($shots).'</b> Erfolgen getroffen.<br />');	
 					$this->evaluateEnemyDamage($shots, $e);
 				} else {
-					array_push($this->combatlog, 'Schuss Nummer '.($i+1).' von <i>'.ucfirst($e['name']).'</i> hat verfehlt.<br />');		
+					array_push($this->combatlog, 'Fernkampf -> Gegner w&uuml;rfelt:  Schuss Nummer '.($i+1).' von <b>'.ucfirst($e['name']).'</b> hat verfehlt.<br />');		
 				}					
 			} else {
 				$this->finalizeFight();
@@ -1033,13 +1079,18 @@ class Combat_model extends CI_Model
 
 	function evaluateEnemyDamage ($shots, $enemy) {
  		error_log('in evaluateEnemyDamage');					
-		
-		#$this->checkResult();
+				
 		if($this->status == 'running') {
-			#$enemy['weapon_damage'] = $enemy['weapon_default'];
-			$soaking = array();	
-			$allrolls = array();		
+			$soaking = $allrolls = array();	
 			
+			/* increasing damage */
+			if (count($shots) > 2) {
+				$dmgBefore = $enemy['weapon_damage'];
+				$enemy['weapon_damage'] = $this->combat->calculateDamageIncrease($shots, $enemy['weapon_damage']);
+				array_push($this->combatlog, 'Fernkampf -> Schaden: <b>'.$enemy['name'].'</b> hat den Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$enemy['weapon_damage'].'</b> erh&ouml;ht.<br />');
+			}
+			
+			/* Player soaking */
 			for ($x=0;$x<$this->player['body'];$x++) {
 				$roll = $this->combat->_rollDiceWithRule();
 				/* Mindestwurf berechnung */
@@ -1054,33 +1105,28 @@ class Combat_model extends CI_Model
 			foreach ($allrolls as $s) {
 				$rolls .= $s.', ';
 			}
-			array_push($this->combatlog, $this->player['name'].' versucht dem Schaden zu wiederstehen und w&uuml;rfelte '.$rolls.' das sind '.count($soaking).' Erfolge gegen einen Mindestwurf von '.$min.'<br />');						
-
-
-			if (count($shots) > 2) {
-				$enemy['weapon_damage'] = $this->combat->calculateDamageIncrease($shots, $enemy['weapon_damage']);
-			}
+			array_push($this->combatlog, 'Fernkampf -> Widerstand: <b>'.$this->player['name'].'</b> versucht dem Schaden zu wiederstehen und w&uuml;rfelte <b>'.$rolls.'</b> das sind <b>'.count($soaking).'</b> Erfolge gegen einen Mindestwurf von <b>'.$min.'</b><br />');						
 
 			if (count($soaking) > 1) {
+				$dmgBefore = $enemy['weapon_damage'];
 				$enemy['weapon_damage'] = $this->combat->calculateDamageDecrease($soaking, $enemy['weapon_damage']);
+				array_push($this->combatlog, 'Fernkampf -> Widerstand: <b>'.$this->player['name'].'</b> hat den Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$enemy['weapon_damage'].'</b> reduziert.<br />');
 			}				
 
-
-
-
-			 $weapondamage  = (int)($this->combat->_getWeaponDamage($enemy['weapon_damage']));
+			/* damage evaluation */
+			$weapondamage  = (int)($this->combat->_getWeaponDamage($enemy['weapon_damage']));
 			if ($weapondamage < 1)	 {
-				array_push($this->combatlog, '<i>'.ucfirst($enemy['name']).'</i> schiesst auf <b>'.$this->player['name']."</b> verursacht aber keinen Schaden. <br />");
+				array_push($this->combatlog, 'Fernkampf -> Schaden: <b>'.ucfirst($enemy['name']).'</b> schiesst auf <b>'.$this->player['name']."</b> verursacht aber keinen Schaden. <br />");
 			} else {
 				$damage = $this->player['health']-$weapondamage;
 				$this->player['health_before'] = $this->player['health'];
 
 				$this->player['health'] = $damage;
-				array_push($this->combatlog, "<i>".ucfirst($enemy['name']).'</i> schiesst auf <b>'.$this->player['name']."</b> und macht ".$weapondamage." Schaden. <br /><b>".$this->player['name']."</b> Leben sinkt von ".$this->player['health_before']." auf ".$this->player['health']."<br />");
+				array_push($this->combatlog, "Fernkampf -> Schaden: <b>".ucfirst($enemy['name']).'</b> schiesst auf <b>'.$this->player['name']."</b> und macht ".$weapondamage." Schaden. <b>".$this->player['name']."</b> Leben sinkt von ".$this->player['health_before']." auf ".$this->player['health']."<br />");
 				$this->player['status'] = 'wounded';
 				if ($this->player['health'] < 1) {
 					$this->player['status'] = 'dead';
-					array_push($this->combatlog, "<b>".$this->player['name']."</b> ist schwer verwundet und fl√ºchtet aus dem Kampf.");
+					array_push($this->combatlog, "Fernkampf -> Schaden: <b>".$this->player['name']."</b> ist schwer verwundet und fl&uuml;chtet aus dem Kampf.");
 				}				
 			}
 					

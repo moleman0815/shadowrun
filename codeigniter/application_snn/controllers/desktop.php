@@ -5,6 +5,7 @@ class Desktop extends CI_Controller {
 
 	var $settings;
 	var $newMessages;
+	var $header;
 	
 	function Desktop() {
 		parent::__construct();
@@ -19,9 +20,10 @@ class Desktop extends CI_Controller {
 			$this->add_functions->setActive();
 			$this->settings = $this->add_functions->readSettings();
 			$this->newMessages = $this->main_db_assets->countNewMessages();
-			#$this->session->set_userdata('id', '5');		
-			#$this->session->set_userdata('name', 'feta');		
-			#$this->session->set_userdata('rank', '2');
+			$this->header = array(
+					'name' => $this->session->userdata('name'),
+					'systemnews' => $this->add_functions->getSystemNews(),
+			);
 		} else {
 			redirect('/login');
 		}
@@ -89,9 +91,6 @@ class Desktop extends CI_Controller {
 	
 	public function shoutbox () {
 		$page = $this->uri->segment(3);
-		$header = array(
-				'name' => $this->session->userdata('name'),		
-		);
 		$data = array(
 				'shoutbox' => $this->main_db_assets->getShoutboxFull(),
 		);
@@ -110,7 +109,7 @@ class Desktop extends CI_Controller {
 		);
 		
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('left_column', $left);
 		$this->load->view('div_md8');
 		$this->load->view('shoutbox', $data);
@@ -137,12 +136,11 @@ class Desktop extends CI_Controller {
 		$config['first_tag_close'] = '</span>';		
 			
 		$this->pagination->initialize($config);		
-		$header = array(
-				'name' => $this->session->userdata('name'),
-		);
+
 		$data = array(
 						'news' => $this->main_db_assets->getNews($page),
 						'pagination' => $this->pagination->create_links(),
+						'receiver' => $this->main_db_assets->getReceiver(),
 			);
 		$left = array(
 						'show_shoutbox' => true,
@@ -160,7 +158,7 @@ class Desktop extends CI_Controller {
 			);
 
 			$this->load->view('header');
-			$this->load->view('menu_header', $header);
+			$this->load->view('menu_header', $this->header);
 			$this->load->view('left_column', $left);
 			$this->load->view('div_md8');
 			$this->load->view('desktop', $data);
@@ -175,7 +173,7 @@ class Desktop extends CI_Controller {
 		$this->load->library('pagination');
 
 		$page = $this->uri->segment(3);
-		$header = array('name' => $this->session->userdata('name'));
+
 		$config['base_url'] = '/secure/snn/desktop/messages/';
 		$config['total_rows'] = ($this->main_db_assets->countMessages()-1);
 		$config['per_page'] = 10;		
@@ -222,7 +220,7 @@ class Desktop extends CI_Controller {
 			);							
 
 			$this->load->view('header');
-			$this->load->view('menu_header', $header);
+			$this->load->view('menu_header', $this->header);
 			$this->load->view('left_column', $left);
 			$this->load->view('div_md8');
 			$this->load->view('messages', $data);		
@@ -296,9 +294,6 @@ class Desktop extends CI_Controller {
 		$friendMsg = '';
 		$flashMsg;
 
-		$header = array(
-				'name' => $this->session->userdata('name'),
-		);
 		$settings = $this->add_functions->readSettings();
 		
 		$left = array(
@@ -392,7 +387,7 @@ class Desktop extends CI_Controller {
 
 
 			$this->load->view('header');
-			$this->load->view('menu_header', $header);
+			$this->load->view('menu_header', $this->header);
 			$this->load->view('left_column', $left);
 			$this->load->view('div_md8');
 			$this->load->view('einstellungen', $data);		
@@ -445,9 +440,7 @@ class Desktop extends CI_Controller {
 				redirect('desktop/feedback');
 			}
 		}
-		$header = array(
-				'name' => $this->session->userdata('name'),
-		);
+
 		$data = array('feedback' => $this->main_db_assets->getFeedback(),);	
 		$this->load->view('header');
 		$this->load->view('menu_header', $header);			
@@ -476,7 +469,7 @@ class Desktop extends CI_Controller {
 		);
 		$data = array('features' => $this->main_db_assets->getFeatures(),);
 		$this->load->view('header');
-		$this->load->view('menu_header', $header);
+		$this->load->view('menu_header', $this->header);
 		$this->load->view('features', $data);
 		$this->load->view('footer');
 	}

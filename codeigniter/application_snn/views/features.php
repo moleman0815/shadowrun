@@ -45,7 +45,7 @@
 	<?php endif; ?>
 <div style="clear:both"></div>	
 	<br /><hr />
-	<?php if($this->session->userdata('rank') == '1'): ?>
+	<?php if($this->session->userdata('rank') < '1'): ?>
 		<div style="margin: 0 auto;padding:15px;">
 		<fieldset style="border:wpx solid white">
 			<legend style="color:white">Feature schreiben</legend>

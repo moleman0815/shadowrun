@@ -38,6 +38,12 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+
+	select {
+		color: black;
+	}
+
 	
 	</style>
 	<script>
@@ -130,8 +136,21 @@
   			<form action="#" id="writeComment" enctype="text/html" method="post"> 
 			<input type="hidden" name="newsid" id="newsid" value="" />
 			<input type="hidden" name="sendcomment" id="sendcomment" value="true" />
-			<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
-
+			<?php if($this->session->userdata('rank') > 1):?>
+				<input type="hidden" name="userid" id="userid" value="<?=$this->session->userdata('id');?>" />
+			<?php else: ?>
+				<select name="userid">
+					<option value="">Absender w&auml;hlen</option>
+					<?php foreach($receiver as $r): ?>							
+						<option value="<?=$r['id']?>">
+						<?=ucfirst($r['nickname'])?>
+						<?php if ($r['rank'] == '3'): ?>
+    								&nbsp;(NSC)
+								<?php endif; ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
 			<br />
 			<label for="msg_text">Kommentar</label><br />
 			<textarea name="comment" id="comment" rows="10" cols="90"></textarea>

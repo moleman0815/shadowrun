@@ -80,7 +80,7 @@
      	    }
      	}
 	});
-<?php if($this->session->userdata('rank') == '1'): ?>	
+<?php if($this->session->userdata('rank') < '1'): ?>	
 	function changeFeedbackStatus(id) {
 		$.post(
 			'/secure/snn/desktop/changeFeedbackStatus', 
@@ -152,12 +152,12 @@
 			<li class="col-lg-12" style="border: 1px solid white;padding:5px" data-subtype="<?=$f['status']?>">
 				<div><b><?=$f['title']?>: <span style="color: red"><?=strtoupper($f['type'])?></span></b><br />
 					<span style="float:right;margin-right:15px;">				
-					<?php if($this->session->userdata('rank') == '1'): ?>
+					<?php if($this->session->userdata('rank') < '1'): ?>
 						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red;cursor:pointer" onclick="changeFeedbackStatus(\''.$f['fid'].'\')")><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>
 					<?php else: ?>
 						Status: <?php echo ($f['status'] == '0') ? '<span style="color:red"><b>offen</b></span>' : '<span style="color:green">fixed</span>';  ?>						
 					<?php endif; ?>
-					<?php if($this->session->userdata('rank') == '1' || $this->session->userdata('id') == $f['uid']): ?>
+					<?php if($this->session->userdata('rank') < '1' || $this->session->userdata('id') == $f['uid']): ?>
 						<br />
 						<span><img src="/secure/snn/assets/img/icons/delete.png" title="delete" alt="delete" onclick="if(confirm('Feedback wirklich loeschen?')) { sr.messages.deleteFeedback('<?=$f['fid']?>'); return true; } else { return false; }" style="cursor:pointer" /></span>
 						&nbsp;

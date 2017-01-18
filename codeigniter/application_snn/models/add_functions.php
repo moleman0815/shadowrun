@@ -51,7 +51,7 @@ class Add_functions extends CI_Model {
     }
 
     function getFriends () {
-    	if($this->session->userdata('rank') == '1') {
+    	if($this->session->userdata('rank') < '1') {
 			$this->db->select('login.nickname, login.id');
 	        $this->db->from('login');			
 	        $this->db->where('rank != ', '1');
@@ -411,7 +411,7 @@ class Add_functions extends CI_Model {
 		$this->db->where('fid', $this->uri->segment(3));
 		$friend = $this->db->count_all_results('friends');
 
-		if ($this->session->userdata('rank') == 1 || $friend == 1) {
+		if ($this->session->userdata('rank') <= 1 || $friend == 1) {
 			$this->db->select('*');
 			$this->db->from('chars');
 			$this->db->where('uid', $this->uri->segment(3));
@@ -804,6 +804,15 @@ class Add_functions extends CI_Model {
 				'teaser' => $teaser,
 			);
 		return ($this->db->insert('news', $news)) ? true : false;
+	}
+	
+	function insertSystemNews () {
+		$news = array (
+				'title' => $this->input->post('title'),
+				'text' => $this->input->post('newstext'),
+				'online' => 0,
+		);
+		return ($this->db->insert('notes', $news)) ? true : false;
 	}
 
 	function editNews () {
@@ -1209,6 +1218,11 @@ class Add_functions extends CI_Model {
 	function getStoryItems () {
 		$this->db->order_by('itemname', 'ASC');
 		return $this->db->get('items')->result_array();
+	}
+	
+	function getSystemNews () {
+		$data = array('online' => '1');
+		return $this->db->get_where('notes', $data)->result_array();
 	}
 }
 
