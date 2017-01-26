@@ -449,6 +449,7 @@ class Combat_model extends CI_Model
 		$player['ammo_default'] = $weapon['ammo'];
 		$player['action'] = '';
 		$player['small_medipacks'] = $inv[0]['medipacks'];
+		$player['grenades']  = $inv[0]['grenades'];
 		$player['inidice'] = $char[0]['inidice']+$c_ini;
 		$player['reaction_mod'] = $c_reaction;
 		$player['money'] = $inv[0]['money'];
@@ -584,6 +585,8 @@ class Combat_model extends CI_Model
 						$this->playerMeleeAttack($this->round);
 					} else if ($this->player['action'] == 'magic') { 
 						$this->playerMagicAttack();
+					}  else if ($this->player['action'] == 'grenade')  {
+						$this->playerGrenadeThrow();
 					} else {
 						$this->playerShooting($this->round);
 					}
@@ -641,6 +644,66 @@ class Combat_model extends CI_Model
 		} else {
 			$this->beginnFighting();
 			error_log('in returnFromCombatRound after shootout');	
+		}
+	}
+	
+	function playerGrenadeThrow () {
+		array_push($this->combatlog, 'Fernkampf -> Granate: '.ucfirst($this->player['name']).' wirft eine <b>Granate</b>.<br />');
+		$throws = array();
+		for ($i=0;$i<$this->enemies;$i++) {
+			$throws[$i] = rand(1, 100);
+		}
+		foreach ($throws as $key => $value) {
+			if ($value > 25) {
+				array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> steht im Radius, und wird <b>getroffen</b>.<br />');
+				$this->evaluateGranadeDamage($key);
+			} else {
+				array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> hat GlÃ¼ck und steht auÃŸerhalb des Radius.<br />');
+			}
+		}
+		_debug($this->combatlog);
+		_debug($throws);
+		_debugDie($this->player);
+	}
+	
+	function evaluateGranadeDamage ($key) {
+		#_debug($enemy);
+		$mw = 9-$this->enemy[$key]['armor'];
+		$enemyAll = $enemySoaked = array();
+		
+		for ($x=0;$x<$this->enemy[$key]['body'];$x++) {
+			$roll = $this->combat->_rollDiceWithRule();
+			if ($roll >= $mw) {
+				array_push($enemySoaked, $roll);
+			}
+			array_push($enemyAll, $roll);
+		}
+		foreach ($enemyAll as $s) { $targethit .= $s.', '; }
+		
+		
+		if (count($enemySoaked) > 1) {
+			$spelldamage = $this->combat->calculateDamageDecrease($enemySoaked, 'S');
+		}
+		$damage = $this->combat->_getWeaponDamage($spelldamage);
+		
+		$healthBefore = $this->enemy[$key]['health'];
+		/* evaluate damage after increase and soaking */
+		$this->enemy[$key]['health'] = ($this->enemy[$key]['health']-$damage);
+		if ($this->enemy[$key]['health'] < 10) {
+			if ($this->enemy[$key]['health'] > 0) {
+				$this->enemy[$key]['status'] = "wounded";
+			} else if ($this->enemy[$key]['health'] <= 0) {
+				$this->enemy[$key]['status'] = "dead";
+			}
+		}
+			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> versucht dem Schaden zu wiederstehen, und wÃ¼rfelt <b>'.$targethit.'</b> gegen einen Mindestwurf von <b>'.$mw.'</b>, das sind <b>'.count($enemySoaked).'</b> Erfolge.<br />');			
+		if ($healthBefore == $this->enemy[$key]['health']) {
+			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> hat dem Schaden erfolgreich wiederstanden.<br />');
+		} else {
+			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> .<br />');
+		}
+		if ($this->enemy[$target]['status'] == "dead") {
+			array_push($this->combatlog, 'Zauber: <b>'.$this->enemy[$key]['name'].'</b> stirbt.</b><br />');
 		}
 	}
 	
@@ -918,7 +981,6 @@ class Combat_model extends CI_Model
 			array_push($this->combatlog, 'Nahkampf -> Vergleich: <b>'.$winner.'</b> hat den Nahkampf, mit <b>'.$angriffe.'</b> Erfolgen, f&uuml;r sich gewonnen.<br />');
 
 			if (count($enemyHit) > count($playerHit)) {
-				echo "here";
 				$this->evaluateEnemyMeleeDamage($enemyHit, $target);
 			} else {
 				$this->evaluatePlayerMeleeDamage($playerHit, $target);
@@ -978,7 +1040,6 @@ class Combat_model extends CI_Model
 	}
 	
 	function evaluateEnemyMeleeDamage($hits, $target) {		
-		echo "enemy";
 		if (count($hits) > 1) {
 			$dmgBefore = $this->enemy[$target]['melee_damage'];
 			$this->enemy[$target]['melee_damage'] = $this->combat->calculateMeleeDamageIncrease($hits, $this->enemy[$target]['melee_damage']);
@@ -1114,7 +1175,7 @@ class Combat_model extends CI_Model
 				$dmgBefore = $this->player['weapon_damage'];
 				$this->player['weapon_soak'] = (int)($this->player['weapon_soak']+6);
 				$this->player['weapon_damage'] = 'T';
-				array_push($this->combatlog, 'Fernkampf -> Angriff: <b>'.ucfirst($this->player['name']).'</b> feuert einen automatischen Feuerstoß und steigert seinen Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
+				array_push($this->combatlog, 'Fernkampf -> Angriff: <b>'.ucfirst($this->player['name']).'</b> feuert einen automatischen Feuerstoï¿½ und steigert seinen Schaden von <b>'.$dmgBefore.'</b> auf <b>'.$this->player['weapon_damage'].'</b>.<br />');
 			}
 			if (count($shots) > 2) {
 				$dmgBefore = $this->player['weapon_damage'];
@@ -1320,27 +1381,6 @@ class Combat_model extends CI_Model
 			}
 		}
 	}	
-
-	/* Berechnet die Kampfrunden der Initiative BACKUP */
-// 	function calculateRounds($count, $name) {
-// 		error_log('in calculateRounds');
-// 		echo $count;
-// 		if ($count > 10) {
-// 			for ($x=$count;$x>0;$x-=10) {
-// 				if (empty($this->ini[$x]))	 {
-// 					$this->ini[$x] = $name;
-// 				} else {
-// 					$this->ini[$x] = $this->ini[$x].";".$name;
-// 				}
-// 			}
-// 		} else {
-// 			if (empty($this->ini[$count]))	 {
-// 				$this->ini[$count] = $name;
-// 			} else {
-// 				$this->ini[$count] = $this->ini[$count].";".$name;
-// 			}
-// 		}
-// 	}
 	
 	function finalizeFight() {	
  		error_log('in finalizeFight');		
@@ -1386,7 +1426,7 @@ class Combat_model extends CI_Model
 	}	
 
 	/*
-	 * Überprüft, ob der Spieler und die NSCs noch am leben sind
+	 * ï¿½berprï¿½ft, ob der Spieler und die NSCs noch am leben sind
 	 * 
 	 * 
 	 */
@@ -1460,7 +1500,7 @@ class Combat_model extends CI_Model
 			$cash = $mission[0]['cash']-$mission[0]['expense'];
 			$loss = '0';
 			$money = $this->player['money']+cash;
-			array_push($this->combatlog, 'Du wurdest ohnm&auml;chtig, aber deine Gegner sind tot. Der Run hat dir '.$cash.' &yen; gebracht. Glück gehabt!<br />');
+			array_push($this->combatlog, 'Du wurdest ohnm&auml;chtig, aber deine Gegner sind tot. Der Run hat dir '.$cash.' &yen; gebracht. Glï¿½ck gehabt!<br />');
 		} else {
 			$result = 'Lost';
 			$cash = '0';

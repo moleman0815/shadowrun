@@ -169,6 +169,28 @@ class Desktop extends CI_Controller {
 
 	}
 	
+	public function readme () {	
+		$data = array();
+		$left = array(
+				'show_shoutbox' => false,
+				'show_messages' => false,
+				'show_friends' => false,
+				'settings' => $this->settings,	
+		);
+		$right = array(
+				'show_ads' => false,
+				'settings' => $this->settings,
+		);
+	
+		$this->load->view('header');
+		$this->load->view('menu_header', $this->header);
+		$this->load->view('left_column', $left);
+		$this->load->view('div_md10');
+		$this->load->view('readme', $data);
+		$this->load->view('div_end');
+		$this->load->view('footer');
+	}
+	
 	public function messages () {	
 		$msg = array('error' => '' , 'success' => '');
 		$this->load->library('pagination');

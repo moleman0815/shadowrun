@@ -32,8 +32,7 @@ foreach ($wpnoptions as $w) {
 	    $(window).scroll(function(){
 	    	var winscroll = ($(window).scrollTop()+navbar);
 	    	 
-	    console.log('nav: '+navbar+' -> window: '+winscroll+" -> top: "+top);
-	      if(winscroll > top) {
+	    if(winscroll > top) {
 	        $('#buyBasket').addClass('fixedBuy');
 	      } else {
 	        $('#buyBasket').removeClass('fixedBuy');
@@ -59,12 +58,16 @@ foreach ($wpnoptions as $w) {
 			var armor = $('#armor_cost').val();
 			var ammo = $('#ammo_cost').val();
 			var med =  $('#medipack_cost').val();
-
+			var grenade =  $('#grenades_cost').val();
+			
+console.log("m "+grenade);
 			if (typeof armor != 'undefined') { a = parseInt(armor);} else { a = 0;}
 			if (typeof weapon != 'undefined') { w = parseInt(weapon);} else { w = 0;}
 			if (typeof ammo != 'undefined') { am = parseInt(ammo);} else { am = 0;}
 			if (typeof med != 'undefined') { m = parseInt(med);} else { m = 0;}
-			var costs = a+w+am+m;
+			if (typeof grenade != 'undefined') { g = parseInt(grenade);} else { g = 0;}
+			
+			var costs = a+w+am+m+g;
 			$('#total_cost').val(costs);
 			if (costs > '<?=$inv[0]['money']?>') {
 				$('#total_cost').css('color', 'red');
@@ -160,7 +163,8 @@ legend {
 	<?php if(!empty($char)): ?>
 			<div class="curator">Verfügbares Geld: <?=$inv[0]['money']?> &yen;</div>
 			<div class="curator">Medipacks: <?=$inv[0]['medipacks']?></div>
-			<div class="curator">Munition: <?=$inv[0]['maxammo']?></div><br />
+			<div class="curator">Munition: <?=$inv[0]['maxammo']?></div>
+			<div class="curator">Granaten: <?=$inv[0]['grenades']?></div><br />
 			<?php if (!empty($inv[0]['weapon'])): ?>
 			<div class="curator">Waffen:<br />
 				<ul>
@@ -330,6 +334,12 @@ legend {
 	            			<h3 style="font-weight:bold;font-size:14px">Munition</h3>
 	            			Menge: 10 Schuß<br />
 							Kosten: <b>20 &yen;</b>
+						</li>
+						<li data-id="grenades" data-type="stuff" data-cost="100">
+	            			<h3 style="font-weight:bold;font-size:14px">Granate</h3>
+	            			Menge: 1<br />
+	            			Schaden: 9S<br />
+							Kosten: <b>100 &yen;</b>
 						</li>					
 		        	</ul>
 		        	</section>

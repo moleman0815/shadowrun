@@ -47,6 +47,10 @@
     border-color: #BCE8F1;
 }
 
+.navbar-brand {
+	font-size: 16px;
+}
+
 </style>
 <script>
 $(document).ready(function($) {
@@ -82,7 +86,7 @@ $(document).ready(function($) {
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <span class="navbar-brand" href="#">Willkommen zurück <?=ucfirst($this->session->userdata('nickname')); ?></span>
+        <span class="navbar-brand" href="#">Willkommen zur&uuml;ck <?=ucfirst($this->session->userdata('nickname')); ?></span>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav" role="menu">
@@ -110,6 +114,7 @@ $(document).ready(function($) {
         
             <li><a href="/secure/snn/desktop/einstellungen"><i class="fa fa-cogs"></i>&nbsp;[Einstellungen]</a></li>
             <li><a href="/secure/snn/desktop/messages"><i class="fa fa-newspaper-o"></i>&nbsp;[Nachrichten<span id="newMessagesHeader"></span>]</a></li>
+            <li><a href="/secure/snn/desktop/readme"><i class="fa fa-newspaper-o"></i>&nbsp;[ReadMe]</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bar-chart"></i>&nbsp;[Betatest]</a>
                 <ul class="dropdown-menu" role="menu">            

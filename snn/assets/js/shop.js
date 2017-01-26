@@ -148,7 +148,7 @@ $(document).ready(function () {
 			move.hide();
 		}
 
-        function addBasket(basket, move) {			
+        function addBasket(basket, move) {		
 			basket.find("ul[id^='sell']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '" data-cost="' + move.attr("data-cost") + '">'
 					+ '<table class="table"><tr>'
 					+ '<input type="hidden" name="' + move.attr("data-type") + '[]" value="' + move.attr("data-id") + '" />'
@@ -161,7 +161,7 @@ $(document).ready(function () {
 			move.hide();
 		}
 
-        function addBasketStuff(basket, move, event) {			
+        function addBasketStuff(basket, move, event) {	
 			basket.find("ul[id^='stuff']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '" data-cost="' + move.attr("data-cost") + '">'
 					+ '<table class="table"><tr>'
 					+ '<td style="width:220px"><span class="name">' + move.find("h3").html() + '</span></td>'					

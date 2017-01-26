@@ -139,9 +139,12 @@
 					</td>		
 				</tr>			
 				<tr>
-					<td><b>R&uuml;stung:</b></td><td><?=$combat['player']['armor']?></td>					
 					<td><b>Medipacks:</b></td><td <?=$mpclass;?>><?=$combat['player']['small_medipacks']?></td>
-				</tr>							
+					<td><b>Granaten:</b></td><td><?=$combat['player']['grenades']?></td>
+				</tr>	
+				<tr>
+					<td><b>R&uuml;stung:</b></td><td><?=$combat['player']['armor']?></td>									
+				</tr>						
 
 				<?php if($combat['player']['weapon_name']): ?>
 					<tr><td colspan="4" style="padding:4px;border:none"></td></tr>
@@ -244,6 +247,11 @@
 					<?php endif; ?>					
 				<?php endif; ?>
 			<?php endif; ?>
+			<?php if($combat['player']['grenades'] > 0):?>
+			<br />
+				<b>Granaten</b><br />
+				<input type="radio" name="action" id="action" value="grenade" /> - Granate werfen<br />
+			<?php endif; ?>
 			<?php if($combat['player']['melee_name']): ?>
 			<br />
 				<b>Nahkampf</b><br />
@@ -257,7 +265,7 @@
 					<select name="spell" id="spell" onchange="checkCombatSpell()">
 						<option value="">Zauber ausw&auml;hlen</option>
 						<option value=""></option>
-					<?php foreach($combat['player']['spells'] as $s): ?>´
+					<?php foreach($combat['player']['spells'] as $s): ?>ï¿½
 						<option value="<?=$s['zid']?>" data-typ="<?=$s['typ']?>"><?=$s['name']?></option>
 					<?php endforeach; ?>
 					</select>
