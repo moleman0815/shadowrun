@@ -65,6 +65,14 @@ $( document ).ready(function() {
 		'titleShow' : false
 	}); 
 
+	$("a#MrJohnson").fancybox({
+		'titleShow' : false
+	});
+
+	<?php if($mission[0]['text_story'] != ''):?>
+		$('#text_story').show('fast');
+	<?php endif; ?>
+
 });
 
 
@@ -124,6 +132,7 @@ $( document ).ready(function() {
 					<?=$mission[0]['text']?><br />
 				</div>		
 				<?php if($mission[0]['special'] == 1): ?>
+					<br /><br />&nbsp;
 					Bei dieser Mission handelt es sich um eine spezielle Storymission.<br />
 					Storymissionen sind selten und k&ouml;nnen nur ein einziges Mal gespielt werden. Daf&uuml;r winken mit besonderen Gegenst&auml;nden oder Informationen als Belohnung, welche euch im sp&auml;teren Spiel n&uuml;tzlich werden k&ouml;nnen. 
 				<?php endif;?>			
@@ -137,7 +146,9 @@ $( document ).ready(function() {
 			<div id="text_story" style="display:none">
 			<?php if($mission[0]['johnson']): ?>
 				<div style="float:left;margin: 0 10px 10px 0">
-					<img src="/secure/snn/assets/img/combat/johnson/<?=$mission[0]['johnson']?>" alt="Mr. Johnson" title="Mr. Johnson"/>
+					<a id="MrJohnson" href="/secure/snn/assets/img/combat/johnson/<?=$mission[0]['johnson']?>">
+						<img src="/secure/snn/assets/img/combat/johnson/<?=$mission[0]['johnson']?>" alt="MrJohnson" title="Mr. Johnson"  style="width:220px;height:220px"/>
+					</a>
 				</div>
 			<?php endif; ?>
 				<?php if($mission[0]['storyimage']): ?>

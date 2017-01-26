@@ -487,3 +487,125 @@ display: flex;
     cursor: pointer;
 
 }
+/* basket spells */
+.basket_spells {
+    position: relative;
+}
+
+.basket_spells .basket_list {
+    width: 400px;
+    background-color: #fff;
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    color: #000000;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    background: none repeat scroll 0 0 rgba(103, 193, 245, 0.2);
+    color: #FFFFFF;        
+}
+.basket_cybasket_spellsberware .basket_list input {
+    color: black;
+}
+
+.basket_spells.active .basket_list,
+.basket_basket_spellscyberware.hover .basket_list { 
+    background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF;
+     }
+
+.basket_spells.active .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; 
+    border: 1px solid red;
+}
+
+.basket_spells.hover .basket_list { background: none repeat scroll 0 0 rgba(36, 119, 166, 0.2);
+    color: #FFFFFF; }
+
+/* .head */
+
+.basket_spells .head {
+    overflow: hidden;
+    margin: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    border-bottom: 1px solid #ddd;
+}
+
+.basket_spells .head .name { float: left }
+.basket_spells .head .amount {padding-left: 200px;}
+.basket_spells .head .count { padding-left: 10px; }
+
+.basket_spells  .name { float: left }
+.basket_spells  .amount {padding-left: 200px;}
+.basket_spells  .count { padding-left: 10px; }
+
+/* .head */
+
+.basket_spells ul { padding-bottom: 10px }
+
+.basket_spells ul li {
+    position: relative;
+    clear: both;
+    overflow: hidden;
+    margin: 0 10px;
+    height: 35px;
+    line-height: 32px;
+    border-bottom: 1px dashed #eee;
+}
+
+.basket_spells ul li:hover { border-bottom-color: #ccc }
+
+
+.basket_spells ul li span.name {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    -webkit-transition: width .2s ease;
+    -moz-transition: width .2s ease;
+    -o-transition: width .2s ease;
+    -ms-transition: width .2s ease;
+    transition: width .2s ease;
+}
+
+.basket_spells ul li:hover span.name { width: 146px }
+
+.basket_spells ul li input.count {
+    line-height: 20px;
+    text-align: center;
+    border: 0;
+    border-radius: 3px;
+    background-color: #ddd;
+}
+
+.basket_spells ul li button.delete {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.basket_spells ul li button.minus {
+        width: 20px;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    color: #EE5757;
+    background-color: #eee;
+    border-radius: 3px;
+    cursor: pointer;
+
+}

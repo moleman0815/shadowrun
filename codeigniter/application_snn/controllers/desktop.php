@@ -141,6 +141,7 @@ class Desktop extends CI_Controller {
 						'news' => $this->main_db_assets->getNews($page),
 						'pagination' => $this->pagination->create_links(),
 						'receiver' => $this->main_db_assets->getReceiver(),
+						'missions' => $this->add_functions->getSpecialMission(),
 			);
 		$left = array(
 						'show_shoutbox' => true,

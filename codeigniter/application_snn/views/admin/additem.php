@@ -26,20 +26,21 @@ function changeItemType (id) {
 	$('#type_weapon').hide('fast');
 	$('#type_cyberware').hide('fast');
 	$('#type_melee').hide('fast');
+	$('#type_spell').hide('fast');
 	$('#type_'+id).show('fast');
 }
 </script>
 
 <div class="col-lg-8 admininterface">
-	<fieldset>
-		<legend class="newstitle">Gegenstand hinzufügen</legend>
-				<br />
 			<?php if($error): ?>
 				<div class="alert alert-danger" style="z-index: 100;position: absolute; width:90%;border: 3px solid black" id="error"><b><i class="fa fa-exclamation-circle"></i>&nbsp;<?=$error?></b></div>
 			<?php endif; ?>
 			<?php if($success): ?>
 				<div class="alert alert-success" style="z-index: 100;position: absolute; width:90%;border: 3px solid black" id="success"><b><i class="fa fa-thumbs-up"></i>&nbsp;<?=$success?></b></div>
-			<?php endif; ?>			
+			<?php endif; ?>		<fieldset>
+		<legend class="newstitle">Gegenstand hinzufügen</legend>
+				<br />
+		
 			<div id="gangername_error"></div>
 			<?=form_open('/admin/insertItem');?>
 			<?=form_hidden('sendItem', true);?>
@@ -48,7 +49,7 @@ function changeItemType (id) {
 				<?=form_input(array('id' => 'itemname', 'name' =>'itemname', "class" => "input-xlarge"), '');?>
 				<br />
 				<label class="control-label select_width" for="type" style="width:150px">Gegenstandstyp</label>
-				<?=form_dropdown('type', array('' => 'Typ wählen', 'weapon' => 'Waffe', 'armor' => 'Rüstung', 'cyberware' => 'Cyberware', 'melee' => Nahkampf), '', 'id="type" onchange="changeItemType(this.value)"');?>
+				<?=form_dropdown('type', array('' => 'Typ wählen', 'weapon' => 'Waffe', 'armor' => 'Rüstung', 'cyberware' => 'Cyberware', 'melee' => 'Nahkampf', 'spell' => 'Zauber'), '', 'id="type" onchange="changeItemType(this.value)"');?>
 				<br />
 				<label class="control-label" for="cost" style="width:150px">Kosten</label>
 				<?=form_input(array('id' => 'cost', 'name' =>'cost', "class" => "input-xlarge"), '');?>								
@@ -57,6 +58,22 @@ function changeItemType (id) {
 				<label class="control-label" for="description" style="width:150px;" valign="top">Beschreibung</label>
 				<?=form_textarea(array('id' => 'description', 'name' =>'description', "class" => "input-xlarge"));?>
 				<br />								
+			</div>
+			<div class="col-sm-6">
+				<div id="type_spell" style="display:none;color: white">
+					<label class="control-label" for="ammo" style="width:150px">Typ</label>
+					<?=form_dropdown('typ', array('kampf' => 'Kampf', 'heilung' => 'Heilung'));?><br />
+					<label class="control-label" for="ammo" style="width:150px">Subtyp</label>
+					<?=form_dropdown('subtype', array('p' => 'Physisch', 'm' => 'Mental'));?><br />
+					<label class="control-label" for="ammo" style="width:150px">Mindestwurf</label>
+					<?=form_input(array('id' => 'mw', 'name' =>'mw', "class" => "input-xlarge"), '');?><br />
+					<label class="control-label" for="ammo" style="width:150px">Entzug</label>
+					<?=form_input(array('id' => 'entzug', 'name' =>'entzug', "class" => "input-xlarge"), '');?><br />
+					<label class="control-label" for="ammo" style="width:150px">Wirkung</label>
+					<?=form_input(array('id' => 'wirkung', 'name' =>'wirkung', "class" => "input-xlarge"), '');?><br />
+					<label class="control-label" for="ammo" style="width:150px">Ziel</label>
+					<?=form_dropdown('target', array('enemy' => 'Gegner', 'multi' => 'mehrere Gegner', 'self' => 'Spieler'));?><br />
+				</div>
 			</div>
 			<div class="col-sm-6">
 				<div id="type_melee" style="display:none;color: white">

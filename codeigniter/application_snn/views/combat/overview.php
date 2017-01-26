@@ -113,6 +113,20 @@
 				</tr>
 			</tbody>
 		</table>
+		<?php if($private[0] != ''): ?>
+		<div>
+			<fieldset class="newselement" style="border-color:red">	
+				<div class="newstitle">ACHTUNG! Du hast eine offene Storymission!</div>
+				<br />
+				<div class="col-sm-12">
+					<strong><?=$private[0]['title']?> - Stufe <?=$private[0]['level']?></strong><br /><br />
+					<i class="fa fa-external-link" aria-hidden="true"></i> <a href="/secure/snn/combatzone/combat_mission/<?=$private[0]['mid']?>" style="color:gold">Direkt zur Mission gehen</a>
+				</div>
+			</fieldset>
+		</div>
+	
+		<br />&nbsp;
+	<?php endif; ?>
 		<br />
 		Wähle deinen Schwierigkeitsgrad aus:
 		

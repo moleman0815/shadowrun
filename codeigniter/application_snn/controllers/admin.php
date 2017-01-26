@@ -51,10 +51,18 @@ class Admin extends CI_Controller {
 		$success = '';
 		if($this->input->post('sendItem')) {
 			if ($this->input->post('itemname')) {
-				if($this->add_functions->insertItem()) {
-					$this->session->set_userdata('success', 'Der Gegenstand wurde erfolgreich erstellt.');
+				if($this->input->post('type') == 'spell') {
+					if($this->add_functions->insertSpell()) {
+						$this->session->set_userdata('success', 'Der Gegenstand wurde erfolgreich erstellt.');
+					} else {
+						$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
+					}
 				} else {
-					$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
+					if($this->add_functions->insertItem()) {
+						$this->session->set_userdata('success', 'Der Gegenstand wurde erfolgreich erstellt.');
+					} else {
+						$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
+					}
 				}
 			} else {
 				$this->session->set_userdata('error', 'Beim Erstellen des Gegenstand ist ein Fehler aufgetreten.');
@@ -373,6 +381,7 @@ class Admin extends CI_Controller {
 			'johnson' => directory_map('assets/img/combat/johnson/'),
 			'story' => directory_map('assets/img/combat/storyimage/'),
 			'storyitems' => $this->add_functions->getStoryItems(),
+			'chars' => $this->add_functions->getAllCharacters(),
 			);
 		$left = array(
 						'show_shoutbox' => false,

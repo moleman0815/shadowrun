@@ -1,6 +1,19 @@
 <?php
-#	_debug($data['inv'][0]['spells']);
+	#_debug($data['inv']);
 ?>
+
+<?php if($data['inv'][0]['items'] > 0): ?>
+<script>
+$( document ).ready(function() {
+	<?php foreach($data['inv'][0]['items'] as $s):?>
+	$("a#item_<?=$s['iid']?>").fancybox({
+		'titleShow' : false
+	});
+	<?php endforeach; ?>
+});	
+</script>
+<?php endif; ?>
+
 
 	<?php if(!empty($data['char'][0])): ?>
 	<div>
@@ -158,6 +171,32 @@
 								}
 							?>
 						</td>
+					</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+		
+		<?php if($data['inv'][0]['items'] > 0): ?>
+		<div class="newstitle">Spezielle Gegenst&auml;nde</div>				
+			<table class="table table-condensed newselement">
+				<thead>
+					<tr>
+						<th style="width:100px">Name</th>
+						<th>Typ</th>
+						<th>Subtype</th>						
+					</tr>
+				</thead>
+				<tbody>	
+					<?php foreach($data['inv'][0]['items'] as $s):?>
+					<tr>
+						<td><?=$s['itemname']?></td>
+						<td><?=$s['itemtext']?></td>
+						<td>
+							<a id="item_<?=$s['iid']?>" href="/secure/snn/assets/img/combat/storyitem/<?=$s['image']?>">
+								<img src="/secure/snn/assets/img/combat/storyitem/<?=$s['image']?>" style="width:100px;height:100px">
+							</a>		
+						</td>						
 					</tr>
 					<?php endforeach; ?>
 				</tbody>

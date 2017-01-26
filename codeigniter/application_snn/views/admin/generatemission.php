@@ -7,9 +7,12 @@
 $n_options = array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10'); 
 $r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'ork' => 'Ork', 'troll' => 'Troll');
 $options = '';
-#_debugDie($storyitems);
+#_debugDie($chars);
 foreach($allganger as $g) {
 	$options .= '<option value="'.$g['gid'].'">Lv. '.$g['level'].' - '.$g['ganger_name'].'</option>';
+}
+foreach($chars as $g) {
+	$chars_options .= '<option value="'.$g['cid'].'">'.$g['charname'].'</option>';
 }
 ?>
 <script>
@@ -60,7 +63,13 @@ foreach($allganger as $g) {
 				<label class="control-label" for="missionstitle" style="width:150px">Missions Titel</label>
 				<?php $js = 'onblur="checkMissionTitle(this.value)"'; ?>
 				<?=form_input(array('id' => 'missionstitle', 'name' =>'missionstitle', "class" => "input-xlarge"), '', $js);?>
-				<br />				
+				<br />	
+				<label class="control-label select_width" for="missiontype" style="width:150px">Single Char only</label>
+				<select name="character" id="character">
+						<option value="">Char ausw&auml;hlen</option>
+						<?=$chars_options ?>
+					</select>
+				<br />			
 				<label class="control-label select_width" for="missionlevel" style="width:150px">Missions Level</label>
 				<?=form_dropdown('missionlevel', $n_options);?>
 				<br />

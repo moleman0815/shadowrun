@@ -74,7 +74,7 @@ ul {
 			<?php endif; ?>			
 		<div class="col-sm-12">
 
-			<div class="col-sm-3">
+			<div class="col-sm-4">
 				<img src="/secure/snn/assets/img/layout/mensch.png" />
 			</div>
 			<div class="col-sm-3" style="margin-left:20px">

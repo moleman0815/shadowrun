@@ -145,6 +145,21 @@ class Add_functions extends CI_Model {
 			}
 		}
     }
+    
+    function insertSpell () {
+    	#_debugDie($this->input->post());
+    	$data= array (
+    			'name' => $this->input->post('itemname'),
+    			'typ' => $this->input->post('typ'),
+    			'subtype' => $this->input->post('subtype'),
+    			'mw' => $this->input->post('mw'),
+    			'entzug' => $this->input->post('entzug'),
+    			'wirkung' => $this->input->post('wirkung'),
+    			'target' => $this->input->post('target'),
+    			'cost' => $this->input->post('cost'),
+    	);
+    	return ($this->db->insert('spells', $data)) ? true : false;
+    }
 
     function insertItem() {
     	$bmode=$this->input->post('mode');
@@ -353,6 +368,10 @@ class Add_functions extends CI_Model {
 		#$this->util->_debug($cid);
 	}
 
+	function getAllCharacters() {
+		return $this->db->get('chars')->result_array();
+	}
+	
 	function getCharacter() {
 		$this->db->select('*');
 		$this->db->from('chars');
@@ -497,7 +516,8 @@ class Add_functions extends CI_Model {
 
 	function removeArchetypValues ($stats, $oldtyp) {
 		$ganger = array('armed_combat' => '1');
-		$lonestar = array('armed_longrange' => '1');	
+		$lonestar = array('armed_longrange' => '1');
+		$security = array('armed_longrange' => '2');
 		foreach ($stats as $key => $value) {
 			if(in_array($key, array_keys(${$oldtyp}))) {
 				if (substr(${$oldtyp}[$key], 0,1) == '+') {
@@ -722,6 +742,14 @@ class Add_functions extends CI_Model {
 		$query = $this->db->get();
 		return $query->result_array();		
 	}
+	function getSpecialMission () {
+		$this->db->where('charid', $this->session->userdata('charid'));
+		$this->db->where('charid != ', '');
+		$this->db->where('mission_played', 0);
+		return $this->db->get('missions')->result_array();
+	}
+	
+	
 
 	function generateMission () {
 		#_debugDie($this->input->post());
@@ -752,6 +780,7 @@ class Add_functions extends CI_Model {
 					'gid' => implode(';', $this->input->post('missionganger')),
 					'special' => $this->input->post('special'),				
 					'specialitem' => $this->input->post('storyitem'),
+					'charid' => $this->input->post('character'),
 			);
 			
 			return ($this->db->insert('missions', $mission)) ? true : false;
@@ -1162,7 +1191,20 @@ class Add_functions extends CI_Model {
 						"mode" => $row[4],
 						"cost" => $row[5],
 						"reduce" => $row[6],
-						"type" => $row[7]
+						"type" => $row[7],
+						"subtype" => $row[8],
+						"armor" => $row[9],
+						"reach" =>  $row[10],
+						"cyberware_type" =>  $row[11],
+						"cyberware_ini" =>  $row[12],
+						"cyberware_reaction" =>  $row[13],
+						"cyberware_armor" =>  $row[14],
+						"cyberware_mw" =>  $row[15],
+						"cyberware_essence" =>  $row[16],
+						"cyberware_strength" =>  $row[17],
+						"cyberware_quickness" =>  $row[18],
+						"cyberware_body" =>  $row[19],
+						"cyberware_intelligence" =>  $row[20]
 				);
 				if(!$this->db->insert('weapons', $data)) {
 					return false;

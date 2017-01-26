@@ -7,6 +7,7 @@ class Combatzone extends CI_Controller {
 	var $header;
 	
 	function Combatzone() {
+
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));	
 		if ($this->session->userdata('login') == true) {
@@ -20,6 +21,7 @@ class Combatzone extends CI_Controller {
 					'name' => $this->session->userdata('name'),
 					'systemnews' => $this->add_functions->getSystemNews(),
 			);
+			#_debugDie($this->session->all_userdata());
 		} else {
 			redirect('/login');
 		}
@@ -98,6 +100,49 @@ class Combatzone extends CI_Controller {
 		$this->load->view('footer');		
 	}
 
+	function medicine () {
+		if ($this->input->post('buySpells')) {
+			if($this->input->post('total_spell_cost')) {
+				if($this->combat_model->buySpells()) {
+					$this->session->set_userdata('success', 'Du hast neue Zauber erlernt.');
+					redirect('combatzone/medicine');
+				} else {
+					$this->session->set_userdata('error', 'Beim erlernern deiner Zauberist ein Fehler aufgetreten.');
+					redirect('combatzone/medicine');
+				}
+			} else {
+				$this->session->set_userdata('error', 'Wolltest du nichts lernen? Deine Liste war leer gewesen.');
+				redirect('combatzone/medicine');
+			}
+		}
+		$left = array(
+				'show_shoutbox' => true,
+				'show_messages' => true,
+				'shoutbox' => $this->main_db_assets->getShoutbox(),
+				'column_messages' => $this->main_db_assets->getColumnMessages(),
+				'show_friends' => true,
+				'friends' => $this->add_functions->getFriends(),
+				'settings' => $this->settings,
+		);
+		$center = array(
+				'char' => $this->add_functions->getCharacter(),
+				'cyberware' => $this->combat_model->getSpells(),
+				'inv' =>  $this->combat_model->getInventory(),
+		);
+		$right = array(
+				'show_ads' => true,
+				'ads' => $this->main_db_assets->getAds(),
+				'settings' => $this->settings,
+		);
+		$this->load->view('header');
+		$this->load->view('menu_header', $this->header);
+		$this->load->view('left_column', $left);
+		$this->load->view('div_md10');
+		$this->load->view('combat/medicine', $center);
+		$this->load->view('div_end');
+		$this->load->view('footer');
+	}
+	
 	function clinic () {
 		if ($this->input->post('buyCyberware')) {
 			if($this->input->post('total_cyber_cost')) {
@@ -142,6 +187,7 @@ class Combatzone extends CI_Controller {
 	}	
 
 	function combat_overview() {
+		#_debugDie($this->session->all_userdata());
 		$left = array(
 				'show_shoutbox' => true,
           		'show_messages' => true,
@@ -157,6 +203,7 @@ class Combatzone extends CI_Controller {
 				'missions' => $this->combat_model->getAllMissions('1'),
 				'stats' =>  $this->combat_model->getStatistics(),
 				'inv' => $this->combat_model->getInventory(),
+				'private' => $this->add_functions->getSpecialMission(),
 			);
 		$right = array(
 				'show_ads' => true,
@@ -212,7 +259,7 @@ class Combatzone extends CI_Controller {
 	public function fetchMissions() {
 		if ($this->input->post('level') == true) {
 			$data = $this->combat_model->getAllMissions($this->input->post('level'));			
-			#$this->util->_debug($data);
+			
 			$mid = array();
 			$level = array();
 			$title = array();
@@ -222,26 +269,52 @@ class Combatzone extends CI_Controller {
 			$extras = array();
 			$member = array();
 			$tiles = array();
+			$charid = array();
 
 			if (count($data) > '0') {
 				for ($x=0; $x<count($data);$x++) {
 					if (empty($data[$x]['gid'])) continue;
-					$ganger = count(explode(';', $data[$x]['gid']));
-					array_push(
-							$tiles, array(
-									'mid' => $data[$x]['mid'],
-									'level' => $data[$x]['level'],
-									'title' => $data[$x]['title'], 
-									'text' => $data[$x]['text'],
-									'cash' => $data[$x]['cash'],
-									'type' => ucfirst($data[$x]['type']),
-									'ganger' => $ganger,
-									'expense' => $data[$x]['expense'],
-									'extras' => $data[$x]['extras'],
-									'member' => $data[$x]['member'],
-									'special' => $data[$x]['special'],
-								)
-							);
+					if ($data[$x]['charid'] == '') { 
+						$ganger = count(explode(';', $data[$x]['gid']));
+						array_push(
+								$tiles, array(
+										'mid' => $data[$x]['mid'],
+										'level' => $data[$x]['level'],
+										'title' => $data[$x]['title'], 
+										'text' => $data[$x]['text'],
+										'cash' => $data[$x]['cash'],
+										'type' => ucfirst($data[$x]['type']),
+										'ganger' => $ganger,
+										'expense' => $data[$x]['expense'],
+										'extras' => $data[$x]['extras'],
+										'member' => $data[$x]['member'],
+										'special' => $data[$x]['special'],
+										'charid' => $data[$x]['charid'],
+									)
+								);
+					} else {
+						if ($data[$x]['charid'] == $this->session->userdata('charid')) {
+							$ganger = count(explode(';', $data[$x]['gid']));
+							$title = "Eine spezielle Mission f&uuml;r DICH:<br /><br />";
+							$person = "<br /><br />Personalisiert";
+							array_push(
+									$tiles, array(
+											'mid' => $data[$x]['mid'],
+											'level' => $data[$x]['level'],
+											'title' => $title.$data[$x]['title'],
+											'text' => $data[$x]['text'],
+											'cash' => $data[$x]['cash'],
+											'type' => ucfirst($data[$x]['type']).$person,
+											'ganger' => $ganger,
+											'expense' => $data[$x]['expense'],
+											'extras' => $data[$x]['extras'],
+											'member' => $data[$x]['member'],
+											'special' => $data[$x]['special'],
+											'charid' => $data[$x]['charid'],
+									)
+									);
+						}
+					}
 				}
 
 				echo json_encode(array('status' => 'success', 'data' => $tiles));

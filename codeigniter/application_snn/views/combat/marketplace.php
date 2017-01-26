@@ -25,8 +25,23 @@ foreach ($wpnoptions as $w) {
     	$('#total_sell').val(0);    	
 		$( "#tabs" ).tabs();
 		var last_index = $.cookie("lasttab");
-	    $("#tabs").tabs( "option", "active", last_index );    	   	
+	    $("#tabs").tabs( "option", "active", last_index );
+
+	    var top = $('#buyBasket').offset().top;
+	    var navbar = $('.navbar').offset().top;
+	    $(window).scroll(function(){
+	    	var winscroll = ($(window).scrollTop()+navbar);
+	    	 
+	    console.log('nav: '+navbar+' -> window: '+winscroll+" -> top: "+top);
+	      if(winscroll > top) {
+	        $('#buyBasket').addClass('fixedBuy');
+	      } else {
+	        $('#buyBasket').removeClass('fixedBuy');
+	      }
+	    });
 	});
+
+	
 
 	$(function() {
 		$("li").click(function() {
@@ -82,6 +97,11 @@ foreach ($wpnoptions as $w) {
 </script>
 <style>
 
+.fixedBuy {
+	position: fixed; 
+	top:55px;
+	right:20px;}
+
 .ui-widget-content {
 	background-image: none;
 	background-color: #000000;
@@ -108,7 +128,7 @@ legend {
 }
 
 .basket ul {
-	font-size:12px;
+	font-size:11px;
 	color: white;
 }
 
@@ -170,12 +190,10 @@ legend {
 	
 		</ul>	
 		<div id="buy">		
-			<div class="col-md-12" style="color: white">
+			<div class="col-md-12" style="color: white;" id="buyBasket">
 			<?=form_open_multipart('/combatzone/marketplace');?>
 			<?=form_hidden('buyItems', true);?>		
-				<div class="newstitle">Warenkorb</div>	
-				<br />
-				<div class="basket" id="weapon" style="color: white">
+				<div class="basket" id="weapon" style="color: white;float:right">
 	            	<div class="basket_list" style="color: white">
 						<div class="head" style="color: white">
 							<table style="color: white">
@@ -232,8 +250,9 @@ legend {
 			        				$tooltip .= "<div>";
 			        			?>
 			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-subtype="<?=$w['subtype']?>" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()" style="z-index:1000">
-			            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3>
-			      					Kosten: <b><?=$w['cost'];?> &yen;</b>
+			            			<h3 style="font-weight:bold;font-size:12px"><?=$w['name'];?></h3>
+			      					Kosten: <b><?=$w['cost'];?> &yen;</b><br />
+			      					Typ: <b><?=$w['subtype']?></b>
 			            		</li>
 			            		<?php if ($i%5 == 0): ?>
 			            			</ul><ul class="clear">
@@ -267,6 +286,7 @@ legend {
 			            		<li data-id="<?=$w['wid']?>" data-type="weapon" data-subtype="<?=$w['subtype']?>" data-cost="<?=$w['cost'];?>" onmouseover="Tip('<?=$tooltip?>')" onmouseout="UnTip()" style="z-index:1000">
 			            			<h3 style="font-weight:bold;font-size:14px"><?=$w['name'];?></h3>
 			      					Kosten: <b><?=$w['cost'];?> &yen;</b>
+			      					
 			            		</li>
 			            		<?php if ($i%5 == 0): ?>
 			            			</ul><ul class="clear">

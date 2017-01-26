@@ -1,7 +1,11 @@
 
 <?php 
   if ($this->uri->segment(1) == 'combatzone'){
-    $class = 'combatzone'; 
+  	if ($this->uri->segment(2) == 'medicine') {
+  		$class = 'medicine';
+  	} else {
+    	$class = 'combatzone';
+  	}
   } else {
     if ($this->uri->segment(2) == 'messages') {
       $class = 'messages';
@@ -42,6 +46,7 @@
     background-color: #D9EDF7;
     border-color: #BCE8F1;
 }
+
 </style>
 <script>
 $(document).ready(function($) {
@@ -60,7 +65,7 @@ $(document).ready(function($) {
 
     <div id="top-header">
         <div class="container text-center">
-          <img src="/secure/snn/assets/img/layout/snn.png"/>
+          <img src="/secure/snn/assets/img/layout/snn.png" class="logo" />
         </div>
     </div>
 
@@ -77,35 +82,32 @@ $(document).ready(function($) {
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <span class="navbar-brand" href="#">Willkommen zurÃ¼ck <?=ucfirst($this->session->userdata('nickname')); ?></span>
+        <span class="navbar-brand" href="#">Willkommen zurück <?=ucfirst($this->session->userdata('nickname')); ?></span>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav" role="menu">
             <li><a href="/secure/snn/desktop/overview"><i class="fa fa-home"></i>&nbsp;[Home]</a></li>
-		<?php if($this->session->userdata('rank') <= '3'): ?>
 
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-jpy"></i>&nbsp;[H&auml;ndler]</a>
+                <ul class="dropdown-menu" role="menu">                  
+                  <li><a href="/secure/snn/combatzone/marketplace"><i class="fa fa-credit-card"></i>&nbsp;[Marktplatz]</a></li>
+                  <li><a href="/secure/snn/combatzone/clinic"><i class="fa fa-ambulance"></i>&nbsp;[Schattenklinik]</a></li>
+            <?php if($this->session->userdata('rank') == '0' || $this->session->userdata('id') == 6): ?>
+                  <li><a href="/secure/snn/combatzone/medicine"><i class="fa fa-flask"></i>&nbsp;[Medizinh&uuml;tte]</a></li>
+            <?php endif; ?>
+                </ul>
+            </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]</a>
                 <ul class="dropdown-menu" role="menu">                  
                   <li><a href="/secure/snn/combatzone/inventory"><i class="fa fa-suitcase"></i>&nbsp;[Charakterbogen]</a></li>
-                  <li><a href="/secure/snn/combatzone/marketplace"><i class="fa fa-credit-card"></i>&nbsp;[Marktplatz]</a></li>
                   <li><a href="/secure/snn/combatzone"><i class="fa fa-heartbeat"></i>&nbsp;[Missionen]</a></li>
-                  <li><a href="/secure/snn/combatzone/clinic"><i class="fa fa-ambulance"></i>&nbsp;[Schattenklinik]</a></li>
                 </ul>
-            </li>
+            </li>            
             
-         <?php endif; ?>
-<?php /*     
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="combatzone"><i class="fa fa-trophy"></i>&nbsp;[Combatzone]<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="/secure/snn/combatzone"><i class="fa fa-heartbeat"></i>&nbsp;[Missionen]</a></li>
-          <li><a href="/secure/snn/combatzone/inventory"><i class="fa fa-suitcase"></i>&nbsp;[Inventar]</a></li>          
-          <li><a href="/secure/snn/combatzone/marketplace"><i class="fa fa-credit-card"></i>&nbsp;[Marktplatz]</a></li>
-          <li><a href="/secure/snn/combatzone/clinic"><i class="fa fa-ambulance"></i>&nbsp;[Schattenklinik]</a></li>          
-        </ul>
-      </li>
-*/ ?>
+        
             <li><a href="/secure/snn/desktop/einstellungen"><i class="fa fa-cogs"></i>&nbsp;[Einstellungen]</a></li>
             <li><a href="/secure/snn/desktop/messages"><i class="fa fa-newspaper-o"></i>&nbsp;[Nachrichten<span id="newMessagesHeader"></span>]</a></li>
             <li class="dropdown">

@@ -1,6 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CI_Combat {
 
 	function _calculateIni($ammount) {
 		$ini = 0;
@@ -129,23 +128,6 @@ class CI_Combat {
 
 		return $damage[$type];
 	}
-	
-	function _getDamageCode($type) {
-		if ($type == "") {
-			return 0;
-		}
-		if ($type == 1 || $type == 2) {
-			return "L";
-		} else if ($type == 3 || $type == 4 || $type == 5) {
-			return "M";
-		} else if ($type > 5 && $type < 10) {
-			return "S";
-		} else {
-			return "T";
-		}
-	
-		return $damage[$type];
-	}
 
 	function _adjustBurstDamage ($type) {
 		$damage = array(
@@ -251,20 +233,24 @@ class CI_Combat {
 			return 3;
 		} 
 	}
+
+	function _generateReadableEntzug ($data) {
+
+		//1;schadensniveau;2
+		$tmpEntzug = explode(";", $data);
+
+		$niveau = ($tmpEntzug[1] == 'schadensniveau') ? 'Schadensniveau' : $tmpEntzug[1];
+		$add = ($tmpEntzug[2] != '') ? "+ ".ucfirst($tmpEntzug[2]) : "";
+		$entzug =  "Stufe+".$tmpEntzug[0]." ". $niveau." ". $add;
+		return $entzug;
+	}
 	
-	function _getIncrease ($roll) {
-		if ($roll == 1) {
-			return 0;
-		} else if ($roll == 2 || $roll == 3) {
-			return 1;
-		} else if ($roll == 4 || $roll == 5) {
-			return 2;
-		} else if ($roll == 6 || $roll == 7) {
-			return 3;	
-		} else if ($roll == 8 || $roll == 9) {
-			return 4;
-		} else if ($roll == 10 || $roll == 11) {
-			return 5;
+	function _generateReadableSchaden ($data, $typ) {
+		$type = ($typ == 'kampf') ? "Schaden" : "Heilung";
+		if (empty($data)) {
+			return "Stufe+Schadensniveau ".$type;
+		} else {
+			$tmp = explode(';', $data);
+			return "+ ".$tmp[0]." ".ucfirst($tmp[1]);
 		}
 	}
-}

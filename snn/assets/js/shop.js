@@ -92,19 +92,12 @@ $(document).ready(function () {
 			}
 		});
 
-
-		$(".basket_cyberware").droppable({
-		
-			// The class that will be appended to the to-be-dropped-element (basket)
-			activeClass:"active",
-		
-			// The class that will be appended once we are hovering the to-be-dropped-element (basket)
+		/* CYBERWARE */
+		$(".basket_cyberware").droppable({		
+			activeClass:"active",		
 			hoverClass:"hover",
-		
-			// The acceptance of the item once it touches the to-be-dropped-element basket
-			// For different values http://api.jqueryui.com/droppable/#option-tolerance
 			tolerance:"touch",
-			drop:function (event, ui) {		
+			drop:function (event, ui) {	
 				var basket = $(this),
 						move = ui.draggable,
 						itemId = basket.find("ul li[data-id='" + move.attr("data-id") + "']");
@@ -112,6 +105,7 @@ $(document).ready(function () {
 				addCyberBasket(basket, move);		
 			}
 		});		
+
 
         function addCyberBasket(basket, move) {			
 			basket.find("ul[id^='cyberware']").append('<li data-essence="' + move.attr("data-essence") + '" data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '" data-cost="' + move.attr("data-cost") + '">'
@@ -123,6 +117,34 @@ $(document).ready(function () {
 					+ '</tr></table></li>'
 				);					
 			calculateCyberwareCosts('add', move.attr("data-cost"), move.attr("data-essence"));
+			move.hide();
+		}
+        
+		/* MAGIC */
+		$(".basket_spells").droppable({
+			activeClass:"active",
+			hoverClass:"hover",
+			tolerance:"touch",
+			drop:function (event, ui) {	
+
+				var basket = $(this),
+						move = ui.draggable,
+						itemId = basket.find("ul li[data-id='" + move.attr("data-id") + "']");
+						itemType = move.attr("data-type");
+				addSpellBasket(basket, move);		
+			}
+		});
+		
+        function addSpellBasket(basket, move) {			
+			basket.find("ul[id^='spells']").append('<li data-id="' + move.attr("data-id") + '" data-type="' + move.attr("data-type") + '" data-cost="' + move.attr("data-cost") + '">'
+					+ '<table class="table"><tr>'
+					+ '<input type="hidden" name="' + move.attr("data-type") + '[]" value="' + move.attr("data-id") + '" />'
+					+ '<td style="width:220px"><span class="name">' + move.find("h3").html() + '</span></td>'					
+					+ '<td style="width:70px"><input type="text" id="' + move.attr("data-id") + '_sell" readonly value="' + move.attr("data-cost") + '" style="width:50px;color:black" class="count"  /></td>'
+					+ '<td style="width:20px"><button class="delete">&#10005;</button></td>'
+					+ '</tr></table></li>'
+				);					
+			calculateSpellCosts('add', move.attr("data-cost"));
 			move.hide();
 		}
 
@@ -187,6 +209,17 @@ $(document).ready(function () {
 			calculateCyberwareCosts('sub', price, essence);			
 		});	
 
+        // The function that is triggered once delete button is pressed
+        $(".basket_spells ul li button.delete").live("click", function () {
+
+			var price = $(this).closest("li").attr("data-cost");
+			var id = $(this).closest("li").attr("data-id");
+
+			$('#item_'+id).show();		
+			$(this).closest("li").remove();
+			calculateSpellCosts('sub', price);			
+		});	
+        
         // The function that is triggered once delete button is pressed
         $(".basket ul li button.delete").live("click", function () {
 			$(this).closest("li").remove();

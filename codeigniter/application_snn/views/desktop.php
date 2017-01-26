@@ -1,3 +1,7 @@
+<?php 
+#_debug($missions);
+?>
+
 <style>
 
 /* The Modal (background) */
@@ -74,6 +78,20 @@
 </script>
 	<div class="alert alert-danger" id="sendMsgError" style="display:none"></div>
 	<div class="alert alert-success" id="sendMsgSuccess" style="display:none"></div>
+	<?php if($missions[0] != ''): ?>
+		<div>
+			<fieldset class="newselement" style="border-color:red">	
+				<div class="newstitle">ACHTUNG! Du hast eine offene Storymission!</div>
+				<br />
+				<div class="col-sm-12">
+					<strong><?=$missions[0]['title']?> - Stufe <?=$missions[0]['level']?></strong><br /><br />
+					<i class="fa fa-external-link" aria-hidden="true"></i> <a href="/secure/snn/combatzone/combat_mission/<?=$missions[0]['mid']?>">Direkt zur Mission gehen</a>
+				</div>
+			</fieldset>
+		</div>
+	
+		<br />&nbsp;
+	<?php endif; ?>
 	<?php foreach($news as $n):?>
 		<div>
 			<fieldset class="newselement">
