@@ -168,7 +168,7 @@
 				<?=$f['autor']?> schrieb am <?=date('d.m.Y H:i', $f['time'])?><br /><br />
 				<?=nl2br($f['feedback']);?>
 
-				<?php if($this->session->userdata('rank') == '1'): ?>
+				<?php if($this->session->userdata('rank') < '1'): ?>
 				<br /><br />
 					<span style="float:right;margin-right:10px;cursor:pointer" onclick="openFeedbackModal('<?=$f['fid']?>')">[Antwort]</span>
 					<br />

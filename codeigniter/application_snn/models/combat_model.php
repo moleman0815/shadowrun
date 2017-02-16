@@ -660,17 +660,14 @@ class Combat_model extends CI_Model
 			} else {
 				array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> hat Glück und steht außerhalb des Radius.<br />');
 			}
-		}
-		_debug($this->combatlog);
-		_debug($throws);
-		_debugDie($this->player);
+		}		
 	}
 	
 	function evaluateGranadeDamage ($key) {
 		#_debug($enemy);
 		$mw = 9-$this->enemy[$key]['armor'];
 		$enemyAll = $enemySoaked = array();
-		
+		$spelldamage = "S";
 		for ($x=0;$x<$this->enemy[$key]['body'];$x++) {
 			$roll = $this->combat->_rollDiceWithRule();
 			if ($roll >= $mw) {
@@ -680,15 +677,17 @@ class Combat_model extends CI_Model
 		}
 		foreach ($enemyAll as $s) { $targethit .= $s.', '; }
 		
-		
 		if (count($enemySoaked) > 1) {
-			$spelldamage = $this->combat->calculateDamageDecrease($enemySoaked, 'S');
+		
+			$spelldamage = $this->combat->calculateDamageDecrease($enemySoaked, $spelldamage);
 		}
+
 		$damage = $this->combat->_getWeaponDamage($spelldamage);
 		
 		$healthBefore = $this->enemy[$key]['health'];
 		/* evaluate damage after increase and soaking */
 		$this->enemy[$key]['health'] = ($this->enemy[$key]['health']-$damage);
+		
 		if ($this->enemy[$key]['health'] < 10) {
 			if ($this->enemy[$key]['health'] > 0) {
 				$this->enemy[$key]['status'] = "wounded";
@@ -696,11 +695,11 @@ class Combat_model extends CI_Model
 				$this->enemy[$key]['status'] = "dead";
 			}
 		}
-			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> versucht dem Schaden zu wiederstehen, und würfelt <b>'.$targethit.'</b> gegen einen Mindestwurf von <b>'.$mw.'</b>, das sind <b>'.count($enemySoaked).'</b> Erfolge.<br />');			
+		array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> versucht dem Schaden zu wiederstehen, und würfelt <b>'.$targethit.'</b> gegen einen Mindestwurf von <b>'.$mw.'</b>, das sind <b>'.count($enemySoaked).'</b> Erfolge.<br />');			
 		if ($healthBefore == $this->enemy[$key]['health']) {
 			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> hat dem Schaden erfolgreich wiederstanden.<br />');
 		} else {
-			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> .<br />');
+			array_push($this->combatlog, 'Fernkampf -> Granate: <b>'.ucfirst($this->enemy[$key]['name']).'</b> Leben sinkt von <b>'.$healthBefore.'</b> auf <b>'.$this->enemy[$key]['health'].'</b>.<br />');
 		}
 		if ($this->enemy[$target]['status'] == "dead") {
 			array_push($this->combatlog, 'Zauber: <b>'.$this->enemy[$key]['name'].'</b> stirbt.</b><br />');
@@ -733,7 +732,7 @@ class Combat_model extends CI_Model
 	
 	function resolveHealingMagic ($spell) {
 		#toDo Delete
-		$spell['wirkung'] = ';heilung';
+		#$spell['wirkung'] = ';heilung';
 		$wirkung = explode(';', $spell['wirkung']);
 
 		if ($wirkung[1] == 'ini') {
@@ -797,8 +796,15 @@ class Combat_model extends CI_Model
 	function resolveCombatMagic ($spell) {
 		if ($spell['wirkung'] == '') {
 			if ($spell['target'] == 'multi') {
+				$chance = 0;
 				for ($x=0;$x<$this->enemies;$x++) {
-					$this->resolveMagicDamage($x);
+					$rand = rand(1, 100);
+					if ($rand >= $chance) {
+						$this->resolveMagicDamage($x);
+					} else {
+						array_push($this->combatlog, 'Zauber: <b>'.ucfirst($this->enemy[$x]['name']).'</b> hatte Gl&uuml;ck und steht ausserhalb des Wirkungsbereichs.<br />');
+					}
+					$chance = $chance+20;
 				}
 			} else {
 				$target = ($this->player['target'] != "") ? $this->getIndividuelTarget() : ($this->enemies > 1) ? $this->getTarget() : $target = 0;		
@@ -808,7 +814,7 @@ class Combat_model extends CI_Model
 		}
 		
 	}
-	
+
 	function resolveMagicDamage ($target) {
 		$playerAll = $playerHit = $enemySoak = $enemyAll = array();
 		array_push($this->combatlog, 'Zauber: '.ucfirst($this->player['name']).' zaubert einen '.$spell['name'].' auf '.$this->enemy[$target]['name'].'<br />');
@@ -868,23 +874,26 @@ class Combat_model extends CI_Model
 	function soakMagic ($soak, $type = "") {
 		$entzug = explode(';', $soak);
 		$playerAll = $playerHit = array();
-		
+
 		if ($entzug[1] == 'schadensniveau') {
 			if ($type == "heilung") {
 				$mw = $this->player['magic']+$entzug[0];
-				$schaden = $this->combat->_getDamageCode(10-$this->player['health_before']);			
+				$schaden = $this->combat->_getDamageCode(10-$this->player['health_before']);	
 			} else {
-				$mw = $this->player['spelllevel']+$entzug[0];
+				$mw = ceil($this->player['spelllevel']/2)+$entzug[0];
 				$schaden = $this->player['spelldamage'];
 			}
 				if (!empty($entzug[2])) {
 					for ($y=0;$y<$entzug[2];$y++) {
 						$schaden = $this->combat->_adjustBurstDamage($schaden);		
 					}
-				}
-			
+				}			
+		} else if ($entzug[1] == 'ini') {
+				$this->player['spirit'] = $this->player['spirit']-3;
+				array_push($this->combatlog, 'Zauber -> Entzug: Der Zauber hat keinen Entzug, bewirkt aber +2 auf alle MW durch Aufrechterhalten.<br />');
+				return true;
 		} else {
-			$mw = $this->player['magic']+$entzug[0];
+			$mw = ceil($this->player['magic']/2)+$entzug[0];
 			$schaden = ucfirst($entzug[1]);
 		}
 		
@@ -909,7 +918,7 @@ class Combat_model extends CI_Model
 		}
 		if ($this->player['status'] == "unconsious") {
 			array_push($this->combatlog, 'Zauber -> Entzug: <b>'.ucfirst($this->player['name']).'</b> wird ohnm&auml;chtig.</b><br />');
-		}
+		}	
 	}
 	
 	function playerMeleeAttack($inround) {
@@ -1395,13 +1404,13 @@ class Combat_model extends CI_Model
  		error_log('in finalizeCombatlog');			
 		array_push($this->combatlog, 'Der Kampf wurde nach '.$this->round.' Runden beendet.');
 		if ($this->status == 'success') {
-			array_push($this->combatlog, 'XXX Du warst erfolgreich.');
+			array_push($this->combatlog, 'Du warst erfolgreich.');
 		} else if ($this->status == 'flee') {
-			array_push($this->combatlog, 'XXX Du bist verletzte aus dem Kampf geflohen.');
+			array_push($this->combatlog, 'Du bist verletzte aus dem Kampf geflohen.');
 		}  else if ($this->status == 'unconsious') {
-			array_push($this->combatlog, 'XXX Du wurdest ohnm&auml;chtig und wurdest liegen gelassen.');
+			array_push($this->combatlog, 'Du wurdest ohnm&auml;chtig und wurdest liegen gelassen.');
 		} else {
-			array_push($this->combatlog, 'XXX Du wurdest besiegt, und schwer verletzt.');
+			array_push($this->combatlog, 'Du wurdest besiegt, und schwer verletzt.');
 		}
 	}
 
