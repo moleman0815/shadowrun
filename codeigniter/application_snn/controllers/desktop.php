@@ -118,6 +118,7 @@ class Desktop extends CI_Controller {
 	}
 
 	public function overview() {
+		_debug($this->session->all_userdata());
 		$page = $this->uri->segment(3);
 		$config['base_url'] = '/secure/snn/desktop/overview/';
 		$config['total_rows'] = ($this->main_db_assets->countNews()-1);
@@ -268,7 +269,7 @@ class Desktop extends CI_Controller {
 			if(empty($title)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Titel.'));
 			} else if (empty($receiver[0])) {
-				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Empfänger.'));
+				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Empfï¿½nger.'));
 			} else if (empty($text)) {
 				echo json_encode(array('status' => 'error', 'msg' => 'Beim Versenden der Nachricht ist ein Fehler aufgetreten: Kein Text.'));
 			} else {
@@ -522,7 +523,7 @@ class Desktop extends CI_Controller {
 	
 	public function deleteComment () {
 		if($this->main_db_assets->deleteComment()) {
-			echo json_encode(array('status' => 'success', 'msg' => 'Ihr Kommentar wurde gelöscht.'));
+			echo json_encode(array('status' => 'success', 'msg' => 'Ihr Kommentar wurde gelï¿½scht.'));
 		} else {
 			echo json_encode(array('status' => 'error', 'msg' => 'Ein Fehler ist aufgetreten.'));
 		}

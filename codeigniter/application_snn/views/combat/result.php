@@ -123,18 +123,24 @@
 		}
 	</style>
 
-	<div class="newstitle" style="cursor:pointer" onclick="$('#combatlog').toggle('fast');"><?=substr($combat[count($combat)-1], 4);?> (Combatlog anzeigen)</div>
+	<div class="newstitle" style="cursor:pointer" onclick="$('#combatlog').toggle('fast');"><?=$combat[count($combat)-1];?> (Combatlog anzeigen)</div>
 	<div id="combatlog" style="display:none">
 		<div style="list-style-type: none;" class="newselement">
 			<ul>
 		<?php foreach ($combat as $c): ?>
-			<?php if (preg_match("/AAA/", $c)): ?>
-				<b></ul><br /><?=substr($c ,4)?><ul></b>
-			<?php elseif (preg_match("/XXX/", $c)): ?>
-				<?php continue;?>
-			<?php else: ?>
-				<li><?=$c;?></li>
-			<?php endif; ?>
+		<?php 
+				if (preg_match('/systemcreateheader/i', $c)) {
+					
+				} else if (preg_match('/systemcloseheader/i', $c)) {
+					continue;
+				} else if (preg_match('/systemcreatediv/i', $c)) {
+					continue;
+				} else if (preg_match('/systemclosediv/i', $c)) {
+					continue;
+				} else {				
+					echo "<li>".$c."</li>";
+				}
+		?>
 		<?php endforeach; ?>
 			</ul>
 		</div>

@@ -19,8 +19,14 @@ class User_Model extends CI_Model {
 			$this->db->select('id, name, nickname, type, rank');
 			$this->db->where('name', $username);	
 			$this->db->where('privatekey', $pass);	
-			return $this->db->get("login")->result_array();
+			$user = $this->db->get("login")->result_array();
+			$this->db->select('charname, cid');
+			$this->db->where('uid', $user[0]['id']);
+			$char = $this->db->get("chars")->result_array();
+			$user[0]['charid'] = $char[0]['cid'];
+			$user[0]['charname'] = $char[0]['charname'];
 			
+			return $user;			
 	}	
 	
 	function changeNickname () {

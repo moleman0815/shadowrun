@@ -1,5 +1,5 @@
 <?php 
-#_debug($missions);
+_debug($missions);
 ?>
 
 <style>

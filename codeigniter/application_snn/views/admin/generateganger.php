@@ -5,7 +5,7 @@
 	$this->session->unset_userdata('error');
 
 $n_options = array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10'); 
-$r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'ork' => 'Ork', 'troll' => 'Troll');
+$r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'ork' => 'Ork', 'troll' => 'Troll', 'critter' => 'Critter');
 ?>
 <script>
 	$( document ).ready(function() {
@@ -48,7 +48,7 @@ $r_options = array('mensch' => 'Mensch', 'elf' => 'Elf', 'zwerg' => 'Zwerg', 'or
 				<?=form_dropdown('gangertype', array('combat' => 'Kampf', 'magic' => 'Magie'));?>
 				<br />
 				<label class="control-label select_width" for="gangerarchtyp" style="width:150px">Ganger Archetyp</label>
-				<?=form_dropdown('gangerarchetyp', array('ganger' => 'Ganger', 'lonestar' => 'Lonestar'));?>
+				<?=form_dropdown('gangerarchetyp', array('ganger' => 'Ganger', 'lonestar' => 'Lonestar', 'critter' => 'Critter', 'ghost' => 'Geist'));?>
 				<br />
 				<label class="control-label" for="gangerbio" style="width:150px;" valign="top">Ganger Bio</label>
 				<?=form_textarea(array('id' => 'gangerbio', 'name' =>'gangerbio', "class" => "input-xlarge"));?>
